@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Oct 18, 2017 at 10:49 AM -0400
+# Last Change: Wed Oct 18, 2017 at 03:49 PM -0400
 
 import socket
 import threading
 
 
 class ThreadedServer():
-    def __init__(self, host, port, max_connection=5, timeout=60, log_dir='/var/log/bUrnIn'):
+    def __init__(self, host, port,
+                 max_connection=5, timeout=60, log_dir='/var/log/bUrnIn'):
         self.host = host
         self.port = port
         self.max_connection = max_connection
