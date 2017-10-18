@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Oct 18, 2017 at 11:14 AM -0400
+# Last Change: Wed Oct 18, 2017 at 12:40 PM -0400
 
 import sys
 sys.path.insert(0, '..')
@@ -26,7 +26,7 @@ class NaiveThreadedServer(ThreadedServer):
 
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 4567
+    HOST, PORT = "", 4567
 
     server = NaiveThreadedServer(HOST, PORT)
     server.listen()
