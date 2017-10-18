@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Oct 18, 2017 at 10:54 AM -0400
+# Last Change: Wed Oct 18, 2017 at 11:14 AM -0400
+
+import sys
+sys.path.insert(0, '..')
 
 from bUrnIn.server import ThreadedServer
 
@@ -14,14 +17,16 @@ class NaiveThreadedServer(ThreadedServer):
                 if data:
                     print(data)
                 else:
-                    raise ValueError('Client disconnected')
+                    print('Client disconnected.')
+                    raise ValueError('Client disconnected.')
 
-            except client.close():
+            except ValueError:
+                client.close()
                 return False
 
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 4567
 
-    server = ThreadedServer(HOST, PORT)
+    server = NaiveThreadedServer(HOST, PORT)
     server.listen()
