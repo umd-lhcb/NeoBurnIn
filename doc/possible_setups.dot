@@ -1,0 +1,36 @@
+digraph G {
+    rankdir="LR";
+    graph [fontname = "DejaVu Sans Mono"];
+    node [fontname = "DejaVu Sans Mono"];
+    edge [fontname = "DejaVu Sans Mono"];
+
+	subgraph cluster_0 {
+		color=blue
+		label = "setup #1: single pi";
+
+        board -> pi1
+
+		board [label="custom-made mux"];
+        pi1 [label="raspberry pi"];
+	}
+
+	subgraph cluster_1 {
+		color=blue
+		label = "setup #2: multiple pis";
+
+        pi2 [label="raspberry pi"];
+        pi3 [label="raspberry pi"];
+        pimore [shape=none label="...more pis"]
+	}
+
+	equip -> board;
+    pi1 -> srv [label="Internet"];
+
+    equip -> pi2
+    equip -> pi3
+    pi2 -> srv [label="Internet"];
+    pi3 -> srv [label="Internet"];
+
+	equip [shape=box label="equipments need to be tested"];
+	srv [label="server"];
+}
