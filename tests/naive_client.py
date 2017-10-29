@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Oct 18, 2017 at 10:36 AM -0400
+# Last Change: Sun Oct 29, 2017 at 07:02 PM -0400
 
 import socket
+import sys
 
 
-class Client():
+class NaiveTransmissionClient():
     def __init__(self, host, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock = sock
@@ -19,3 +20,10 @@ class Client():
 
         finally:
             self.sock.close()
+
+
+if __name__ == "__main__":
+    host, port = "127.0.0.1", 4567
+    msg = " ".join(sys.argv[1:])
+    client = NaiveTransmissionClient(host, port)
+    client.send(msg)
