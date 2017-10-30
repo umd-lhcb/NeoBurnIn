@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Oct 29, 2017 at 09:16 PM -0400
+# Last Change: Mon Oct 30, 2017 at 12:15 AM -0400
 
 from time import sleep
 
@@ -11,21 +11,9 @@ from bUrnIn.server.transmission import TransmissionServer
 
 
 class NaiveTransmissionServer(TransmissionServer):
-    def client_handle(self, client, address):
-        size = 1024
-        while True:
-            try:
-                data = client.recv(size)
-                if data:
-                    print(data)
-                    sleep(5)
-                else:
-                    print('Client disconnected.')
-                    raise ValueError('Client disconnected.')
-
-            except ValueError:
-                client.close()
-                return False
+    def dispatcher(self, msg, address):
+        print(msg)
+        sleep(1)
 
 
 if __name__ == "__main__":
