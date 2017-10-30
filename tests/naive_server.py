@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Oct 29, 2017 at 06:51 PM -0400
+# Last Change: Sun Oct 29, 2017 at 09:16 PM -0400
+
+from time import sleep
 
 import sys
 sys.path.insert(0, '..')
@@ -16,6 +18,7 @@ class NaiveTransmissionServer(TransmissionServer):
                 data = client.recv(size)
                 if data:
                     print(data)
+                    sleep(5)
                 else:
                     print('Client disconnected.')
                     raise ValueError('Client disconnected.')

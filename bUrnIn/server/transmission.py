@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Oct 29, 2017 at 07:08 PM -0400
+# Last Change: Sun Oct 29, 2017 at 10:20 PM -0400
 
 import socket
 import threading
@@ -23,27 +23,41 @@ class TransmissionServer(BaseSignalHandler):
         self.log_filename = log_filename
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # This allows OS to immediately reuse the address without waiting for
+        # the existing socket
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
 
     def listen(self):
         self.sock.listen(self.max_connections)
 
-        while True:
-            client, address = self.sock.accept()
-            client.settimeout(self.timeout)
+        while not self.stop:
+            try:
+                client, address = self.sock.accept()
+                client.settimeout(self.timeout)
 
-            threading.Thread(target=self.client_handle,
-                             args=(client, address)).start()
+                threading.Thread(target=self.client_handle,
+                                 args=(client, address)).start()
 
-            if self.stop:
-                print("Termination signal received. Prepare to exit...")
-                break
+            except OSError as err:
+                if err.errno is 9:
+                    # This is likely due to a SIGINT or SIGTERM signal
+                    # and we are trying to shut down the server now
+                    pass
+
+                else:
+                    raise(err)
 
         # Exit gracefully
+        # Make sure all threads are properly closed
         for t in threading.enumerate():
             if t.daemon:
                 t.join()
 
     def client_handle(self, client, address):
         pass
+
+    def exit(self, signum, frame):
+        self.stop = True
+        self.sock.close()
+        print("Termination signal received, prepare to exit...")
