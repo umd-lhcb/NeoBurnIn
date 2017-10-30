@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 01:58 PM -0400
+# Last Change: Mon Oct 30, 2017 at 07:20 PM -0400
 
 import socket
 import threading
@@ -49,8 +49,8 @@ class TransmissionServer(BaseSignalHandler):
 
         # SOCK_STREAM means that this is a TCP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # This allows OS to immediately reuse the address without waiting for
-        # the existing socket
+        # This allows OS to immediately bind the socket without waiting for
+        # the existing socket on the same IP address
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
 
