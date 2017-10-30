@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 12:50 PM -0400
+# Last Change: Mon Oct 30, 2017 at 01:58 PM -0400
 
 import socket
 import threading
@@ -82,8 +82,10 @@ class TransmissionServer(BaseSignalHandler):
                     # FIXME: need a logger
                     raise(err)
 
-        # Exit gracefully
-        # Make sure all threads are (properly) closed
+        # Exit gracefully:
+        #   Make sure all threads are (properly) closed
+        #   However if some threads malfunction, this process will need to be
+        #   killed by external commands
         for t in threading.enumerate():
             if t.daemon:
                 t.join()
@@ -91,9 +93,19 @@ class TransmissionServer(BaseSignalHandler):
     def client_handle(self, clientsocket, address):
         retries = 0
 
+        # Here we design a very simple protocol:
+        #   Messages can have variable length, but it's end is indicated by a
+        #   single '\n' character.
+        #   The rationale is that the minimum read size for a socket is,
+        #   needless to say, 1. This means that the token should have a length
+        #   of 1.
+        #   We also require the message be encoded in UTF-8.
+
+        EOM = 10    # binary representation of '\n'
+        msg = bytearray()
         while retries <= self.max_retries:
             try:
-                msg = clientsocket.recv(self.size)
+                msg.extend(clientsocket.recv(self.size))
 
             except clientsocket.timeout:
                 # Keep trying until we reach the maximum retries
@@ -103,11 +115,10 @@ class TransmissionServer(BaseSignalHandler):
                 self.dispatcher(msg, address, err)
 
             else:
-                if not msg:
+                if msg[-1] is EOM:
+                    self.dispatcher(bytes(msg).decode("utf-8"), address)
                     # We reached End-Of-Message
                     break
-                else:
-                    self.dispatcher(msg, address)
 
         clientsocket.close()
 

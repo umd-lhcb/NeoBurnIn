@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 12:22 PM -0400
+# Last Change: Mon Oct 30, 2017 at 01:56 PM -0400
 
 from time import sleep
 import socket
@@ -34,7 +34,8 @@ class NaiveTransmissionServer(TransmissionServer):
 
 
 if __name__ == "__main__":
-    HOST, PORT = "0.0.0.0", 4567
+    host, port = "0.0.0.0", 4567
+    size = 20
 
-    server = NaiveTransmissionServer(HOST, PORT)
+    server = NaiveTransmissionServer(host, port, size=1)
     server.listen()
