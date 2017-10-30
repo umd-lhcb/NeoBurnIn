@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Oct 29, 2017 at 06:53 PM -0400
+# Last Change: Sun Oct 29, 2017 at 07:08 PM -0400
 
 import socket
 import threading
@@ -29,17 +29,21 @@ class TransmissionServer(BaseSignalHandler):
     def listen(self):
         self.sock.listen(self.max_connections)
 
-        while not self.stop:
+        while True:
             client, address = self.sock.accept()
             client.settimeout(self.timeout)
 
             threading.Thread(target=self.client_handle,
                              args=(client, address)).start()
 
-            # Exit gracefully
-            for t in threading.enumerate():
-                if t.daemon:
-                    t.join()
+            if self.stop:
+                print("Termination signal received. Prepare to exit...")
+                break
+
+        # Exit gracefully
+        for t in threading.enumerate():
+            if t.daemon:
+                t.join()
 
     def client_handle(self, client, address):
         pass
