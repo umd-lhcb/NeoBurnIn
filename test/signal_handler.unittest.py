@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Oct 29, 2017 at 08:59 PM -0400
+# Last Change: Mon Oct 30, 2017 at 01:35 AM -0400
 
 from time import sleep
 from datetime import datetime
@@ -12,17 +12,18 @@ from bUrnIn.server.base import BaseSignalHandler
 
 time_fmt = "%Y-%m-%d %H:%M:%S"
 
-class NaiveSignalHandler(BaseSignalHandler):
+
+class SignalHandler(BaseSignalHandler):
     def start(self):
         while not self.stop:
             current_time = datetime.now().strftime(time_fmt)
             print("I am still alive at: {}".format(current_time))
-            sleep(2)
+            sleep(1)
 
         # Kill itself gracefully
         print("Termination signal received, exit gracefully...")
 
 
 if __name__ == "__main__":
-    handler = NaiveSignalHandler()
+    handler = SignalHandler()
     handler.start()
