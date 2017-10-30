@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 12:17 AM -0400
+# Last Change: Mon Oct 30, 2017 at 12:41 PM -0400
 
 import socket
 import threading
@@ -61,7 +61,7 @@ class TransmissionServer(BaseSignalHandler):
             try:
                 clientsocket, address = self.sock.accept()
                 # Here the clientsocket is a non-blocking one!
-                # where as our seversocket is blocking
+                # whereas our seversocket is blocking
                 clientsocket.settimeout(self.timeout)
 
                 handler = threading.Thread(target=self.client_handle,
@@ -79,6 +79,7 @@ class TransmissionServer(BaseSignalHandler):
                     pass
 
                 else:
+                    # FIXME: need a logger
                     raise(err)
 
         # Exit gracefully

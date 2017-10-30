@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Oct 29, 2017 at 06:32 PM -0400
+# Last Change: Mon Oct 30, 2017 at 12:28 PM -0400
 
 import signal
 
 
 class BaseSignalHandler():
+    '''
+    A base server class that defers SIGINT and SIGTERM signals.
+    It is assumed that any subclass will deal with above signals EXPLICITLY.
+    '''
     def __init__(self):
         self.signal_handle()
 
@@ -19,3 +23,11 @@ class BaseSignalHandler():
 
     def exit(self, signum, frame):
         self.stop = True
+
+
+class BaseLogger():
+    '''
+    A base logger that
+    '''
+    def __init__(self):
+        pass
