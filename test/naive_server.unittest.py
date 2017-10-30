@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 01:56 PM -0400
+# Last Change: Mon Oct 30, 2017 at 02:28 PM -0400
 
 from time import sleep
 import socket
+import unittest
 
 import sys
 sys.path.insert(0, '..')
@@ -29,13 +30,25 @@ class NaiveTransmissionClient():
 
 class NaiveTransmissionServer(TransmissionServer):
     def dispatcher(self, msg, address):
-        print(msg)
+        self.testresults.append(msg)
         sleep(1)
 
 
-if __name__ == "__main__":
-    host, port = "0.0.0.0", 4567
-    size = 20
+class TestTransferMsg(unittest.TestCase):
+    def __init__(self, *args, **kwargs):
+        unittest.TestCase.__init__(self, *args, **kwargs)
 
-    server = NaiveTransmissionServer(host, port, size=1)
-    server.listen()
+        self.server = NaiveTransmissionServer("", 0)
+        self.server.listen()
+
+    def test_ascii_str(self):
+        self.assertEqual(self.a, 1)
+
+
+if __name__ == "__main__":
+    # host, port = "0.0.0.0", 4567
+    # size = 20
+
+    # server = NaiveTransmissionServer(host, port, size=1)
+    # server.listen()
+    unittest.main()
