@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 12:41 PM -0400
+# Last Change: Mon Oct 30, 2017 at 12:50 PM -0400
 
 import socket
 import threading
@@ -22,7 +22,7 @@ class TransmissionServer(BaseSignalHandler):
                  log_filename=""):
         # Register handler for SIGINT and SIGTERM
         # so that this server can exit gracefully
-        self.signal_handle()
+        BaseSignalHandler.__init__(self)
 
         self.host = host
         self.port = port
@@ -113,7 +113,7 @@ class TransmissionServer(BaseSignalHandler):
 
     def exit(self, signum, frame):
         print("Termination signal received, prepare to exit...")
-        self.stop = True
+        BaseSignalHandler.exit(self, signum, frame)
         self.sock.close()
 
     def dispatcher(self, msg, address, err=None):

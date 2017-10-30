@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 12:28 PM -0400
+# Last Change: Mon Oct 30, 2017 at 12:49 PM -0400
 
 import signal
 
@@ -11,9 +11,6 @@ class BaseSignalHandler():
     It is assumed that any subclass will deal with above signals EXPLICITLY.
     '''
     def __init__(self):
-        self.signal_handle()
-
-    def signal_handle(self):
         self.stop = False
 
         # SIGINT: Ctrl-C
