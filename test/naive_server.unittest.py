@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 02:28 PM -0400
+# Last Change: Mon Oct 30, 2017 at 02:36 PM -0400
 
 from time import sleep
 import socket
@@ -42,7 +42,7 @@ class TestTransferMsg(unittest.TestCase):
         self.server.listen()
 
     def test_ascii_str(self):
-        self.assertEqual(self.a, 1)
+        self.assertEqual(self.a, 2)
 
 
 if __name__ == "__main__":
