@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 07:20 PM -0400
+# Last Change: Tue Oct 31, 2017 at 12:30 AM -0400
 
 import socket
 import threading
+import sys
 
 from bUrnIn.server.base import BaseSignalHandler
 
@@ -89,6 +90,8 @@ class TransmissionServer(BaseSignalHandler):
         for t in threading.enumerate():
             if t.daemon:
                 t.join()
+
+        sys.exit(0)
 
     def client_handle(self, clientsocket, address):
         retries = 0
