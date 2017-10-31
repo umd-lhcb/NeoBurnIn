@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Oct 31, 2017 at 02:19 AM -0400
+# Last Change: Tue Oct 31, 2017 at 02:37 AM -0400
 
 from time import sleep
 from multiprocessing import Process, Queue
@@ -78,7 +78,7 @@ class TestTransferMsgSmSize(unittest.TestCase):
         self.client.send(utf8_text)
         self.assertEqual(self.server_instance.output.get(), utf8_text)
 
-    def tearDown(self):
+    def doCleanups(self):
         self.client.exit()
 
         # FIXME: A dirty workaround
