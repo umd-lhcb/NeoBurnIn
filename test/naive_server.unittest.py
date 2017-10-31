@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 08:59 PM -0400
+# Last Change: Tue Oct 31, 2017 at 01:14 AM -0400
 
 from time import sleep
 from multiprocessing import Process
@@ -44,9 +44,9 @@ class NaiveTransmissionServer(TransmissionServer):
         print(msg)
 
 
-def server_loop(port, size, lock=None):
-    server = NaiveTransmissionServer("localhost", port, size=size)
-    server.listen()
+# def server_loop(port, size, lock=None):
+    # server = NaiveTransmissionServer("localhost", port, size=size)
+    # server.listen()
 
 
 def get_free_tcp_port():
@@ -62,11 +62,16 @@ class TestTransferMsgSmSize(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         unittest.TestCase.__init__(self, *args, **kwargs)
 
-        self.server_port = get_free_tcp_port()
-        self.server = Process(target=server_loop, args=(self.server_port, 3))
+        server_port = get_free_tcp_port()
+        size = 3
+
+        self.server_instance = NaiveTransmissionServer("",
+                                                       server_port, size=size)
+
+        self.server = Process(target=self.server_instance.listen, args=())
         self.server.start()
 
-        self.client = NaiveTransmissionClient("localhost", self.server_port)
+        self.client = NaiveTransmissionClient("localhost", server_port)
 
     def test_ascii_text(self):
         ascii_text = "Gou Li Guo Jia Sheng Si Yi"
@@ -76,6 +81,7 @@ class TestTransferMsgSmSize(unittest.TestCase):
     def tearDown(self):
         self.client.exit()
         os.kill(self.server.pid, signal.SIGTERM)
+        self.server.join()
 
 
 if __name__ == "__main__":
