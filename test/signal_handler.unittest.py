@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Oct 31, 2017 at 12:10 AM -0400
+# Last Change: Tue Oct 31, 2017 at 03:06 AM -0400
 
 from time import sleep
 from multiprocessing import Process
@@ -18,7 +18,7 @@ from bUrnIn.server.base import BaseSignalHandler
 class SignalHandler(BaseSignalHandler):
     def start(self):
         while not self.stop:
-            sleep(1)    # This operations is likely atomic
+            sleep(0.2)    # This operations is atomic
 
         # Exit with a special code for testing
         sys.exit(13)
@@ -29,8 +29,8 @@ class TestKill(unittest.TestCase):
         handler = SignalHandler()
         server = Process(target=handler.start, args=())
         server.start()
-        sleep(1.5)
 
+        sleep(0.3)
         os.kill(server.pid, signal.SIGINT)
         server.join()
 
@@ -40,8 +40,8 @@ class TestKill(unittest.TestCase):
         handler = SignalHandler()
         server = Process(target=handler.start, args=())
         server.start()
-        sleep(1.5)
 
+        sleep(0.3)
         os.kill(server.pid, signal.SIGTERM)
         server.join()
 
