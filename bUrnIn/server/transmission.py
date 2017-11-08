@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Oct 31, 2017 at 12:30 AM -0400
+# Last Change: Wed Nov 08, 2017 at 11:14 AM -0500
 
 import socket
 import threading
 import sys
+from sqlite3 import OperationalError
 
 from bUrnIn.server.base import BaseSignalHandler
+from bUrnIn.output.sqlite import sql_init
 
 
 class TransmissionServer(BaseSignalHandler):
@@ -54,6 +56,12 @@ class TransmissionServer(BaseSignalHandler):
         # the existing socket on the same IP address
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
+
+        # Initialize sqlite database
+        try:
+            sql_init(self.db_filename)
+        except OperationalError:
+            pass  # This is due to table already exists
 
     def listen(self):
         self.sock.listen(self.max_connections)
