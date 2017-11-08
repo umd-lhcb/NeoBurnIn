@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 08, 2017 at 11:17 AM -0500
+# Last Change: Wed Nov 08, 2017 at 12:06 PM -0500
 
 from configparser import ConfigParser
 from os import getcwd
@@ -49,9 +49,9 @@ if __name__ == "__main__":
     DEFAULT_CFG = join(getcwd(), 'server-trans.cfg')
 
     if isfile(GLOBAL_CFG):
-        opts = parse_config('/etc/server-trans/config')
+        opts = parse_config(GLOBAL_CFG)
     else:
-        opts = parse_config(join(getcwd(), 'server-trans.cfg'))
+        opts = parse_config(join(getcwd(), DEFAULT_CFG))
 
     server = Server(opts['main']['ip'], int(opts['main']['port']),
                     size=int(opts['main']['size']),
