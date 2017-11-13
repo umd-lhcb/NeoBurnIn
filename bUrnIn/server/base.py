@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Oct 30, 2017 at 12:49 PM -0400
+# Last Change: Mon Nov 13, 2017 at 11:28 AM -0500
 
 import signal
 
@@ -20,11 +20,3 @@ class BaseSignalHandler():
 
     def exit(self, signum, frame):
         self.stop = True
-
-
-class BaseLogger():
-    '''
-    A base logger that
-    '''
-    def __init__(self):
-        pass
