@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 08, 2017 at 11:14 AM -0500
+# Last Change: Sun Nov 12, 2017 at 10:54 PM -0500
 
 import socket
 import threading
 import sys
+
 from sqlite3 import OperationalError
 
 from bUrnIn.server.base import BaseSignalHandler
@@ -112,7 +113,7 @@ class TransmissionServer(BaseSignalHandler):
         #   of 1.
         #   We also require the message be encoded in UTF-8.
 
-        EOM = 10    # binary representation of '\n'
+        EOM = b'EOF'  # binary representation
         msg = bytearray()
         while retries <= self.max_retries:
             try:
@@ -122,11 +123,13 @@ class TransmissionServer(BaseSignalHandler):
                 # Keep trying until we reach the maximum retries
                 retries += 1
 
-            except clientsocket.error as err:
+            except socket.error as err:
                 self.dispatcher(msg, address, err)
 
             else:
-                if msg[-1] is EOM:
+                # Note that we require the length of the message to be no less
+                # than 3.
+                if msg[-3:] is EOM:
                     self.dispatcher(bytes(msg).decode("utf-8"), address)
                     # We reached End-Of-Message
                     break
