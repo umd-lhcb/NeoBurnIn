@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Nov 13, 2017 at 01:17 PM -0500
+# Last Change: Mon Nov 13, 2017 at 01:41 PM -0500
 
 import socket
 import sys
@@ -98,13 +98,13 @@ class TransmissionServer(BaseSignalHandler):
 
         # Here we design a very simple protocol:
         #   Messages can have variable length, but it's end is indicated by a
-        #   'EOF' byte array.
+        #   'EOM' byte array.
         #   The rationale is that the minimum read size for a socket is,
         #   needless to say, 1. This means that the token should have a length
         #   of 1.
         #   We also require the message be encoded in UTF-8.
 
-        EOM = bytearray(b'EOF')  # binary representation
+        EOM = bytearray(b'EOM')  # binary representation
         msg = bytearray()
 
         while True:
@@ -113,8 +113,9 @@ class TransmissionServer(BaseSignalHandler):
 
             except socket.timeout:
                 # Keep trying until we reach the maximum retries
-                print('Timeout')
                 retries += 1
+                # Also, clear the full buffer and start from scratch
+                msg.clear()
 
                 if retries is self.max_retries:
                     errs.put((socket.timeout, self.time_stamp(), msgs))

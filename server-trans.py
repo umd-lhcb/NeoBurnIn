@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 08, 2017 at 12:06 PM -0500
+# Last Change: Mon Nov 13, 2017 at 11:21 AM -0500
 
 from configparser import ConfigParser
 from os import getcwd
@@ -35,7 +35,7 @@ class Server(TransmissionServer):
         hostname = header[0]
         timestamp = header[1]
 
-        # # The rest are all data
+        # The rest are all data
         data_bundle = msg_bundle[2:]
         data = dict()
         for i in range(0, int(len(data_bundle)/2)):
