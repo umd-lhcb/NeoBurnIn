@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Nov 12, 2017 at 10:54 PM -0500
+# Last Change: Sun Nov 12, 2017 at 11:02 PM -0500
 
 import socket
 import threading
@@ -107,7 +107,7 @@ class TransmissionServer(BaseSignalHandler):
 
         # Here we design a very simple protocol:
         #   Messages can have variable length, but it's end is indicated by a
-        #   single '\n' character.
+        #   'EOF' string.
         #   The rationale is that the minimum read size for a socket is,
         #   needless to say, 1. This means that the token should have a length
         #   of 1.
@@ -115,16 +115,22 @@ class TransmissionServer(BaseSignalHandler):
 
         EOM = b'EOF'  # binary representation
         msg = bytearray()
-        while retries <= self.max_retries:
+        while True:
             try:
                 msg.extend(clientsocket.recv(self.size))
 
-            except clientsocket.timeout:
+            except socket.timeout:
                 # Keep trying until we reach the maximum retries
+                print('Timeout')
                 retries += 1
 
+                if retries is self.max_retries:
+                    self.logger(msg, address, socket.timeout)
+                    break
+
             except socket.error as err:
-                self.dispatcher(msg, address, err)
+                self.logger(msg, address, err)
+                break
 
             else:
                 # Note that we require the length of the message to be no less
@@ -141,5 +147,8 @@ class TransmissionServer(BaseSignalHandler):
         BaseSignalHandler.exit(self, signum, frame)
         self.sock.close()
 
-    def dispatcher(self, msg, address, err=None):
+    def logger(self, msg, address, err):
+        pass
+
+    def dispatcher(self, msg, address):
         pass
