@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Nov 13, 2017 at 01:50 PM -0500
+# Last Change: Mon Nov 13, 2017 at 03:47 PM -0500
 
 
 import socket
@@ -28,5 +28,5 @@ class NaiveTransmissionClient():
 
 
 if __name__ == "__main__":
-    client = NaiveTransmissionClient('localhost', '45678')
+    client = NaiveTransmissionClient('localhost', 45678)
     client.send(sys.argv[1])
