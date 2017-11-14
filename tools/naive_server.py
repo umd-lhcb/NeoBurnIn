@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Nov 13, 2017 at 09:14 PM -0500
+# Last Change: Tue Nov 14, 2017 at 01:19 AM -0500
 
 import sys
 sys.path.insert(0, '..')
@@ -27,15 +27,9 @@ class NaiveDispatcher(Dispatcher):
 
 if __name__ == "__main__":
     msgs = Queue()
-    errs = Queue()
-    emails = Queue()
 
-    db_filename = ''
-    time_format = ''
-
-    server = TransmissionServerAsync('localhost', 45678, msgs, errs, emails,
-                                     time_format)
+    server = TransmissionServerAsync('localhost', 45678, msgs=msgs)
     server.listen()
 
-    dispatcher = NaiveDispatcher(msgs, errs, emails, db_filename, time_format)
+    dispatcher = NaiveDispatcher(msgs=msgs)
     dispatcher.start()

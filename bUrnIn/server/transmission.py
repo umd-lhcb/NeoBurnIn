@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Nov 14, 2017 at 01:05 AM -0500
+# Last Change: Tue Nov 14, 2017 at 01:44 PM -0500
 
 import socket
 import asyncio
@@ -101,8 +101,8 @@ class TransmissionServerAsync():
             server.close()
             loop.run_until_complete(server.wait_closed())
             loop.close()
-            print('hehe')
 
     def listen(self):
         server = Container(target=self.serve)
         server.start()
+        self.server_process = server

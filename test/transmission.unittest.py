@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Nov 13, 2017 at 01:43 PM -0500
-
-from time import sleep
-from subprocess import Popen
+# Last Change: Tue Nov 14, 2017 at 01:42 PM -0500
 
 import socket
 import unittest
 
+from time import sleep
+from multiprocessing import Queue
+
 import sys
 sys.path.insert(0, '..')
 
-from bUrnIn.server.transmission import TransmissionServer
+from bUrnIn.server.transmission import TransmissionServerAsync
 
 
 class TransmissionClientTester():
@@ -38,13 +38,6 @@ class TransmissionClientTester():
         self.sock.close()
 
 
-class TransmissionServerTester(TransmissionServer):
-    def dispatcher(self, data, msgs, errs):
-        print("something's here...")
-        data = data[:-3]  # Remove the 'EOM' character
-        msgs.put(data)
-
-
 def get_free_tcp_port():
     tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     tcp.bind(('', 0))  # Get any available port
@@ -62,8 +55,12 @@ class TestTransferMsgSmSize(unittest.TestCase):
         server_port = get_free_tcp_port()
         size = 3
 
-        self.server = TransmissionServerTester("", server_port, size=size)
+        msgs = Queue()
+
+        self.server = TransmissionServerAsync("", server_port, size=size,
+                                              msgs=msgs)
         self.server.listen()
+        sleep(0.5)  # Need this to make sure server is properly initialized
 
         self.client = TransmissionClientTester("localhost", server_port)
 
@@ -84,8 +81,8 @@ class TestTransferMsgSmSize(unittest.TestCase):
         # kill = Popen(["kill", "-9", str(self.server.pid)])
         # kill.wait()
 
-        self.server.exit()
+        # self.server.exit()
 
 
 if __name__ == "__main__":
-    unittest.main(failfast=True)
+    unittest.main()
