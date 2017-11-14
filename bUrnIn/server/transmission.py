@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Nov 13, 2017 at 09:11 PM -0500
+# Last Change: Tue Nov 14, 2017 at 12:50 AM -0500
 
 import socket
 import asyncio
@@ -32,7 +32,23 @@ class TransmissionServerAsync():
         # Define a time stamp format
         self.time_format = time_format
 
-    async def client_handle(self, reader, writer):
+        # Store all unterminated clients in a dictionary
+        self.clients = dict()
+
+    def client_accept(self, client_reader, client_writer):
+        task = asyncio.ensure_future(
+            self.client_handle(client_reader, client_writer))
+        self.clients[task] = (client_reader, client_writer)
+
+        def client_done(task):
+            del self.clients[task]
+            client_writer.close()
+
+        task.add_done_callback(client_done)
+        print(self.clients.keys())
+
+    @asyncio.coroutine
+    def client_handle(self, client_reader, client_writer):
         retries = 0
 
         # Here we design a very simple protocol:
@@ -46,9 +62,9 @@ class TransmissionServerAsync():
 
         while True:
             # Asynchronously read chunks of data from the socket
-            chunk = await reader.read(self.size)
-
             try:
+                chunk = yield from asyncio.wait_for(client_reader.read(self.size),
+                                         timeout=self.timeout)
                 data.extend(chunk)
 
             except socket.timeout:
@@ -71,14 +87,12 @@ class TransmissionServerAsync():
                 # than 3.
                 if data[-3:] == EOM:
                     self.msgs.put(bytes(data[:-3]).decode("utf-8"))
-                    # We reached End-Of-Message
+                    # We reached 'EOM': End-Of-Message
                     break
-
-        writer.close()
 
     def serve(self):
         loop = asyncio.get_event_loop()
-        coro = asyncio.start_server(self.client_handle, self.host, self.port,
+        coro = asyncio.start_server(self.client_accept, self.host, self.port,
                                     loop=loop)
         server = loop.run_until_complete(coro)
 
