@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Nov 14, 2017 at 12:50 AM -0500
+# Last Change: Tue Nov 14, 2017 at 01:05 AM -0500
 
 import socket
 import asyncio
@@ -45,7 +45,6 @@ class TransmissionServerAsync():
             client_writer.close()
 
         task.add_done_callback(client_done)
-        print(self.clients.keys())
 
     @asyncio.coroutine
     def client_handle(self, client_reader, client_writer):
@@ -63,11 +62,11 @@ class TransmissionServerAsync():
         while True:
             # Asynchronously read chunks of data from the socket
             try:
-                chunk = yield from asyncio.wait_for(client_reader.read(self.size),
-                                         timeout=self.timeout)
+                chunk = yield from asyncio.wait_for(
+                    client_reader.read(self.size), timeout=self.timeout)
                 data.extend(chunk)
 
-            except socket.timeout:
+            except asyncio.TimeoutError:
                 # Keep trying until we reach the maximum retries
                 retries += 1
                 # Also, clear the full buffer and start from scratch
@@ -78,7 +77,7 @@ class TransmissionServerAsync():
                                    data))
                     break
 
-            except socket.error as err:
+            except Exception as err:
                 self.errs.put((err, time_stamp(self.time_format), data))
                 break
 
@@ -98,13 +97,11 @@ class TransmissionServerAsync():
 
         try:
             loop.run_forever()
-        except KeyboardInterrupt:
-            pass
-
-        # Exit gracefully
-        server.close()
-        loop.run_until_complete(server.wait_closed())
-        loop.close()
+        finally:  # Exit gracefully
+            server.close()
+            loop.run_until_complete(server.wait_closed())
+            loop.close()
+            print('hehe')
 
     def listen(self):
         server = Container(target=self.serve)
