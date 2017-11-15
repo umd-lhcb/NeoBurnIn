@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 11:07 AM -0500
+# Last Change: Wed Nov 15, 2017 at 11:08 AM -0500
 
 from multiprocessing import Process as Container
 
@@ -33,7 +33,7 @@ def generate_config_listener(filename, recipients, level, handlers):
             'email': {
                 'class': 'logging.handlers.SMTPHandler',
                 'formatter': 'detailed',
-                'level': 'ERROR',
+                'level': 'CRITICAL',
                 'fromaddr': 'burnin.umd.lhb@gmail.com',
                 'mailhost': ('smtp.gmail.com', 587),
                 'toaddrs': recipients,

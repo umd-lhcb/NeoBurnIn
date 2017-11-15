@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 10:59 AM -0500
+# Last Change: Wed Nov 15, 2017 at 11:09 AM -0500
 
 import logging
 import logging.config
@@ -26,6 +26,7 @@ if __name__ == "__main__":
     log = logging.getLogger()
     log.info('This is a test message.')
     log.error('A fake error has occurred!')
+    log.critical('A fake critical error has occurred!')
 
     stop_event.set()
     logger.listener_process.join()
