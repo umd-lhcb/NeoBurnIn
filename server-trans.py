@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 01:18 PM -0500
+# Last Change: Wed Nov 15, 2017 at 03:37 PM -0500
 
 import signal
 
@@ -48,8 +48,10 @@ if __name__ == "__main__":
     ################
     # Start logger #
     ################
-    logger = LoggerForMultiProcesses(logs, stop_event,
-                                     log_filename=opts['log']['filename'])
+    logger = LoggerForMultiProcesses(
+        logs, stop_event,
+        log_filename=opts['log']['filename'],
+        recipients=opts['log']['recipients'].split(','))
     logger.start()
 
     ####################
