@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 11:58 AM -0500
+# Last Change: Wed Nov 15, 2017 at 12:04 PM -0500
 
 import signal
 
@@ -20,4 +20,6 @@ class ChildProcessSignalHandler():
         signal.signal(signal.SIGTERM, self.signal_handle)
 
     def signal_handle(self, signum, frame):
-        print("Child process received SIGTERM/SIGINT. Igoring...")
+        # print("Child process received SIGINT/SIGTERM. Igoring...")
+        # WARNING: Ignore SIGINT/SIGTERM silently
+        pass
