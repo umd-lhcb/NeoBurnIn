@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 03:33 PM -0500
+# Last Change: Wed Nov 15, 2017 at 06:09 PM -0500
 
 import logging
 import logging.config
@@ -21,7 +21,8 @@ class Dispatcher(ChildProcessSignalHandler):
     Dispatch received data. This Dispatcher runs in a separated process.
     '''
     def __init__(self, msgs, logs,
-                 db_filename='', log_level='INFO'):
+                 db_filename='',
+                 log_level='INFO'):
         self.signal_register()
         self.msgs = msgs
         self.db_filename = db_filename
@@ -85,7 +86,7 @@ class Dispatcher(ChildProcessSignalHandler):
             data = self.msgs.get()
 
             if data is None:
-                self.log.info("Preparing dispatcher shutdown on receiving shutdown control message.")
+                self.log.debug("Shutdown signal received, Prepare dispatcher shutdown.")
                 break
             else:
                 self.filter(data)
