@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Nov 14, 2017 at 09:58 PM -0500
+# Last Change: Wed Nov 15, 2017 at 01:07 PM -0500
 
 import socket
 import unittest
 
 from time import sleep
 from multiprocessing import Queue
+from os import kill
+from signal import SIGTERM
 
 import sys
 sys.path.insert(0, '..')
@@ -55,7 +57,7 @@ class TestTransferMsgSmSize(unittest.TestCase):
         msgs = Queue()
 
         self.server = TransmissionServerAsync("", port, size=size, msgs=msgs)
-        self.server.listen()
+        self.server.start()
         sleep(0.5)  # Need this to make sure server is properly initialized
 
         self.client = TransmissionClientTester("localhost", port)
@@ -72,12 +74,7 @@ class TestTransferMsgSmSize(unittest.TestCase):
 
     def doCleanups(self):
         self.client.exit()
-
-        # # FIXME: A dirty workaround
-        # kill = Popen(["kill", "-9", str(self.server.pid)])
-        # kill.wait()
-
-        # self.server.exit()
+        kill(self.server.server_process.pid, SIGTERM)
 
 
 if __name__ == "__main__":
