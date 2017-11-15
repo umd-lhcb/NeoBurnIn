@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 11:08 AM -0500
+# Last Change: Wed Nov 15, 2017 at 12:00 PM -0500
 
 from multiprocessing import Process as Container
 
 import logging
 import logging.handlers
 import logging.config
+
+from bUrnIn.server.base import ChildProcessSignalHandler
 
 
 def generate_config_listener(filename, recipients, level, handlers):
@@ -79,16 +81,16 @@ class HandlerForMultiProcesses():
         logger.handle(record)
 
 
-class LoggerForMultiProcesses():
+class LoggerForMultiProcesses(ChildProcessSignalHandler):
     '''
     Logger for multiprocessing.
     '''
     def __init__(self, queue, stop_event,
                  level='INFO', handlers=['console'],
                  filename='/tmp/bUrnIn.log', recipients=['syp@umd.edu']):
+        self.signal_register()
         self.queue = queue
         self.stop_event = stop_event
-
         self.config = generate_config_listener(
             filename, recipients, level, handlers)
 
@@ -99,7 +101,11 @@ class LoggerForMultiProcesses():
             self.queue, HandlerForMultiProcesses())
         listener.start()
 
-        self.stop_event.wait()
+        try:
+            self.stop_event.wait()
+        except KeyboardInterrupt:
+            pass  # This is equivalent to request logger shutdown
+
         listener.stop()
 
     def start(self):

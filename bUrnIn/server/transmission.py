@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 10:47 AM -0500
+# Last Change: Wed Nov 15, 2017 at 11:56 AM -0500
 
 import asyncio
 import logging
@@ -8,7 +8,7 @@ import logging.config
 
 from multiprocessing import Process as Container
 
-from bUrnIn.io.logging import generate_config_worker
+from bUrnIn.server.logging import generate_config_worker
 
 
 class TransmissionServerAsync():

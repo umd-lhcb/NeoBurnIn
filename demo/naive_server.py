@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 11:01 AM -0500
+# Last Change: Wed Nov 15, 2017 at 11:55 AM -0500
 
 import signal
 
@@ -9,9 +9,9 @@ from multiprocessing import Queue, Event
 import sys
 sys.path.insert(0, '..')
 
-from bUrnIn.io.logging import LoggerForMultiProcesses
 from bUrnIn.server.transmission import TransmissionServerAsync
 from bUrnIn.server.dispatcher import Dispatcher
+from bUrnIn.server.logging import LoggerForMultiProcesses
 
 
 class NaiveDispatcher(Dispatcher):
@@ -45,6 +45,8 @@ if __name__ == "__main__":
     server.listen()
 
     # Cleanup
-    stop_event.set()
     dispatcher.dispatcher_process.join()
+    stop_event.set()
     logger.listener_process.join()
+    msgs.close()
+    logs.close()

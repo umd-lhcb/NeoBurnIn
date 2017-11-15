@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 11:09 AM -0500
+# Last Change: Wed Nov 15, 2017 at 11:55 AM -0500
 
 import logging
 import logging.config
@@ -10,7 +10,7 @@ from multiprocessing import Event, Queue
 import sys
 sys.path.insert(0, '..')
 
-from bUrnIn.io.logging import generate_config_worker, LoggerForMultiProcesses
+from bUrnIn.server.logging import generate_config_worker, LoggerForMultiProcesses
 
 
 if __name__ == "__main__":

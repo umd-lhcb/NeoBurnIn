@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 10:53 AM -0500
+# Last Change: Wed Nov 15, 2017 at 11:59 AM -0500
 
 import logging
 import logging.config
@@ -8,23 +8,24 @@ import logging.config
 from multiprocessing import Process as Container
 from sqlite3 import OperationalError
 
-from bUrnIn.io.logging import generate_config_worker
 from bUrnIn.io.sqlite import sql_init
+from bUrnIn.server.base import ChildProcessSignalHandler
+from bUrnIn.server.logging import generate_config_worker
 
 
-class Dispatcher():
+class Dispatcher(ChildProcessSignalHandler):
     '''
     Dispatch received data. This Dispatcher runs in a separated process.
     '''
     def __init__(self, msgs, logs,
                  db_filename=''):
+        self.signal_register()
         self.msgs = msgs
-
         self.db_filename = db_filename
 
         # Initialize a logger
         logging.config.dictConfig(generate_config_worker(logs))
-        self.logger = logging.getLogger()
+        self.log = logging.getLogger()
 
         # Initialize sqlite database
         try:
@@ -37,13 +38,19 @@ class Dispatcher():
 
     def dispatch(self):
         while True:
-            data = self.msgs.get()
+            try:
+                data = self.msgs.get()
 
-            if data is None:
-                self.logger.info("Preparing dispatcher shutdown on receiving shutdown control message.")
+                if data is None:
+                    self.log.info("Preparing dispatcher shutdown on receiving shutdown control message.")
+                    break
+                else:
+                    self.filter(data)
+
+            except KeyboardInterrupt:
+                self.log.info('Preparing dispatcher shutdown on receiving KeyboardInterrupt.')
+                # self.log.info('Preparing dispatcher shutdown on receiving {}.'.format(err.__class__.__name__))
                 break
-            else:
-                self.filter(data)
 
     def start(self):
         dispatcher = Container(target=self.dispatch)
