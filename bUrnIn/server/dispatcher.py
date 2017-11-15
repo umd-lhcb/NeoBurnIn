@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 01:50 PM -0500
+# Last Change: Wed Nov 15, 2017 at 03:33 PM -0500
 
 import logging
 import logging.config
@@ -42,6 +42,7 @@ class Dispatcher(ChildProcessSignalHandler):
         # Remove trailing '' element, if it exists
         entries = entries[:-1] if entries[-1] == '' else entries
 
+        self.log.debug('Message processing started...')
         DatabaseWriter = SqlWorker(self.db_filename)
         for entry in entries:
             try:
@@ -55,7 +56,6 @@ class Dispatcher(ChildProcessSignalHandler):
             try:
                 timestamp = datetime.strptime(
                     date, standard_time_format).timestamp()
-                self.log.debug(timestamp)
             except Exception as err:
                 self.log.error("{}: Corrupted date entry: {}.".format(
                     err.__class__.__name__, date
@@ -78,6 +78,7 @@ class Dispatcher(ChildProcessSignalHandler):
                 ))
                 break
         DatabaseWriter.commit()
+        self.log.debug('Message processing finished...')
 
     def dispatch(self):
         while True:
