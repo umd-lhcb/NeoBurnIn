@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 11:56 AM -0500
+# Last Change: Wed Nov 15, 2017 at 06:10 PM -0500
 
 import asyncio
 import logging
@@ -15,19 +15,18 @@ class TransmissionServerAsync():
     '''
     Single-process TCP server with asyncio.
     '''
-    def __init__(self, host, port,
-                 msgs=None, errs=None, emails=None,
+    def __init__(self, host, port, msgs, logs,
                  size=4096, max_retries=3, timeout=5):
         self.host = host
         self.port = port
+        self.msgs = msgs
         self.size = size
         self.max_retries = max_retries
         self.timeout = timeout
 
-        # Bind all queues to the object
-        self.msgs = msgs
-        self.errs = errs
-        self.emails = emails
+        # Initialize a logger
+        logging.config.dictConfig(generate_config_worker(logs))
+        self.log = logging.getLogger()
 
         # Store all unterminated clients in a dictionary
         self.clients = dict()
@@ -70,12 +69,12 @@ class TransmissionServerAsync():
                 data.clear()
 
                 if retries is self.max_retries:
-                    # self.errs.put((socket.timeout, time_stamp(self.time_format),
-                                    # data))
+                    self.log.error("TimeoutError: Maximum retries exceeded.")
                     break
 
             except Exception as err:
-                # self.errs.put((err, time_stamp(self.time_format), data))
+                self.log.error("{}: Transmission failed".format(
+                    err.__class__.__name__))
                 break
 
             else:
@@ -95,8 +94,7 @@ class TransmissionServerAsync():
         try:
             loop.run_forever()
         except KeyboardInterrupt:
-            # This signals that we should shut down.
-            pass
+            self.log.info("Shutdown signal received. Prepare TCP server shutdown.")
         finally:  # Exit gracefully
             server.close()
             loop.run_until_complete(server.wait_closed())
