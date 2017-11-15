@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 12:54 PM -0500
+# Last Change: Wed Nov 15, 2017 at 01:50 PM -0500
 
 import logging
 import logging.config
@@ -21,13 +21,13 @@ class Dispatcher(ChildProcessSignalHandler):
     Dispatch received data. This Dispatcher runs in a separated process.
     '''
     def __init__(self, msgs, logs,
-                 db_filename=''):
+                 db_filename='', log_level='INFO'):
         self.signal_register()
         self.msgs = msgs
         self.db_filename = db_filename
 
         # Initialize a logger
-        logging.config.dictConfig(generate_config_worker(logs))
+        logging.config.dictConfig(generate_config_worker(logs, log_level))
         self.log = logging.getLogger()
 
         # Initialize sqlite database
@@ -37,8 +37,7 @@ class Dispatcher(ChildProcessSignalHandler):
             pass  # This is due to table already exists.
 
     def filter(self, msg):
-        # We require '|' to be the delimiter
-        entries = msg.split('|')
+        entries = msg.split('\n')
 
         # Remove trailing '' element, if it exists
         entries = entries[:-1] if entries[-1] == '' else entries
@@ -46,7 +45,8 @@ class Dispatcher(ChildProcessSignalHandler):
         DatabaseWriter = SqlWorker(self.db_filename)
         for entry in entries:
             try:
-                date, ch_name, value = entry
+                # We require '|' to be the delimiter inside an entry
+                date, ch_name, value = entry.split('|')[:-1]
             except Exception as err:
                 self.log.error("{}: Corrupted data: {}.".format(
                     err.__class__.__name__, entry))
@@ -55,6 +55,7 @@ class Dispatcher(ChildProcessSignalHandler):
             try:
                 timestamp = datetime.strptime(
                     date, standard_time_format).timestamp()
+                self.log.debug(timestamp)
             except Exception as err:
                 self.log.error("{}: Corrupted date entry: {}.".format(
                     err.__class__.__name__, date

@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 09:05 AM -0500
+# Last Change: Wed Nov 15, 2017 at 01:50 PM -0500
 
 import socket
+
+from time import sleep
+from datetime import datetime
+from random import uniform
 
 import sys
 sys.path.insert(0, '..')
@@ -27,5 +31,25 @@ class NaiveTransmissionClient():
 
 
 if __name__ == "__main__":
-    client = NaiveTransmissionClient('localhost', 45678)
-    client.send(sys.argv[1])
+    while True:
+        try:
+            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+
+            dataset = dict()
+            dataset['Test'] = (date, str(uniform(1, 10)))
+
+            msg = ''
+            for key in dataset.keys():
+                msg = msg + dataset[key][0] + '|'
+                msg = msg + key + '|'
+                msg = msg + dataset[key][1] + '|'
+
+            print(msg)
+
+            client = NaiveTransmissionClient("localhost", 45678)
+            client.send(msg)
+
+            sleep(0.5)
+
+        except KeyboardInterrupt:
+            break

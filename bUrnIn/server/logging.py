@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 12:56 PM -0500
+# Last Change: Wed Nov 15, 2017 at 01:16 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -52,7 +52,7 @@ def generate_config_listener(filename, recipients, level, handlers):
     return config
 
 
-def generate_config_worker(queue, level='INFO'):
+def generate_config_worker(queue, level):
     config = {
         'version': 1,
         'disable_existing_loggers': True,

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 12:52 PM -0500
+# Last Change: Wed Nov 15, 2017 at 01:18 PM -0500
 
 import signal
 
@@ -56,7 +56,8 @@ if __name__ == "__main__":
     # Start dispatcher #
     ####################
     dispatcher = Dispatcher(msgs=msgs, logs=logs,
-                            db_filename=opts['db']['filename'])
+                            db_filename=opts['db']['filename'],
+                            log_level=opts['log']['level'])
     dispatcher.start()
 
     #################################################
