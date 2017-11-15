@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Nov 14, 2017 at 01:42 PM -0500
+# Last Change: Tue Nov 14, 2017 at 09:58 PM -0500
 
 import socket
 import unittest
@@ -49,20 +49,16 @@ def get_free_tcp_port():
 
 
 class TestTransferMsgSmSize(unittest.TestCase):
-    def __init__(self, *args, **kwargs):
-        unittest.TestCase.__init__(self, *args, **kwargs)
-
-        server_port = get_free_tcp_port()
+    def setUp(self):
+        port = get_free_tcp_port()
         size = 3
-
         msgs = Queue()
 
-        self.server = TransmissionServerAsync("", server_port, size=size,
-                                              msgs=msgs)
+        self.server = TransmissionServerAsync("", port, size=size, msgs=msgs)
         self.server.listen()
         sleep(0.5)  # Need this to make sure server is properly initialized
 
-        self.client = TransmissionClientTester("localhost", server_port)
+        self.client = TransmissionClientTester("localhost", port)
 
     def test_ascii_text(self):
         ascii_text = "Gou Li Guo Jia Sheng Si Yi"
