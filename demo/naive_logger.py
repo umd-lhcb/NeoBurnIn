@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 09:16 AM -0500
+# Last Change: Wed Nov 15, 2017 at 10:59 AM -0500
 
 import logging
 import logging.config
@@ -18,14 +18,14 @@ if __name__ == "__main__":
     stop_event = Event()
     logging.config.dictConfig(generate_config_worker(logs, 'DEBUG'))
 
-    log_listener = LoggerForMultiProcesses(logs, stop_event,
+    logger = LoggerForMultiProcesses(logs, stop_event,
         handlers=['file', 'console', 'email'],
         recipients=['syp@umd.edu', 'yipengsun@ucla.edu'])
-    log_listener.start()
+    logger.start()
 
-    logger = logging.getLogger()
-    logger.info('This is a test message.')
-    logger.error('A fake error has occurred!')
+    log = logging.getLogger()
+    log.info('This is a test message.')
+    log.error('A fake error has occurred!')
 
     stop_event.set()
-    log_listener.listener_process.join()
+    logger.listener_process.join()

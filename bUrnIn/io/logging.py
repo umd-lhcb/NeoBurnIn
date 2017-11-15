@@ -1,22 +1,15 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 09:37 AM -0500
+# Last Change: Wed Nov 15, 2017 at 11:07 AM -0500
 
-from datetime import datetime
 from multiprocessing import Process as Container
 
 import logging
 import logging.handlers
 import logging.config
 
-standard_time_format = "%Y-%m-%d %H:%M:%S.%f"
 
-
-def time_stamp(time_format):
-    return datetime.now().strftime(time_format)
-
-
-def generate_config_listener(log_filename, recipients, level, handlers):
+def generate_config_listener(filename, recipients, level, handlers):
     config = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -30,7 +23,7 @@ def generate_config_listener(log_filename, recipients, level, handlers):
         'handlers': {
             'file': {
                 'class': 'logging.FileHandler',
-                'filename': log_filename,
+                'filename': filename,
                 # 'mode': 'w',
                 'formatter': 'detailed'
             },
@@ -54,11 +47,10 @@ def generate_config_listener(log_filename, recipients, level, handlers):
             'handlers': handlers
         }
     }
-
     return config
 
 
-def generate_config_worker(queue, level):
+def generate_config_worker(queue, level='INFO'):
     config = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -73,7 +65,6 @@ def generate_config_worker(queue, level):
             'handlers': ['queue']
         },
     }
-
     return config
 
 
@@ -89,14 +80,17 @@ class HandlerForMultiProcesses():
 
 
 class LoggerForMultiProcesses():
+    '''
+    Logger for multiprocessing.
+    '''
     def __init__(self, queue, stop_event,
                  level='INFO', handlers=['console'],
-                 log_filename='/tmp/bUrnIn.log', recipients=['syp@umd.edu']):
+                 filename='/tmp/bUrnIn.log', recipients=['syp@umd.edu']):
         self.queue = queue
         self.stop_event = stop_event
 
         self.config = generate_config_listener(
-            log_filename, recipients, level, handlers)
+            filename, recipients, level, handlers)
 
     def listen(self):
         logging.config.dictConfig(self.config)

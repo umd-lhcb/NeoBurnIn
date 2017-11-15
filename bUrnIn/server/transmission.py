@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 08:43 AM -0500
+# Last Change: Wed Nov 15, 2017 at 10:47 AM -0500
 
 import asyncio
+import logging
+import logging.config
 
 from multiprocessing import Process as Container
+
+from bUrnIn.io.logging import generate_config_worker
 
 
 class TransmissionServerAsync():
@@ -90,10 +94,14 @@ class TransmissionServerAsync():
 
         try:
             loop.run_forever()
+        except KeyboardInterrupt:
+            # This signals that we should shut down.
+            pass
         finally:  # Exit gracefully
             server.close()
             loop.run_until_complete(server.wait_closed())
             loop.close()
+            self.msgs.put(None)  # This tells the dispatcher to shutdown
 
     def start(self):
         server_process = Container(target=self.listen)
