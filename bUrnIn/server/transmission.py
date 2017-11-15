@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Nov 14, 2017 at 01:44 PM -0500
+# Last Change: Wed Nov 15, 2017 at 08:43 AM -0500
 
-import socket
 import asyncio
 
 from multiprocessing import Process as Container
-
-from bUrnIn.io.time import time_stamp, standard_time_format
 
 
 class TransmissionServerAsync():
@@ -16,7 +13,6 @@ class TransmissionServerAsync():
     '''
     def __init__(self, host, port,
                  msgs=None, errs=None, emails=None,
-                 time_format=standard_time_format,
                  size=4096, max_retries=3, timeout=5):
         self.host = host
         self.port = port
@@ -28,9 +24,6 @@ class TransmissionServerAsync():
         self.msgs = msgs
         self.errs = errs
         self.emails = emails
-
-        # Define a time stamp format
-        self.time_format = time_format
 
         # Store all unterminated clients in a dictionary
         self.clients = dict()
@@ -73,12 +66,12 @@ class TransmissionServerAsync():
                 data.clear()
 
                 if retries is self.max_retries:
-                    self.errs.put((socket.timeout, time_stamp(self.time_format),
-                                   data))
+                    # self.errs.put((socket.timeout, time_stamp(self.time_format),
+                                    # data))
                     break
 
             except Exception as err:
-                self.errs.put((err, time_stamp(self.time_format), data))
+                # self.errs.put((err, time_stamp(self.time_format), data))
                 break
 
             else:
@@ -89,7 +82,7 @@ class TransmissionServerAsync():
                     # We reached 'EOM': End-Of-Message
                     break
 
-    def serve(self):
+    def listen(self):
         loop = asyncio.get_event_loop()
         coro = asyncio.start_server(self.client_accept, self.host, self.port,
                                     loop=loop)
@@ -102,7 +95,7 @@ class TransmissionServerAsync():
             loop.run_until_complete(server.wait_closed())
             loop.close()
 
-    def listen(self):
-        server = Container(target=self.serve)
-        server.start()
-        self.server_process = server
+    def start(self):
+        server_process = Container(target=self.listen)
+        server_process.start()
+        self.server_process = server_process

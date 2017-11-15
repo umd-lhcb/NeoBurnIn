@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Nov 13, 2017 at 09:01 PM -0500
+# Last Change: Wed Nov 15, 2017 at 08:42 AM -0500
 
 from multiprocessing import Process as Container
 from sqlite3 import OperationalError
 
-from bUrnIn.io.time import time_stamp
 from bUrnIn.io.sqlite import sql_init
 
 
@@ -15,8 +14,7 @@ class Dispatcher():
     '''
     def __init__(self,
                  msgs=None, errs=None, emails=None,
-                 db_filename='',
-                 time_format="%Y-%m-%d %H:%M:%S:%f"):
+                 db_filename=''):
         # If the following message is received, shut down the dispatcher.
         self.stop_token = None
 
@@ -25,7 +23,6 @@ class Dispatcher():
         self.emails = emails
 
         self.db_filename = db_filename
-        self.time_format = time_format
 
         # Initialize sqlite database
         try:

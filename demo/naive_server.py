@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Nov 14, 2017 at 01:19 AM -0500
+# Last Change: Wed Nov 15, 2017 at 08:40 AM -0500
 
 import sys
 sys.path.insert(0, '..')
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     msgs = Queue()
 
     server = TransmissionServerAsync('localhost', 45678, msgs=msgs)
-    server.listen()
+    server.start()
 
     dispatcher = NaiveDispatcher(msgs=msgs)
     dispatcher.start()
