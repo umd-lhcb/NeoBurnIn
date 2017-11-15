@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 08:40 AM -0500
+# Last Change: Wed Nov 15, 2017 at 09:04 AM -0500
+
+from multiprocessing import Queue
 
 import sys
 sys.path.insert(0, '..')
-
-from multiprocessing import Queue
 
 from bUrnIn.server.transmission import TransmissionServerAsync
 from bUrnIn.server.dispatcher import Dispatcher
