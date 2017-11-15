@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 01:07 PM -0500
+# Last Change: Wed Nov 15, 2017 at 06:00 PM -0500
 
 import socket
 import unittest
@@ -54,6 +54,33 @@ class TestTransferMsgSmSize(unittest.TestCase):
     def setUp(self):
         port = get_free_tcp_port()
         size = 3
+        msgs = Queue()
+
+        self.server = TransmissionServerAsync("", port, size=size, msgs=msgs)
+        self.server.start()
+        sleep(0.5)  # Need this to make sure server is properly initialized
+
+        self.client = TransmissionClientTester("localhost", port)
+
+    def test_ascii_text(self):
+        ascii_text = "Gou Li Guo Jia Sheng Si Yi"
+        self.client.send(ascii_text)
+        self.assertEqual(self.server.msgs.get(), ascii_text)
+
+    def test_utf8_text(self):
+        utf8_text = "苟利国家生死以"
+        self.client.send(utf8_text)
+        self.assertEqual(self.server.msgs.get(), utf8_text)
+
+    def doCleanups(self):
+        self.client.exit()
+        kill(self.server.server_process.pid, SIGTERM)
+
+
+class TestTransferMsgLgSize(unittest.TestCase):
+    def setUp(self):
+        port = get_free_tcp_port()
+        size = 81920
         msgs = Queue()
 
         self.server = TransmissionServerAsync("", port, size=size, msgs=msgs)
