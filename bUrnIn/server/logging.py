@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 12:00 PM -0500
+# Last Change: Wed Nov 15, 2017 at 12:06 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -101,11 +101,7 @@ class LoggerForMultiProcesses(ChildProcessSignalHandler):
             self.queue, HandlerForMultiProcesses())
         listener.start()
 
-        try:
-            self.stop_event.wait()
-        except KeyboardInterrupt:
-            pass  # This is equivalent to request logger shutdown
-
+        self.stop_event.wait()
         listener.stop()
 
     def start(self):
