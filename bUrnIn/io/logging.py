@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 09:00 AM -0500
+# Last Change: Wed Nov 15, 2017 at 09:31 AM -0500
 
 from datetime import datetime
 from multiprocessing import Process as Container
@@ -41,12 +41,11 @@ def generate_config_listener(log_filename, recipients, level, handlers):
                 'class': 'logging.handlers.SMTPHandler',
                 'formatter': 'detailed',
                 'level': 'ERROR',
-                'fromaddr': 'syp@terpmail.umd.edu',
+                'fromaddr': 'burnin.umd.lhcb@gmail.com',
                 'mailhost': ('smtp.gmail.com', 587),
                 'toaddrs': recipients,
                 'subject': '[BurnIn] An error as occurred',
-                # This is the real password (app password)!
-                'credentials': ('syp@terpmail.umd.edu', 'ywdhtcfdllvnrfat'),
+                'credentials': ("burnin.umd.lhb@gmail.com", "burnin@umd@lhcb"),
                 'secure': ()
             }
         },
