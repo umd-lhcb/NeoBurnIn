@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 11:55 AM -0500
+# Last Change: Wed Nov 15, 2017 at 12:43 PM -0500
 
 import signal
 
@@ -48,5 +48,3 @@ if __name__ == "__main__":
     dispatcher.dispatcher_process.join()
     stop_event.set()
     logger.listener_process.join()
-    msgs.close()
-    logs.close()
