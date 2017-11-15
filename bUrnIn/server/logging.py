@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 12:51 PM -0500
+# Last Change: Wed Nov 15, 2017 at 12:56 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -86,7 +86,7 @@ class LoggerForMultiProcesses(ChildProcessSignalHandler):
     Logger for multiprocessing.
     '''
     def __init__(self, queue, stop_event,
-                 level='INFO', handlers=['console'],
+                 level='INFO', handlers=['console', 'file', 'email'],
                  log_filename='/tmp/bUrnIn.log', recipients=['syp@umd.edu']):
         self.signal_register()
         self.queue = queue

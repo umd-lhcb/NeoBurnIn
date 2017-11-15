@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 12:32 PM -0500
+# Last Change: Wed Nov 15, 2017 at 12:54 PM -0500
 
 import logging
 import logging.config
 
 from multiprocessing import Process as Container
 from sqlite3 import OperationalError
-from datetime import strptime
+from datetime import datetime
 
-from bUrnIn.io.sqlite import sql_init, SqlWriter
+from bUrnIn.io.sqlite import sql_init, SqlWorker
 from bUrnIn.server.base import ChildProcessSignalHandler
 from bUrnIn.server.logging import generate_config_worker
 
@@ -43,20 +43,23 @@ class Dispatcher(ChildProcessSignalHandler):
         # Remove trailing '' element, if it exists
         entries = entries[:-1] if entries[-1] == '' else entries
 
-        DatabaseWriter = SqlWriter(self.db_filename)
+        DatabaseWriter = SqlWorker(self.db_filename)
         for entry in entries:
             try:
                 date, ch_name, value = entry
             except Exception as err:
                 self.log.error("{}: Corrupted data: {}.".format(
-                    err.__class__.name, entry))
+                    err.__class__.__name__, entry))
+                break
 
             try:
-                timestamp = strptime(date, standard_time_format).timestamp()
+                timestamp = datetime.strptime(
+                    date, standard_time_format).timestamp()
             except Exception as err:
                 self.log.error("{}: Corrupted date entry: {}.".format(
                     err.__class__.__name__, date
                 ))
+                break
 
             try:
                 value = float(value)
@@ -64,6 +67,7 @@ class Dispatcher(ChildProcessSignalHandler):
                 self.log.error("{}: Corrupted value entry: {}.".format(
                     err.__class__.__name__, value
                 ))
+                break
 
             try:
                 DatabaseWriter.write(date, timestamp, ch_name, value)
@@ -71,6 +75,7 @@ class Dispatcher(ChildProcessSignalHandler):
                 self.log.error("{}: Cannot write to SQLite database.".format(
                     err.__class__.__name__
                 ))
+                break
         DatabaseWriter.commit()
 
     def dispatch(self):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 12:42 PM -0500
+# Last Change: Wed Nov 15, 2017 at 12:52 PM -0500
 
 import signal
 
@@ -12,6 +12,7 @@ from multiprocessing import Queue, Event
 from bUrnIn.server.transmission import TransmissionServerAsync
 from bUrnIn.server.dispatcher import Dispatcher
 from bUrnIn.server.logging import LoggerForMultiProcesses
+
 
 def parse_config(cfg):
     config = ConfigParser()
@@ -47,7 +48,8 @@ if __name__ == "__main__":
     ################
     # Start logger #
     ################
-    logger = LoggerForMultiProcesses(opts['log']['filename'], stop_event)
+    logger = LoggerForMultiProcesses(logs, stop_event,
+                                     log_filename=opts['log']['filename'])
     logger.start()
 
     ####################
