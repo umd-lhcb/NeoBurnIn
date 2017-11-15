@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 09:03 AM -0500
+# Last Change: Wed Nov 15, 2017 at 09:16 AM -0500
 
 import logging
 import logging.config
@@ -18,8 +18,9 @@ if __name__ == "__main__":
     stop_event = Event()
     logging.config.dictConfig(generate_config_worker(logs, 'DEBUG'))
 
-    log_listener = LoggerForMultiProcesses(
-        logs, stop_event, handlers=['file', 'console', 'email'])
+    log_listener = LoggerForMultiProcesses(logs, stop_event,
+        handlers=['file', 'console', 'email'],
+        recipients=['syp@umd.edu', 'yipengsun@ucla.edu'])
     log_listener.start()
 
     logger = logging.getLogger()
