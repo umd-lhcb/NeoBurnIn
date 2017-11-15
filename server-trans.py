@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Nov 13, 2017 at 11:21 AM -0500
+# Last Change: Wed Nov 15, 2017 at 12:42 PM -0500
+
+import signal
 
 from configparser import ConfigParser
 from os import getcwd
 from os.path import join, isfile
+from multiprocessing import Queue, Event
 
-from bUrnIn.server.transmission import TransmissionServer
-from bUrnIn.output.sqlite import sql_write
-
+from bUrnIn.server.transmission import TransmissionServerAsync
+from bUrnIn.server.dispatcher import Dispatcher
+from bUrnIn.server.logging import LoggerForMultiProcesses
 
 def parse_config(cfg):
     config = ConfigParser()
@@ -22,29 +25,10 @@ def parse_config(cfg):
     return opts_dict
 
 
-class Server(TransmissionServer):
-    def dispatcher(self, msg, address, err=None):
-        msg = msg[:-1]  # Remove trailing '\n' characater
-
-        # We require '|' to be the delimiter
-        msg_bundle = msg.split('|')
-        msg_bundle = msg_bundle[:-1]  # Remove trailing ''
-
-        # The first two entries are headers
-        header = msg_bundle[:2]
-        hostname = header[0]
-        timestamp = header[1]
-
-        # The rest are all data
-        data_bundle = msg_bundle[2:]
-        data = dict()
-        for i in range(0, int(len(data_bundle)/2)):
-            data[data_bundle[2*i]] = float(data_bundle[2*i + 1])
-
-        sql_write(self.db_filename, hostname, timestamp, data)
-
-
 if __name__ == "__main__":
+    #######################
+    # Parse configuration #
+    #######################
     GLOBAL_CFG  = '/etc/server-trans/config'
     DEFAULT_CFG = join(getcwd(), 'server-trans.cfg')
 
@@ -53,13 +37,48 @@ if __name__ == "__main__":
     else:
         opts = parse_config(join(getcwd(), DEFAULT_CFG))
 
-    server = Server(opts['main']['ip'], int(opts['main']['port']),
-                    size=int(opts['main']['size']),
-                    max_retries=int(opts['main']['max_retries']),
-                    max_connections=int(opts['main']['max_connections']),
-                    timeout=int(opts['main']['timeout']),
-                    db_filename=opts['db']['filename'],
-                    log_filename=opts['log']['filename']
-                    )
+    ################################
+    # Prepare inter-process queues #
+    ################################
+    msgs = Queue()
+    logs = Queue()
+    stop_event = Event()
 
+    ################
+    # Start logger #
+    ################
+    logger = LoggerForMultiProcesses(opts['log']['filename'], stop_event)
+    logger.start()
+
+    ####################
+    # Start dispatcher #
+    ####################
+    dispatcher = Dispatcher(msgs=msgs, logs=logs,
+                            db_filename=opts['db']['filename'])
+    dispatcher.start()
+
+    #################################################
+    # Handle SIGTERM and SIGINT on the main process #
+    #################################################
+    def on_exit(signum, frame):
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGINT, on_exit)
+    signal.signal(signal.SIGTERM, on_exit)
+
+    ############################################
+    # Start the TCP server on the main process #
+    ############################################
+    server = TransmissionServerAsync(
+        opts['main']['ip'],
+        int(opts['main']['port']),
+        msgs=msgs,
+        timeout=int(opts['main']['timeout']))
     server.listen()
+
+    ###########
+    # Cleanup #
+    ###########
+    dispatcher.dispatcher_process.join()
+    stop_event.set()
+    logger.listener_process.join()
