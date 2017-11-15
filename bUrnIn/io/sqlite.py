@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 08, 2017 at 11:16 AM -0500
+# Last Change: Wed Nov 15, 2017 at 12:29 PM -0500
 
 import sqlite3
 
@@ -11,21 +11,23 @@ def sql_init(db):
     c = conn.cursor()
     c.execute('''
               CREATE TABLE data
-              (date text, host text, measured text, value real)
+              (date text, timestamp real, ch_name text, value real)
               ''')
 
     conn.commit()
     conn.close()
 
 
-def sql_write(db, hostname, timestamp, data):
-    conn = sqlite3.connect(db, check_same_thread=False)
-    c = conn.cursor()
+class SqlWorker():
+    def __init__(self, db):
+        self.conn = sqlite3.connect(db, check_same_thread=False)
 
-    for key in data.keys():
+    def write(self, date, timestamp, ch_name, value):
+        c = self.conn.cursor()
         c.execute("INSERT INTO data VALUES ('{0}', '{1}', '{2}', {3})".format(
-            timestamp, hostname, key, data[key]
+            date, timestamp, ch_name, value
         ))
 
-    conn.commit()
-    conn.close()
+    def commit(self):
+        self.conn.commit()
+        self.conn.close()
