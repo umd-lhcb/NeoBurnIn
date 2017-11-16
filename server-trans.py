@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 07:44 PM -0500
+# Last Change: Wed Nov 15, 2017 at 08:10 PM -0500
 
 import signal
 
@@ -59,15 +59,20 @@ if __name__ == "__main__":
         credentials=[
             opts['email']['username'],
             opts['email']['password']
-        ])
+        ]
+    )
     logger.start()
 
     ####################
     # Start dispatcher #
     ####################
     dispatcher = Dispatcher(msgs, logs,
-                            db_filename=opts['db']['filename'],
-                            log_level=opts['log']['level'])
+        db_filename=opts['db']['filename'],
+        log_level=opts['log']['level'],
+        log_email_interval=float(opts['email']['interval']),
+        hardware_failure=float(opts['filter']['hardware_failure']),
+        channel_failure=float(opts['filter']['channel_failure'])
+    )
     dispatcher.start()
 
     #################################################
@@ -83,7 +88,8 @@ if __name__ == "__main__":
         opts['main']['ip'],
         int(opts['main']['port']),
         msgs, logs,
-        timeout=int(opts['main']['timeout']))
+        timeout=int(opts['main']['timeout'])
+    )
     server.listen()
 
     ###########

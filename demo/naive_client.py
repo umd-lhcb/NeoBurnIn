@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 01:57 PM -0500
+# Last Change: Wed Nov 15, 2017 at 08:27 PM -0500
 
 import socket
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
             client = NaiveTransmissionClient(sys.argv[1], 45678)
             client.send(msg)
 
-            sleep(0.1)
+            sleep(1)
 
         except KeyboardInterrupt:
             break

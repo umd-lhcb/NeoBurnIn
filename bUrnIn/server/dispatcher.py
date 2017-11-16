@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 06:09 PM -0500
+# Last Change: Wed Nov 15, 2017 at 08:26 PM -0500
 
 import logging
 import logging.config
@@ -22,10 +22,19 @@ class Dispatcher(ChildProcessSignalHandler):
     '''
     def __init__(self, msgs, logs,
                  db_filename='',
-                 log_level='INFO'):
+                 log_level='INFO',
+                 log_email_interval=60,
+                 hardware_failure=100,
+                 channel_failure=-100):
         self.signal_register()
         self.msgs = msgs
         self.db_filename = db_filename
+        self.log_email_interval = log_email_interval
+        self.hardware_failure = hardware_failure
+        self.channel_failure = channel_failure
+
+        # For email anti-flooding
+        self.last_sent_timestamp = None
 
         # Initialize a logger
         logging.config.dictConfig(generate_config_worker(logs, log_level))
@@ -65,6 +74,13 @@ class Dispatcher(ChildProcessSignalHandler):
 
             try:
                 value = float(value)
+
+                if value >= self.hardware_failure:
+                    warning = "WARNING: A hardware failure is detected: The {} reads a voltage of {}".format(
+                        ch_name, value
+                    )
+                    self.log.error(warning)
+                    self.email_antiflood(warning)
             except Exception as err:
                 self.log.error("{}: Corrupted value entry: {}.".format(
                     err.__class__.__name__, value
@@ -80,6 +96,26 @@ class Dispatcher(ChildProcessSignalHandler):
                 break
         DatabaseWriter.commit()
         self.log.debug('Message processing finished...')
+
+    def email_antiflood(self, warning):
+        if self.last_sent_timestamp is None:
+            # We never sent any email before
+            self.log.critical(warning)
+            self.last_sent_timestamp = datetime.now()
+
+        else:
+            # If we have sent emails recently, don't send any email again
+            # This is to prevent email flooding
+            delta_t = \
+                (datetime.now() - self.last_sent_timestamp).total_seconds() / 60
+            self.log.debug(delta_t)
+
+            if delta_t >= self.log_email_interval:
+                self.log.critical(warning)
+                # Update the timestamp, only if we sent a new email.
+                self.last_sent_timestamp = datetime.now()
+            else:
+                pass
 
     def dispatch(self):
         while True:
