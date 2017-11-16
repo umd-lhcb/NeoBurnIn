@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 07:13 PM -0500
+# Last Change: Wed Nov 15, 2017 at 07:22 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -11,8 +11,7 @@ import logging.config
 from bUrnIn.server.base import ChildProcessSignalHandler
 
 
-def generate_config_listener(filename, recipients, credentials,
-                             level, handlers):
+def generate_config_listener(filename, handle, recipients, credentials):
     config = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -46,7 +45,6 @@ def generate_config_listener(filename, recipients, credentials,
             }
         },
         'root': {
-            'level': level,
             'handlers': handlers
         }
     }
@@ -88,13 +86,13 @@ class LoggerForMultiProcesses(ChildProcessSignalHandler):
     '''
     def __init__(self, queue, stop_event,
                  recipients=[None], credentials=[None, None],
-                 level='INFO', handlers=['console', 'file', 'email'],
+                 log_handlers=['console', 'file', 'email'],
                  log_filename='/tmp/bUrnIn.log'):
         self.signal_register()
         self.queue = queue
         self.stop_event = stop_event
         self.config = generate_config_listener(
-            log_filename, recipients, credentials, level, handlers)
+            log_filename, log_handlers, recipients, credentials)
 
     def listen(self):
         logging.config.dictConfig(self.config)

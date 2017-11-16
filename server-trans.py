@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 03:37 PM -0500
+# Last Change: Wed Nov 15, 2017 at 07:17 PM -0500
 
 import signal
 
@@ -24,6 +24,10 @@ def parse_config(cfg):
         opts_dict[key] = config[key]
 
     return opts_dict
+
+
+def on_exit(signum, frame):
+    raise KeyboardInterrupt
 
 
 if __name__ == "__main__":
@@ -51,7 +55,11 @@ if __name__ == "__main__":
     logger = LoggerForMultiProcesses(
         logs, stop_event,
         log_filename=opts['log']['filename'],
-        recipients=opts['log']['recipients'].split(','))
+        recipients=opts['log']['recipients'].split(','),
+        credentials=[
+            opts['email']['username'],
+            opts['email']['password']
+        ])
     logger.start()
 
     ####################
@@ -65,9 +73,6 @@ if __name__ == "__main__":
     #################################################
     # Handle SIGTERM and SIGINT on the main process #
     #################################################
-    def on_exit(signum, frame):
-        raise KeyboardInterrupt
-
     signal.signal(signal.SIGINT, on_exit)
     signal.signal(signal.SIGTERM, on_exit)
 
@@ -77,7 +82,7 @@ if __name__ == "__main__":
     server = TransmissionServerAsync(
         opts['main']['ip'],
         int(opts['main']['port']),
-        msgs=msgs,
+        msgs=msgs, logs=logs,
         timeout=int(opts['main']['timeout']))
     server.listen()
 

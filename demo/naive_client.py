@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 01:50 PM -0500
+# Last Change: Wed Nov 15, 2017 at 01:57 PM -0500
 
 import socket
 
@@ -36,7 +36,7 @@ if __name__ == "__main__":
             date = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
             dataset = dict()
-            dataset['Test'] = (date, str(uniform(1, 10)))
+            dataset[sys.argv[2]] = (date, str(uniform(1, 10)))
 
             msg = ''
             for key in dataset.keys():
@@ -46,10 +46,10 @@ if __name__ == "__main__":
 
             print(msg)
 
-            client = NaiveTransmissionClient("localhost", 45678)
+            client = NaiveTransmissionClient(sys.argv[1], 45678)
             client.send(msg)
 
-            sleep(0.5)
+            sleep(0.1)
 
         except KeyboardInterrupt:
             break
