@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 06:00 PM -0500
+# Last Change: Wed Nov 15, 2017 at 07:42 PM -0500
 
 import socket
 import unittest
@@ -55,8 +55,9 @@ class TestTransferMsgSmSize(unittest.TestCase):
         port = get_free_tcp_port()
         size = 3
         msgs = Queue()
+        logs = Queue()
 
-        self.server = TransmissionServerAsync("", port, size=size, msgs=msgs)
+        self.server = TransmissionServerAsync("", port, msgs, logs, size=size)
         self.server.start()
         sleep(0.5)  # Need this to make sure server is properly initialized
 
@@ -82,8 +83,9 @@ class TestTransferMsgLgSize(unittest.TestCase):
         port = get_free_tcp_port()
         size = 81920
         msgs = Queue()
+        logs = Queue()
 
-        self.server = TransmissionServerAsync("", port, size=size, msgs=msgs)
+        self.server = TransmissionServerAsync("", port, msgs, logs, size=size)
         self.server.start()
         sleep(0.5)  # Need this to make sure server is properly initialized
 
