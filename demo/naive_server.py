@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 06:15 PM -0500
+# Last Change: Wed Nov 15, 2017 at 07:36 PM -0500
 
 import signal
 
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     logs = Queue()
     stop_event = Event()
 
-    logger = LoggerForMultiProcesses(logs, stop_event, handlers=['console'])
+    logger = LoggerForMultiProcesses(logs, stop_event, log_handlers=['console'])
     logger.start()
 
     dispatcher = NaiveDispatcher(msgs=msgs, logs=logs)

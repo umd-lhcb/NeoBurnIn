@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 07:22 PM -0500
+# Last Change: Wed Nov 15, 2017 at 07:35 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -11,7 +11,7 @@ import logging.config
 from bUrnIn.server.base import ChildProcessSignalHandler
 
 
-def generate_config_listener(filename, handle, recipients, credentials):
+def generate_config_listener(filename, handlers, recipients, credentials):
     config = {
         'version': 1,
         'disable_existing_loggers': True,
