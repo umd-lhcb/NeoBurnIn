@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 01:16 PM -0500
+# Last Change: Wed Nov 15, 2017 at 07:13 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -11,7 +11,8 @@ import logging.config
 from bUrnIn.server.base import ChildProcessSignalHandler
 
 
-def generate_config_listener(filename, recipients, level, handlers):
+def generate_config_listener(filename, recipients, credentials,
+                             level, handlers):
     config = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -36,11 +37,11 @@ def generate_config_listener(filename, recipients, level, handlers):
                 'class': 'logging.handlers.SMTPHandler',
                 'formatter': 'detailed',
                 'level': 'CRITICAL',
-                'fromaddr': 'burnin.umd.lhb@gmail.com',
+                'fromaddr': credentials[0],
                 'mailhost': ('smtp.gmail.com', 587),
                 'toaddrs': recipients,
                 'subject': '[BurnIn] An error as occurred',
-                'credentials': ("burnin.umd.lhb@gmail.com", "burnin@umd@lhcb"),
+                'credentials': credentials,
                 'secure': ()
             }
         },
@@ -52,7 +53,7 @@ def generate_config_listener(filename, recipients, level, handlers):
     return config
 
 
-def generate_config_worker(queue, level):
+def generate_config_worker(queue, level='INFO'):
     config = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -86,13 +87,14 @@ class LoggerForMultiProcesses(ChildProcessSignalHandler):
     Logger for multiprocessing.
     '''
     def __init__(self, queue, stop_event,
+                 recipients=[None], credentials=[None, None],
                  level='INFO', handlers=['console', 'file', 'email'],
-                 log_filename='/tmp/bUrnIn.log', recipients=['syp@umd.edu']):
+                 log_filename='/tmp/bUrnIn.log'):
         self.signal_register()
         self.queue = queue
         self.stop_event = stop_event
         self.config = generate_config_listener(
-            log_filename, recipients, level, handlers)
+            log_filename, recipients, credentials, level, handlers)
 
     def listen(self):
         logging.config.dictConfig(self.config)
