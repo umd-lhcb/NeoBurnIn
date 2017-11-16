@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 07:17 PM -0500
+# Last Change: Wed Nov 15, 2017 at 07:44 PM -0500
 
 import signal
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     ####################
     # Start dispatcher #
     ####################
-    dispatcher = Dispatcher(msgs=msgs, logs=logs,
+    dispatcher = Dispatcher(msgs, logs,
                             db_filename=opts['db']['filename'],
                             log_level=opts['log']['level'])
     dispatcher.start()
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     server = TransmissionServerAsync(
         opts['main']['ip'],
         int(opts['main']['port']),
-        msgs=msgs, logs=logs,
+        msgs, logs,
         timeout=int(opts['main']['timeout']))
     server.listen()
 

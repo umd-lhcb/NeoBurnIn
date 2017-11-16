@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 07:36 PM -0500
+# Last Change: Wed Nov 15, 2017 at 07:43 PM -0500
 
 import signal
 
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     logger = LoggerForMultiProcesses(logs, stop_event, log_handlers=['console'])
     logger.start()
 
-    dispatcher = NaiveDispatcher(msgs=msgs, logs=logs)
+    dispatcher = NaiveDispatcher(msgs, logs)
     dispatcher.start()
 
     # Handle SIGTERM and SIGINT
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, on_exit)
 
     # Start the TCP server on the main process
-    server = TransmissionServerAsync('localhost', 45678, msgs=msgs, logs=logs)
+    server = TransmissionServerAsync('localhost', 45678, msgs, logs)
     server.listen()
 
     # Cleanup
