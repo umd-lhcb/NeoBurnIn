@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 07:38 PM -0500
+# Last Change: Wed Nov 15, 2017 at 08:22 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -39,7 +39,7 @@ def generate_config_listener(filename, handlers, recipients, credentials):
                 'fromaddr': credentials[0],
                 'mailhost': ('smtp.gmail.com', 587),
                 'toaddrs': recipients,
-                'subject': '[BurnIn] An error as occurred',
+                'subject': '[BurnIn] An error has occurred',
                 'credentials': credentials,
                 'secure': ()
             }
