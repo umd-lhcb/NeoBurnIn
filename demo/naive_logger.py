@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 07:09 PM -0500
+# Last Change: Tue Dec 12, 2017 at 03:51 PM -0500
 
 import logging
 import logging.config
 
 from multiprocessing import Event, Queue
+from random import uniform
 
 import sys
 sys.path.insert(0, '..')
@@ -23,10 +24,16 @@ if __name__ == "__main__":
         credentials=['burnin.umd.lhb@gmail.com', 'burnin@umd@lhcb'])
     logger.start()
 
+    # Test actual logging messages
     log = logging.getLogger()
     log.info('This is a test message.')
-    log.error('A fake error has occurred!')
-    log.critical('A fake critical error has occurred!')
+    # log.error('A fake error has occurred!')
+    # log.critical('A fake critical error has occurred!')
+
+    # Test data log
+    datalog = logging.getLogger('data')
+    for i in range(0, 100):
+        datalog.info('COL1, COL2, COL3, COL4: {}'.format(uniform(0, 100)))
 
     stop_event.set()
     logger.listener_process.join()

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 08:10 PM -0500
+# Last Change: Sat Jan 27, 2018 at 07:20 AM -0500
 
 import signal
 
 from configparser import ConfigParser
 from os import getcwd
-from os.path import join, isfile
+from os.path import join
 from multiprocessing import Queue, Event
 
 from bUrnIn.server.transmission import TransmissionServerAsync
@@ -34,13 +34,8 @@ if __name__ == "__main__":
     #######################
     # Parse configuration #
     #######################
-    GLOBAL_CFG  = '/etc/server-trans/config'
     DEFAULT_CFG = join(getcwd(), 'server-trans.cfg')
-
-    if isfile(GLOBAL_CFG):
-        opts = parse_config(GLOBAL_CFG)
-    else:
-        opts = parse_config(join(getcwd(), DEFAULT_CFG))
+    opts = parse_config(join(getcwd(), DEFAULT_CFG))
 
     ################################
     # Prepare inter-process queues #

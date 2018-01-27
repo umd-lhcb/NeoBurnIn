@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 08:22 PM -0500
+# Last Change: Tue Dec 12, 2017 at 03:55 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -10,8 +10,15 @@ import logging.config
 
 from bUrnIn.server.base import ChildProcessSignalHandler
 
+_B  = 1
+_KB = 1024*_B
+_MB = 1024*_KB
 
-def generate_config_listener(filename, handlers, recipients, credentials):
+
+def generate_config_listener(filename, handlers, recipients, credentials,
+                             datafile,
+                             datafile_max_size=100*_MB,
+                             datafile_backup_count=999):
     config = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -42,6 +49,18 @@ def generate_config_listener(filename, handlers, recipients, credentials):
                 'subject': '[BurnIn] An error has occurred',
                 'credentials': credentials,
                 'secure': ()
+            },
+            # For logging the actual data
+            'datafile': {
+                'class': 'logging.handlers.RotatingFileHandler',
+                'filename': datafile,
+                'maxBytes': datafile_max_size,
+                'backupCount': datafile_backup_count
+            }
+        },
+        'loggers': {
+            'data': {
+                'handlers': ['datafile']
             }
         },
         'root': {
@@ -87,12 +106,15 @@ class LoggerForMultiProcesses(ChildProcessSignalHandler):
     def __init__(self, queue, stop_event,
                  recipients=[None], credentials=[None, None],
                  log_handlers=['console', 'file', 'email'],
-                 log_filename='/tmp/bUrnIn-server.log'):
+                 log_filename='/tmp/bUrnIn-server.log',
+                 data_filename='/tmp/bUrnIn-data.csv'):
         self.signal_register()
         self.queue = queue
         self.stop_event = stop_event
         self.config = generate_config_listener(
-            log_filename, log_handlers, recipients, credentials)
+            log_filename, log_handlers, recipients, credentials,
+            data_filename
+        )
 
     def listen(self):
         logging.config.dictConfig(self.config)
