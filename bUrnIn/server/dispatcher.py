@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 08:26 PM -0500
+# Last Change: Sat Jan 27, 2018 at 07:53 AM -0500
 
 import logging
 import logging.config
 
 from multiprocessing import Process as Container
-from sqlite3 import OperationalError
 from datetime import datetime
 
-from bUrnIn.io.sqlite import sql_init, SqlWorker
 from bUrnIn.server.base import ChildProcessSignalHandler
 from bUrnIn.server.logging import generate_config_worker
 
@@ -21,14 +19,12 @@ class Dispatcher(ChildProcessSignalHandler):
     Dispatch received data. This Dispatcher runs in a separated process.
     '''
     def __init__(self, msgs, logs,
-                 db_filename='',
                  log_level='INFO',
                  log_email_interval=60,
                  hardware_failure=100,
                  channel_failure=-100):
         self.signal_register()
         self.msgs = msgs
-        self.db_filename = db_filename
         self.log_email_interval = log_email_interval
         self.hardware_failure = hardware_failure
         self.channel_failure = channel_failure
@@ -36,15 +32,10 @@ class Dispatcher(ChildProcessSignalHandler):
         # For email anti-flooding
         self.last_sent_timestamp = None
 
-        # Initialize a logger
+        # Initialize loggers
         logging.config.dictConfig(generate_config_worker(logs, log_level))
         self.log = logging.getLogger()
-
-        # Initialize sqlite database
-        try:
-            sql_init(self.db_filename)
-        except OperationalError:
-            pass  # This is due to table already exists.
+        self.datalog = logging.getLogger('data')
 
     def filter(self, msg):
         entries = msg.split('\n')
@@ -53,7 +44,6 @@ class Dispatcher(ChildProcessSignalHandler):
         entries = entries[:-1] if entries[-1] == '' else entries
 
         self.log.debug('Message processing started...')
-        DatabaseWriter = SqlWorker(self.db_filename)
         for entry in entries:
             try:
                 # We require '|' to be the delimiter inside an entry
@@ -88,13 +78,13 @@ class Dispatcher(ChildProcessSignalHandler):
                 break
 
             try:
-                DatabaseWriter.write(date, timestamp, ch_name, value)
+                self.datalog.info('{}, {}, {}, {}'.format(
+                    date, timestamp, ch_name, value))
             except Exception as err:
-                self.log.error("{}: Cannot write to SQLite database.".format(
+                self.log.error("{}: Cannot write to CSV file.".format(
                     err.__class__.__name__
                 ))
                 break
-        DatabaseWriter.commit()
         self.log.debug('Message processing finished...')
 
     def email_antiflood(self, warning):

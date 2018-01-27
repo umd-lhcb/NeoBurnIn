@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sat Jan 27, 2018 at 07:20 AM -0500
+# Last Change: Sat Jan 27, 2018 at 07:47 AM -0500
 
 import signal
 
@@ -50,6 +50,7 @@ if __name__ == "__main__":
     logger = LoggerForMultiProcesses(
         logs, stop_event,
         log_filename=opts['log']['filename'],
+        data_filename=opts['data']['filename'],
         recipients=opts['log']['recipients'].split(','),
         credentials=[
             opts['email']['username'],
@@ -62,7 +63,6 @@ if __name__ == "__main__":
     # Start dispatcher #
     ####################
     dispatcher = Dispatcher(msgs, logs,
-        db_filename=opts['db']['filename'],
         log_level=opts['log']['level'],
         log_email_interval=float(opts['email']['interval']),
         hardware_failure=float(opts['filter']['hardware_failure']),

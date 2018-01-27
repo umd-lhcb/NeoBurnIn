@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Dec 12, 2017 at 03:55 PM -0500
+# Last Change: Sat Jan 27, 2018 at 07:43 AM -0500
 
 from multiprocessing import Process as Container
 
@@ -15,10 +15,10 @@ _KB = 1024*_B
 _MB = 1024*_KB
 
 
-def generate_config_listener(filename, handlers, recipients, credentials,
+def generate_config_listener(logfile, handlers, recipients, credentials,
                              datafile,
-                             datafile_max_size=100*_MB,
-                             datafile_backup_count=999):
+                             datafile_max_size=50*_MB,
+                             datafile_backup_count=9999):
     config = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -32,7 +32,7 @@ def generate_config_listener(filename, handlers, recipients, credentials,
         'handlers': {
             'file': {
                 'class': 'logging.FileHandler',
-                'filename': filename,
+                'filename': logfile,
                 # 'mode': 'w',
                 'formatter': 'detailed'
             },
