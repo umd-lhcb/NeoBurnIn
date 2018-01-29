@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 06:10 PM -0500
+# Last Change: Mon Jan 29, 2018 at 05:17 PM -0500
 
 import asyncio
 import logging
@@ -15,8 +15,12 @@ class TransmissionServerAsync():
     '''
     Single-process TCP server with asyncio.
     '''
-    def __init__(self, host, port, msgs, logs,
-                 size=4096, max_retries=3, timeout=5):
+    def __init__(self,
+                 host, port,
+                 msgs, logs,
+                 timeout=5,
+                 # Parameters below are NOT modifiable outside
+                 size=4096, max_retries=3):
         self.host = host
         self.port = port
         self.msgs = msgs
@@ -77,9 +81,10 @@ class TransmissionServerAsync():
                     err.__class__.__name__))
                 break
 
+            # NOTE: This clause is only executed when NO exception is raised
             else:
-                # Note that we require the length of the message to be no less
-                # than 3.
+                # NOTE: We require the length of the message to be no less than
+                # 3.
                 if data[-3:] == EOM:
                     self.msgs.put(bytes(data[:-3]).decode("utf-8"))
                     # We reached 'EOM': End-Of-Message

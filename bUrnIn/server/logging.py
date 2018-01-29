@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sat Jan 27, 2018 at 07:43 AM -0500
+# Last Change: Mon Jan 29, 2018 at 05:53 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -15,10 +15,10 @@ _KB = 1024*_B
 _MB = 1024*_KB
 
 
-def generate_config_listener(logfile, handlers, recipients, credentials,
+def generate_config_listener(logfile,
+                             recipients, credentials,
                              datafile,
-                             datafile_max_size=50*_MB,
-                             datafile_backup_count=9999):
+                             datafile_max_size, datafile_backup_count):
     config = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -64,7 +64,7 @@ def generate_config_listener(logfile, handlers, recipients, credentials,
             }
         },
         'root': {
-            'handlers': handlers
+            'handlers': ['console', 'file', 'email']
         }
     }
     return config
@@ -104,16 +104,18 @@ class LoggerForMultiProcesses(ChildProcessSignalHandler):
     Logger for multiprocessing.
     '''
     def __init__(self, queue, stop_event,
+                 logfile='/tmp/bUrnIn-server.log',
                  recipients=[None], credentials=[None, None],
-                 log_handlers=['console', 'file', 'email'],
-                 log_filename='/tmp/bUrnIn-server.log',
-                 data_filename='/tmp/bUrnIn-data.csv'):
+                 datafile='/tmp/bUrnIn-data.csv',
+                 datafile_max_size=50*_MB, datafile_backup_count=9999):
         self.signal_register()
         self.queue = queue
         self.stop_event = stop_event
         self.config = generate_config_listener(
-            log_filename, log_handlers, recipients, credentials,
-            data_filename
+            logfile,
+            recipients, credentials,
+            datafile,
+            datafile_max_size, datafile_backup_count
         )
 
     def listen(self):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sat Jan 27, 2018 at 07:47 AM -0500
+# Last Change: Mon Jan 29, 2018 at 06:00 PM -0500
 
 import signal
 
@@ -49,13 +49,15 @@ if __name__ == "__main__":
     ################
     logger = LoggerForMultiProcesses(
         logs, stop_event,
-        log_filename=opts['log']['filename'],
-        data_filename=opts['data']['filename'],
-        recipients=opts['log']['recipients'].split(','),
+        logfile=opts['log']['filename'],
+        recipients=opts['email']['recipients'].split(','),
         credentials=[
             opts['email']['username'],
             opts['email']['password']
-        ]
+        ],
+        datafile=opts['data']['filename'],
+        datafile_max_size=opts['data']['max_size'],
+        datafile_backup_count=opts['data']['backup_count']
     )
     logger.start()
 
@@ -80,8 +82,7 @@ if __name__ == "__main__":
     # Start the TCP server on the main process #
     ############################################
     server = TransmissionServerAsync(
-        opts['main']['ip'],
-        int(opts['main']['port']),
+        opts['main']['ip'], int(opts['main']['port']),
         msgs, logs,
         timeout=int(opts['main']['timeout'])
     )

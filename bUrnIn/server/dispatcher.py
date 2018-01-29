@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sat Jan 27, 2018 at 07:53 AM -0500
+# Last Change: Mon Jan 29, 2018 at 06:12 PM -0500
 
 import logging
 import logging.config
@@ -18,11 +18,12 @@ class Dispatcher(ChildProcessSignalHandler):
     '''
     Dispatch received data. This Dispatcher runs in a separated process.
     '''
-    def __init__(self, msgs, logs,
+    def __init__(self,
+                 msgs, logs,
                  log_level='INFO',
                  log_email_interval=60,
-                 hardware_failure=100,
-                 channel_failure=-100):
+                 hardware_failure=5,
+                 channel_failure=-1):
         self.signal_register()
         self.msgs = msgs
         self.log_email_interval = log_email_interval
