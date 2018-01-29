@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 12:29 PM -0500
+# Last Change: Mon Jan 29, 2018 at 04:52 PM -0500
 
 import sqlite3
 
@@ -24,7 +24,7 @@ class SqlWorker():
 
     def write(self, date, timestamp, ch_name, value):
         c = self.conn.cursor()
-        c.execute("INSERT INTO data VALUES ('{0}', '{1}', '{2}', {3})".format(
+        c.execute("INSERT INTO data VALUES ('{}', '{}', '{}', {})".format(
             date, timestamp, ch_name, value
         ))
 
