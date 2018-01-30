@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 29, 2018 at 06:00 PM -0500
+# Last Change: Mon Jan 29, 2018 at 06:45 PM -0500
 
 import signal
 
@@ -56,8 +56,8 @@ if __name__ == "__main__":
             opts['email']['password']
         ],
         datafile=opts['data']['filename'],
-        datafile_max_size=opts['data']['max_size'],
-        datafile_backup_count=opts['data']['backup_count']
+        datafile_max_size=int(opts['data']['max_size']),
+        datafile_backup_count=int(opts['data']['backup_count'])
     )
     logger.start()
 
