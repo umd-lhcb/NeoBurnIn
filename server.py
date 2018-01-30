@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jan 30, 2018 at 12:36 PM -0500
+# Last Change: Tue Jan 30, 2018 at 01:07 PM -0500
 
 import signal
 
@@ -34,8 +34,8 @@ if __name__ == "__main__":
     #######################
     # Parse configuration #
     #######################
-    DEFAULT_CFG = join(getcwd(), 'server.cfg')
-    opts = parse_config(join(getcwd(), DEFAULT_CFG))
+    config = join(getcwd(), 'server.cfg')
+    opts = parse_config(join(getcwd(), config))
 
     ################################
     # Prepare inter-process queues #
