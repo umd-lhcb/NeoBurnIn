@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 29, 2018 at 05:53 PM -0500
+# Last Change: Tue Jan 30, 2018 at 12:46 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -106,7 +106,7 @@ class LoggerForMultiProcesses(ChildProcessSignalHandler):
     def __init__(self, queue, stop_event,
                  logfile='/tmp/bUrnIn-server.log',
                  recipients=[None], credentials=[None, None],
-                 datafile='/tmp/bUrnIn-data.csv',
+                 datafile='/tmp/bUrnIn-server-data.csv',
                  datafile_max_size=50*_MB, datafile_backup_count=9999):
         self.signal_register()
         self.queue = queue
