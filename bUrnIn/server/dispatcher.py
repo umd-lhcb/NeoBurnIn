@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 29, 2018 at 06:12 PM -0500
+# Last Change: Tue Jan 30, 2018 at 01:03 PM -0500
 
 import logging
 import logging.config
@@ -54,9 +54,11 @@ class Dispatcher(ChildProcessSignalHandler):
                     err.__class__.__name__, entry))
                 break
 
+            # Make sure the datetime is valid
             try:
-                timestamp = datetime.strptime(
-                    date, standard_time_format).timestamp()
+                # timestamp = datetime.strptime(
+                    # date, standard_time_format).timestamp()
+                datetime.strptime(date, standard_time_format)
             except Exception as err:
                 self.log.error("{}: Corrupted date entry: {}.".format(
                     err.__class__.__name__, date
@@ -79,8 +81,8 @@ class Dispatcher(ChildProcessSignalHandler):
                 break
 
             try:
-                self.datalog.info('{}, {}, {}, {}'.format(
-                    date, timestamp, ch_name, value))
+                self.datalog.info('{}, {}, {}'.format(
+                    date, ch_name, value))
             except Exception as err:
                 self.log.error("{}: Cannot write to CSV file.".format(
                     err.__class__.__name__
