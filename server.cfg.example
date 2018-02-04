@@ -8,12 +8,12 @@ hardware_failure=5
 channel_failure=-1
 
 [data]
-filename=test/server/data.csv
+filename=data/data.csv
 max_size=52428800
 backup_count=9999
 
 [log]
-filename=test/server/everything.log
+filename=data/everything.log
 level=INFO
 
 [email]
