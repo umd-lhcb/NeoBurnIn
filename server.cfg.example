@@ -13,7 +13,7 @@ max_size=52428800
 backup_count=9999
 
 [log]
-filename=data/everything.log
+filename=data/server.log
 level=INFO
 
 [email]
