@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 06:17 PM -0500
+# Last Change: Mon Feb 05, 2018 at 06:34 PM -0500
 
 import signal
 import logging
@@ -79,7 +79,7 @@ class Server(SignalHandler):
     '''
     A template server class.
     '''
-    def __init__(self, ip, port, msg_queue, log_config,
+    def __init__(self, ip, port, msg_queue, logger_name,
                  timeout, size, max_retries):
         self.ip = ip
         self.port = port
@@ -88,8 +88,7 @@ class Server(SignalHandler):
         self.size = size
         self.max_retries = max_retries
 
-        logging.config.dictConfig(log_config)
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger(logger_name)
 
         super(Server, self).__init__()
 

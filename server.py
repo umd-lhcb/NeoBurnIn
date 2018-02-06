@@ -1,33 +1,23 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jan 30, 2018 at 01:07 PM -0500
+# Last Change: Mon Feb 05, 2018 at 07:25 PM -0500
 
-import signal
-
-from configparser import ConfigParser
+from configparser import SafeConfigParser
 from os import getcwd
 from os.path import join
 from multiprocessing import Queue, Event
 
-from bUrnIn.server.transmission import TransmissionServerAsync
-from bUrnIn.server.dispatcher import Dispatcher
-from bUrnIn.server.logging import LoggerForMultiProcesses
+from bUrnIn.framework.server import ServerAsync
+from bUrnIn.framework.dispatcher import DispatcherServer
+from bUrnIn.framework.logger import LoggerMP
+from bUrnIn.framework.logger import log_queue_configure
+from bUrnIn.framework.logger import log_config_generate
 
 
-def parse_config(cfg):
-    config = ConfigParser()
-    opts_dict = dict()
-
-    config.read(cfg)
-
-    for key in config:
-        opts_dict[key] = config[key]
-
-    return opts_dict
-
-
-def on_exit(signum, frame):
-    raise KeyboardInterrupt
+def parse_config(config):
+    parsed = SafeConfigParser()
+    parsed.read(config)
+    return parsed
 
 
 if __name__ == "__main__":
@@ -40,57 +30,47 @@ if __name__ == "__main__":
     ################################
     # Prepare inter-process queues #
     ################################
-    msgs = Queue()
-    logs = Queue()
+    msg_queue  = Queue(-1)
+    log_queue  = Queue(-1)
     stop_event = Event()
+
+    ####################
+    # Configure logger #
+    ####################
+    log_queue_configure(log_queue, opts['log']['level'])
+    log_config = log_config_generate(
+        opts['log']['filename'],
+        opts['email']['recipients'].split(','),
+        [opts['email']['username'], opts['email']['password']],
+        opts['data']['filename'],
+        data_file_max_size=opts['data']['max_size'],
+        data_file_backup_count=opts['data']['backup_count']
+    )
 
     ################
     # Start logger #
     ################
-    logger = LoggerForMultiProcesses(
-        logs, stop_event,
-        logfile=opts['log']['filename'],
-        recipients=opts['email']['recipients'].split(','),
-        credentials=[
-            opts['email']['username'],
-            opts['email']['password']
-        ],
-        datafile=opts['data']['filename'],
-        datafile_max_size=int(opts['data']['max_size']),
-        datafile_backup_count=int(opts['data']['backup_count'])
-    )
+    logger = LoggerMP(log_queue, log_config, stop_event)
     logger.start()
 
     ####################
     # Start dispatcher #
     ####################
-    dispatcher = Dispatcher(msgs, logs,
-        log_level=opts['log']['level'],
-        log_email_interval=float(opts['email']['interval']),
-        hardware_failure=float(opts['filter']['hardware_failure']),
-        channel_failure=float(opts['filter']['channel_failure'])
-    )
+    dispatcher = DispatcherServer(msg_queue, 'queue', 'data')
     dispatcher.start()
-
-    #################################################
-    # Handle SIGTERM and SIGINT on the main process #
-    #################################################
-    signal.signal(signal.SIGINT, on_exit)
-    signal.signal(signal.SIGTERM, on_exit)
 
     ############################################
     # Start the TCP server on the main process #
     ############################################
-    server = TransmissionServerAsync(
-        opts['main']['ip'], int(opts['main']['port']),
-        msgs, logs,
+    server = ServerAsync(opts['main']['ip'], int(opts['main']['port']),
+        msg_queue, 'queue',
         timeout=int(opts['main']['timeout'])
     )
-    server.listen()
+    server.start()
 
     ###########
     # Cleanup #
     ###########
-    dispatcher.dispatcher_process.join()
+    dispatcher.process.join()
     stop_event.set()
-    logger.listener_process.join()
+    logger.process.join()

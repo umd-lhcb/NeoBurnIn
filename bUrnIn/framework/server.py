@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 05:34 PM -0500
+# Last Change: Mon Feb 05, 2018 at 06:38 PM -0500
 
 import asyncio
 
@@ -13,12 +13,12 @@ class ServerAsync(Server):
     '''
     def __init__(self,
                  ip, port,
-                 msg_queue, log_config,
+                 msg_queue, logger_name,
                  timeout=5, size=4096, max_retries=3):
         # Store all unterminated clients in a dictionary
         self.clients = dict()
 
-        super(ServerAsync, self).__init__(ip, port, msg_queue, log_config,
+        super(ServerAsync, self).__init__(ip, port, msg_queue, logger_name,
                                           timeout, size, max_retries)
 
     def start(self):

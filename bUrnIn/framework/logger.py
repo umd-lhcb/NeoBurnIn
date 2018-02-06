@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 06:29 PM -0500
+# Last Change: Mon Feb 05, 2018 at 07:24 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -17,62 +17,29 @@ def parse_size_limit(size):
     return int(size_parsed[0]) * size_dict[size_parsed[1]]
 
 
-def configure_logger(log_queue, log_level,
-                     log_file,
-                     email_recipients, email_credentials,
-                     data_file,
-                     data_file_max_size='50 MB', data_file_backup_count=9999):
+def log_queue_configure(log_queue, log_level='INFO'):
     config = {
         'version': 1,
         'disable_existing_loggers': True,
-        'formatters': {
-            'detailed': {
-                'class': 'logging.Formatter',
-                'format': '%(asctime)s.%(msecs)03d %(levelname)-8s %(processName)-8s %(message)s',
-                'datefmt': '%Y-%m-%d %H:%M:%S'
-            }
-        },
         'handlers': {
-            'file': {
-                'class': 'logging.FileHandler',
-                'filename': log_file,
-                'formatter': 'detailed'
-            },
-            'console': {
-                'class': 'logging.StreamHandler',
-            },
-            # For logging the actual data
-            'datafile': {
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': data_file,
-                'maxBytes': parse_size_limit(data_file_max_size),
-                'backupCount': int(data_file_backup_count)
-            },
             'queue': {
                 'class': 'logging.handlers.QueueHandler',
                 'queue': log_queue,
-            }
-        },
-        'loggers': {
-            'data': {
-                'handlers': ['datafile']
             },
-            'queue': {
-                'level': log_level,
-                'handlers': ['queue']
-            }
         },
         'root': {
-            'handlers': ['console', 'file']
-        }
+            'level': log_level,
+            'handlers': ['queue']
+        },
     }
     logging.config.dictConfig(config)
 
 
-def log_receive_config(log_file,
-                     email_recipients, email_credentials,
-                     data_file,
-                     data_file_max_size='50 MB', data_file_backup_count=9999):
+def log_config_generate(log_file,
+                        email_recipients, email_credentials,
+                        data_file,
+                        data_file_max_size='50 MB',
+                        data_file_backup_count=9999):
     config = {
         'version': 1,
         'formatters': {
@@ -122,24 +89,6 @@ def log_receive_config(log_file,
     return config
 
 
-def log_emit_config(log_queue, log_level='INFO'):
-    config = {
-        'version': 1,
-        'disable_existing_loggers': True,
-        'handlers': {
-            'queue': {
-                'class': 'logging.handlers.QueueHandler',
-                'queue': log_queue,
-            },
-        },
-        'root': {
-            'level': log_level,
-            'handlers': ['queue']
-        },
-    }
-    return config
-
-
 class LoggingQueueHandler(object):
     '''
     A simple handler for logging events to a queue.
@@ -156,8 +105,9 @@ class LoggerMP(SignalHandler):
     '''
     def __init__(self, log_queue, log_config, stop_event):
         self.log_queue = log_queue
-        self.log_config = log_config
         self.stop_event = stop_event
+
+        logging.config.dictConfig(log_config)
 
         super(LoggerMP, self).__init__()
 
@@ -167,7 +117,6 @@ class LoggerMP(SignalHandler):
         self.process = listener_process
 
     def listen(self):
-        logging.config.dictConfig(self.log_config)
         listener = logging.handlers.QueueListener(
             self.log_queue, LoggingQueueHandler())
         listener.start()
