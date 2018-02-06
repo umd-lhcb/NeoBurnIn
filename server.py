@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 07:25 PM -0500
+# Last Change: Mon Feb 05, 2018 at 10:40 PM -0500
 
 from configparser import SafeConfigParser
 from os import getcwd
@@ -56,14 +56,14 @@ if __name__ == "__main__":
     ####################
     # Start dispatcher #
     ####################
-    dispatcher = DispatcherServer(msg_queue, 'queue', 'data')
+    dispatcher = DispatcherServer(msg_queue)
     dispatcher.start()
 
     ############################################
     # Start the TCP server on the main process #
     ############################################
     server = ServerAsync(opts['main']['ip'], int(opts['main']['port']),
-        msg_queue, 'queue',
+        msg_queue,
         timeout=int(opts['main']['timeout'])
     )
     server.start()

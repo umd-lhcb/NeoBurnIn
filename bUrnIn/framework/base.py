@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 07:35 PM -0500
+# Last Change: Mon Feb 05, 2018 at 10:38 PM -0500
 
 import signal
 import logging
@@ -41,8 +41,9 @@ class Dispatcher(SignalHandler):
     '''
     A template dispatcher class.
     '''
-    def __init__(self, msg_queue, logger_name, datalogger_name):
-        self.msg_queue = msg_queue
+    def __init__(self, queue,
+                 logger_name='root', datalogger_name='data'):
+        self.queue = queue
         self.logger = logging.getLogger(logger_name)
         self.datalogger = logging.getLogger(datalogger_name)
 
@@ -54,22 +55,7 @@ class Dispatcher(SignalHandler):
         self.process = dispatcher
 
     def dispatch(self):
-        self.logger.info("Dispatcher starting.")
-        while True:
-            msg = self.msg_queue.get()
-            if msg is None:
-                self.logger.info("Shutdown signal received, preparing dispatcher shutdown.")
-                break
-
-            else:
-                data = self.decode(msg)
-                self.filter(data)
-
-    def decode(self, msg):
-        data = msg.split('\n')
-        # Remove trailing '' element if it exists
-        data = data[:-1] if data[-1] == '' else data
-        return data
+        pass
 
     def filter(self, data):
         pass
@@ -79,8 +65,9 @@ class Server(SignalHandler):
     '''
     A template server class.
     '''
-    def __init__(self, ip, port, msg_queue, logger_name,
-                 timeout, size, max_retries):
+    def __init__(self, ip, port, msg_queue,
+                 timeout, size, max_retries,
+                 logger_name='root'):
         self.ip = ip
         self.port = port
         self.msg_queue = msg_queue

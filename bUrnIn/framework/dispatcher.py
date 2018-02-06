@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 06:21 PM -0500
+# Last Change: Mon Feb 05, 2018 at 10:37 PM -0500
 
 from datetime import datetime
 
@@ -12,16 +12,34 @@ class DispatcherServer(Dispatcher):
     '''
     Dispatch received data. This Dispatcher runs in a separated process.
     '''
-    def __init__(self, msg_queue, logger_name, datalogger_name):
+    def __init__(self, msg_queue):
         # For email anti-flooding
         self.last_sent_timestamp = None
 
-        super(DispatcherServer, self).__init__(
-            msg_queue, logger_name, datalogger_name)
+        super(DispatcherServer, self).__init__(msg_queue)
+
+    def dispatch(self):
+        self.logger.info("Dispatcher starting.")
+        while True:
+            msg = self.queue.get()
+            if msg is None:
+                self.logger.info("Shutdown signal received, preparing dispatcher shutdown.")
+                break
+
+            else:
+                data = self.decode(msg)
+                self.filter(data)
+
+    def decode(self, msg):
+        data = msg.split('\n')
+        # Remove trailing '' element if it exists
+        data = data[:-1] if data[-1] == '' else data
+        return data
 
     def filter(self, data):
-        self.logger.info(data)
-        # for entry in data:
+        for entry in data:
+            self.logger.info(data)
+            self.datalogger.info('test')
             # try:
                 # # We require '|' to be the delimiter inside an entry
                 # date, ch_name, value = entry.split('|')[:-1]

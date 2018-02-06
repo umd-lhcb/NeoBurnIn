@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 07:24 PM -0500
+# Last Change: Mon Feb 05, 2018 at 10:44 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -42,6 +42,7 @@ def log_config_generate(log_file,
                         data_file_backup_count=9999):
     config = {
         'version': 1,
+        'disable_existing_loggers': True,
         'formatters': {
             'detailed': {
                 'class': 'logging.Formatter',
@@ -51,11 +52,13 @@ def log_config_generate(log_file,
         },
         'handlers': {
             'file': {
+                'level': 'WARNING',
                 'class': 'logging.FileHandler',
                 'filename': log_file,
                 'formatter': 'detailed'
             },
             'console': {
+                'level': 'WARNING',
                 'class': 'logging.StreamHandler',
             },
             'email': {
