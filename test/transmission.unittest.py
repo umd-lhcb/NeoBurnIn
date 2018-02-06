@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 07:42 PM -0500
+# Last Change: Tue Feb 06, 2018 at 07:33 AM -0500
 
 import socket
 import unittest
@@ -13,10 +13,10 @@ from signal import SIGTERM
 import sys
 sys.path.insert(0, '..')
 
-from bUrnIn.server.transmission import TransmissionServerAsync
+from bUrnIn.framework.server import ServerAsync
 
 
-class TransmissionClientTester():
+class ClientTester():
     def __init__(self, host, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock = sock
@@ -57,7 +57,7 @@ class TestTransferMsgSmSize(unittest.TestCase):
         msgs = Queue()
         logs = Queue()
 
-        self.server = TransmissionServerAsync("", port, msgs, logs, size=size)
+        self.server = ServerAsync("", port, msgs, logs, size=size)
         self.server.start()
         sleep(0.5)  # Need this to make sure server is properly initialized
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 10:38 PM -0500
+# Last Change: Tue Feb 06, 2018 at 06:38 PM -0500
 
 import signal
 import logging
@@ -44,6 +44,7 @@ class Dispatcher(SignalHandler):
     def __init__(self, queue,
                  logger_name='root', datalogger_name='data'):
         self.queue = queue
+
         self.logger = logging.getLogger(logger_name)
         self.datalogger = logging.getLogger(datalogger_name)
 
@@ -55,9 +56,6 @@ class Dispatcher(SignalHandler):
         self.process = dispatcher
 
     def dispatch(self):
-        pass
-
-    def filter(self, data):
         pass
 
 
