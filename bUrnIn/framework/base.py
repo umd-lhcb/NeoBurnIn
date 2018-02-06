@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 06:34 PM -0500
+# Last Change: Mon Feb 05, 2018 at 07:35 PM -0500
 
 import signal
 import logging
@@ -49,12 +49,12 @@ class Dispatcher(SignalHandler):
         super(Dispatcher, self).__init__()
 
     def start(self):
-        self.logger.info("Dispatcher starting.")
         dispatcher = Container(target=self.dispatch)
         dispatcher.start()
         self.process = dispatcher
 
     def dispatch(self):
+        self.logger.info("Dispatcher starting.")
         while True:
             msg = self.msg_queue.get()
             if msg is None:
