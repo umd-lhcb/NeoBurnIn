@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 08:27 PM -0500
+# Last Change: Tue Feb 06, 2018 at 07:32 PM -0500
 
 import socket
 
@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, '..')
 
 
-class NaiveTransmissionClient():
+class NaiveClient():
     def __init__(self, host, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock = sock
@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
             print(msg)
 
-            client = NaiveTransmissionClient(sys.argv[1], 45678)
+            client = NaiveClient(sys.argv[1], 45678)
             client.send(msg)
 
             sleep(1)

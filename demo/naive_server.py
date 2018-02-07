@@ -1,51 +1,37 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Nov 15, 2017 at 07:43 PM -0500
+# Last Change: Tue Feb 06, 2018 at 07:38 PM -0500
 
-import signal
-
-from multiprocessing import Queue, Event
+from multiprocessing import Queue
 
 import sys
 sys.path.insert(0, '..')
 
-from bUrnIn.server.transmission import TransmissionServerAsync
-from bUrnIn.server.dispatcher import Dispatcher
-from bUrnIn.server.logging import LoggerForMultiProcesses
-
-
-def on_exit(signum, frame):
-    raise KeyboardInterrupt
+from bUrnIn.framework.server import ServerAsync
+from bUrnIn.framework.base import Dispatcher
 
 
 class NaiveDispatcher(Dispatcher):
     '''
     A simple dispatch that prints everything that throws at it.
     '''
-    def filter(self, msg):
-        print(msg)
+    def dispatch(self):
+        while True:
+            msg = self.queue.get()
+
+            if msg is not None:
+                print(msg)
+            else:
+                break
 
 
 if __name__ == "__main__":
-    msgs = Queue()
-    logs = Queue()
-    stop_event = Event()
+    msg_queue = Queue()
 
-    logger = LoggerForMultiProcesses(logs, stop_event, log_handlers=['console'])
-    logger.start()
-
-    dispatcher = NaiveDispatcher(msgs, logs)
+    dispatcher = NaiveDispatcher(msg_queue)
     dispatcher.start()
 
-    # Handle SIGTERM and SIGINT
-    signal.signal(signal.SIGINT, on_exit)
-    signal.signal(signal.SIGTERM, on_exit)
+    server = ServerAsync('localhost', 45678, msg_queue)
+    server.start()
 
-    # Start the TCP server on the main process
-    server = TransmissionServerAsync('localhost', 45678, msgs, logs)
-    server.listen()
-
-    # Cleanup
-    dispatcher.dispatcher_process.join()
-    stop_event.set()
-    logger.listener_process.join()
+    dispatcher.container.join()
