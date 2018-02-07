@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 10:40 PM -0500
+# Last Change: Wed Feb 07, 2018 at 05:47 PM -0500
 
 from configparser import SafeConfigParser
 from os import getcwd
@@ -71,6 +71,6 @@ if __name__ == "__main__":
     ###########
     # Cleanup #
     ###########
-    dispatcher.process.join()
+    dispatcher.container.join()
     stop_event.set()
-    logger.process.join()
+    logger.container.join()
