@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 06, 2018 at 06:38 PM -0500
+# Last Change: Tue Feb 06, 2018 at 07:28 PM -0500
 
 import signal
 import logging
@@ -53,7 +53,7 @@ class Dispatcher(SignalHandler):
     def start(self):
         dispatcher = Container(target=self.dispatch)
         dispatcher.start()
-        self.process = dispatcher
+        self.container = dispatcher
 
     def dispatch(self):
         pass

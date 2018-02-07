@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 10:44 PM -0500
+# Last Change: Tue Feb 06, 2018 at 07:28 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -115,9 +115,9 @@ class LoggerMP(SignalHandler):
         super(LoggerMP, self).__init__()
 
     def start(self):
-        listener_process = Container(target=self.listen)
-        listener_process.start()
-        self.process = listener_process
+        listener = Container(target=self.listen)
+        listener.start()
+        self.container = listener
 
     def listen(self):
         listener = logging.handlers.QueueListener(
