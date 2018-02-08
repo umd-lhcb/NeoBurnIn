@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Feb 08, 2018 at 01:07 PM -0500
+# Last Change: Thu Feb 08, 2018 at 01:16 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -70,9 +70,9 @@ def log_config_generate(log_file,
                 'class': 'logging.StreamHandler',
             },
             'email': {
+                'level': 'CRITICAL',
                 'class': 'logging.handlers.SMTPHandler',
                 'formatter': 'detailed',
-                'level': 'CRITICAL',
                 'fromaddr': email_credentials[0],
                 'mailhost': ('smtp.gmail.com', 587),
                 'toaddrs': email_recipients,
@@ -89,12 +89,8 @@ def log_config_generate(log_file,
             }
         },
         'loggers': {
-            'data': {
-                'handlers': ['datafile']
-            },
-            'log': {
-                'handlers': ['file', 'console', 'email']
-            }
+            'data': {'handlers': ['datafile']},
+            'log': {'handlers': ['file', 'console', 'email']}
         }
     }
     return config
