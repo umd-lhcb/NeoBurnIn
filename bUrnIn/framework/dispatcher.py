@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 07, 2018 at 08:03 PM -0500
+# Last Change: Thu Feb 08, 2018 at 01:23 PM -0500
 
 from datetime import datetime
 
@@ -12,12 +12,6 @@ class DispatcherServer(Dispatcher):
     '''
     Dispatch received data. This Dispatcher runs in a separated process.
     '''
-    def __init__(self, msg_queue):
-        # For email anti-flooding
-        self.last_sent_timestamp = None
-
-        super().__init__(msg_queue)
-
     def dispatch(self):
         self.logger.info("Dispatcher starting.")
         while True:

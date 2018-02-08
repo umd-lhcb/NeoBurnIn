@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Feb 08, 2018 at 01:03 PM -0500
+# Last Change: Thu Feb 08, 2018 at 01:23 PM -0500
 
 import signal
 import logging
@@ -41,12 +41,10 @@ class Dispatcher(SignalHandler):
     '''
     A template dispatcher class.
     '''
-    def __init__(self, queue,
-                 logger_name='log', datalogger_name='data'):
+    def __init__(self, queue, logger_name='log'):
         self.queue = queue
 
         self.logger = logging.getLogger(logger_name)
-        self.datalogger = logging.getLogger(datalogger_name)
 
         super().__init__()
 
