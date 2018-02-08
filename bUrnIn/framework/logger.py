@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 07, 2018 at 08:03 PM -0500
+# Last Change: Thu Feb 08, 2018 at 01:03 AM -0500
 
 from multiprocessing import Process as Container
 
@@ -91,10 +91,10 @@ def log_config_generate(log_file,
         'loggers': {
             'data': {
                 'handlers': ['datafile']
+            },
+            'log': {
+                'handlers': ['file', 'console', 'email']
             }
-        },
-        'root': {
-            'handlers': ['console', 'file', 'email']
         }
     }
     return config

@@ -1,39 +1,45 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Dec 12, 2017 at 03:51 PM -0500
+# Last Change: Thu Feb 08, 2018 at 01:15 AM -0500
 
 import logging
 import logging.config
 
-from multiprocessing import Event, Queue
-from random import uniform
+from tempfile import NamedTemporaryFile
 
 import sys
 sys.path.insert(0, '..')
 
-from bUrnIn.server.logging import generate_config_worker, LoggerForMultiProcesses
+from bUrnIn.framework.logger import log_config_generate
+
+
+def cprint(msg):
+    RESET = '\033[0m'
+    GREEN = '\033[92m'
+    print('{}{}{}{}'.format(RESET, GREEN, msg, RESET))
 
 
 if __name__ == "__main__":
-    logs = Queue()
-    stop_event = Event()
-    logging.config.dictConfig(generate_config_worker(logs, 'DEBUG'))
+    log_file = NamedTemporaryFile()
+    data_file = NamedTemporaryFile()
 
-    logger = LoggerForMultiProcesses(logs, stop_event,
-        recipients=['syp@umd.edu', 'yipengsun@ucla.edu'],
-        credentials=['burnin.umd.lhb@gmail.com', 'burnin@umd@lhcb'])
-    logger.start()
+    log_config = log_config_generate(
+        log_file.name,
+        ['syp@umd.edu', 'yipengsun@ucla.edu'],
+        ['burnin.umd.lhb@gmail.com', 'burnin@umd@lhcb'],
+        data_file.name,
+    )
+    logging.config.dictConfig(log_config)
 
-    # Test actual logging messages
-    log = logging.getLogger()
-    log.info('This is a test message.')
-    # log.error('A fake error has occurred!')
-    # log.critical('A fake critical error has occurred!')
+    logger = logging.getLogger('log')
+    datalogger = logging.getLogger('data')
 
-    # Test data log
-    datalog = logging.getLogger('data')
-    for i in range(0, 100):
-        datalog.info('COL1, COL2, COL3, COL4: {}'.format(uniform(0, 100)))
+    logger.warning("Test message from 'log' logger.")
+    datalogger.warning("Test message from 'data' logger.")
+    logger.critical("Critical test message from 'log' logger.")
 
-    stop_event.set()
-    logger.listener_process.join()
+    print(log_file.read().decode("utf-8").strip('\n'))
+    cprint(data_file.read().decode("utf-8").strip('\n'))
+
+    log_file.close()
+    data_file.close()
