@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 05, 2018 at 10:37 PM -0500
+# Last Change: Wed Feb 07, 2018 at 07:40 PM -0500
 
 from datetime import datetime
 
@@ -16,7 +16,7 @@ class DispatcherServer(Dispatcher):
         # For email anti-flooding
         self.last_sent_timestamp = None
 
-        super(DispatcherServer, self).__init__(msg_queue)
+        super.__init__(msg_queue)
 
     def dispatch(self):
         self.logger.info("Dispatcher starting.")

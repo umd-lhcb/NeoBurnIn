@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 06, 2018 at 07:28 PM -0500
+# Last Change: Wed Feb 07, 2018 at 07:39 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -18,6 +18,11 @@ def parse_size_limit(size):
 
 
 def log_queue_configure(log_queue, log_level='INFO'):
+    '''
+    Since we a using a POSIX-compatible (and NOT Windows) OS, each subprocess
+    would inherent the logging configuration, so this only needs to be
+    configured at the main process.
+    '''
     config = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -40,6 +45,9 @@ def log_config_generate(log_file,
                         data_file,
                         data_file_max_size='50 MB',
                         data_file_backup_count=9999):
+    '''
+    The generated configuration needs to be configured at the logger process.
+    '''
     config = {
         'version': 1,
         'disable_existing_loggers': True,
@@ -112,7 +120,7 @@ class LoggerMP(SignalHandler):
 
         logging.config.dictConfig(log_config)
 
-        super(LoggerMP, self).__init__()
+        super.__init__()
 
     def start(self):
         listener = Container(target=self.listen)
