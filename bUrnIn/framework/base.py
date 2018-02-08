@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 07, 2018 at 08:03 PM -0500
+# Last Change: Thu Feb 08, 2018 at 01:03 PM -0500
 
 import signal
 import logging
@@ -42,7 +42,7 @@ class Dispatcher(SignalHandler):
     A template dispatcher class.
     '''
     def __init__(self, queue,
-                 logger_name='root', datalogger_name='data'):
+                 logger_name='log', datalogger_name='data'):
         self.queue = queue
 
         self.logger = logging.getLogger(logger_name)
@@ -65,7 +65,7 @@ class Server(SignalHandler):
     '''
     def __init__(self, ip, port, msg_queue,
                  timeout, size, max_retries,
-                 logger_name='root'):
+                 logger_name='log'):
         self.ip = ip
         self.port = port
         self.msg_queue = msg_queue

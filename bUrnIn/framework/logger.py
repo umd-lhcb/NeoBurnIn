@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Feb 08, 2018 at 01:03 AM -0500
+# Last Change: Thu Feb 08, 2018 at 01:07 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -60,7 +60,7 @@ def log_config_generate(log_file,
         },
         'handlers': {
             'file': {
-                'level': 'WARNING',
+                'level': 'INFO',
                 'class': 'logging.FileHandler',
                 'filename': log_file,
                 'formatter': 'detailed'
