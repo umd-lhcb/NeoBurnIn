@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 07, 2018 at 07:39 PM -0500
+# Last Change: Wed Feb 07, 2018 at 08:03 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -120,7 +120,7 @@ class LoggerMP(SignalHandler):
 
         logging.config.dictConfig(log_config)
 
-        super.__init__()
+        super().__init__()
 
     def start(self):
         listener = Container(target=self.listen)

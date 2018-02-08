@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 07, 2018 at 07:40 PM -0500
+# Last Change: Wed Feb 07, 2018 at 08:03 PM -0500
 
 import asyncio
 
@@ -18,7 +18,7 @@ class ServerAsync(Server):
         # Store all unterminated clients in a dictionary
         self.clients = dict()
 
-        super.__init__(ip, port, msg_queue, timeout, size, max_retries)
+        super().__init__(ip, port, msg_queue, timeout, size, max_retries)
 
     def start(self):
         loop = asyncio.get_event_loop()

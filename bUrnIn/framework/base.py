@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 07, 2018 at 07:40 PM -0500
+# Last Change: Wed Feb 07, 2018 at 08:03 PM -0500
 
 import signal
 import logging
@@ -48,7 +48,7 @@ class Dispatcher(SignalHandler):
         self.logger = logging.getLogger(logger_name)
         self.datalogger = logging.getLogger(datalogger_name)
 
-        super.__init__()
+        super().__init__()
 
     def start(self):
         dispatcher = Container(target=self.dispatch)
@@ -75,7 +75,7 @@ class Server(SignalHandler):
 
         self.logger = logging.getLogger(logger_name)
 
-        super.__init__()
+        super().__init__()
 
     def start(self):
         pass
