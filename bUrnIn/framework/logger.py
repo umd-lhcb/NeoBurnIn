@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Feb 08, 2018 at 01:16 PM -0500
+# Last Change: Fri Feb 09, 2018 at 12:49 AM -0500
 
 from multiprocessing import Process as Container
 
@@ -82,6 +82,7 @@ def log_config_generate(log_file,
             },
             # For logging the actual data
             'datafile': {
+                'level': 'INFO',
                 'class': 'logging.handlers.RotatingFileHandler',
                 'filename': data_file,
                 'maxBytes': parse_size_limit(data_file_max_size),
