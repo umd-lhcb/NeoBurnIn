@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Feb 08, 2018 at 01:23 PM -0500
+# Last Change: Mon Feb 12, 2018 at 05:55 PM -0500
 
 import signal
 import logging
@@ -62,7 +62,7 @@ class Server(SignalHandler):
     A template server class.
     '''
     def __init__(self, ip, port, msg_queue,
-                 timeout, size, max_retries,
+                 timeout=3, size=4096, max_retries=3,
                  logger_name='log'):
         self.ip = ip
         self.port = port

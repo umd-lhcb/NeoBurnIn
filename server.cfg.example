@@ -1,23 +1,21 @@
 [main]
 ip=0.0.0.0
 port=45678
-timeout=5
-
-[filter]
-hardware_failure=5
-channel_failure=-1
-
-[data]
-filename=data/data.csv
-max_size=52428800
-backup_count=9999
+timeout=3
 
 [log]
 filename=data/server.log
-level=INFO
 
 [email]
-interval=60
 recipients=syp@umd.edu
 username=burnin.umd.lhb@gmail.com
 password=burnin@umd@lhcb
+interval=60
+
+[data]
+filename=data/raw_data/data.csv
+max_size=50 MB
+backup_count=9999
+
+[stats]
+prefix=data/stats

@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 07, 2018 at 05:47 PM -0500
+# Last Change: Mon Feb 12, 2018 at 06:01 PM -0500
 
 from configparser import SafeConfigParser
 from os import getcwd
 from os.path import join
 from multiprocessing import Queue, Event
 
-from bUrnIn.framework.server import ServerAsync
-from bUrnIn.framework.dispatcher import DispatcherServer
-from bUrnIn.framework.logger import LoggerMP
-from bUrnIn.framework.logger import log_queue_configure
 from bUrnIn.framework.logger import log_config_generate
+from bUrnIn.framework.logger import LoggerMP
+from bUrnIn.framework.dispatcher import DispatcherServer
+from bUrnIn.framework.server import ServerAsync
 
 
 def parse_config(config):
@@ -37,7 +36,6 @@ if __name__ == "__main__":
     ####################
     # Configure logger #
     ####################
-    log_queue_configure(log_queue, opts['log']['level'])
     log_config = log_config_generate(
         opts['log']['filename'],
         opts['email']['recipients'].split(','),
@@ -62,7 +60,8 @@ if __name__ == "__main__":
     ############################################
     # Start the TCP server on the main process #
     ############################################
-    server = ServerAsync(opts['main']['ip'], int(opts['main']['port']),
+    server = ServerAsync(
+        opts['main']['ip'], int(opts['main']['port']),
         msg_queue,
         timeout=int(opts['main']['timeout'])
     )

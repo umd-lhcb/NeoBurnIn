@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Feb 09, 2018 at 12:49 AM -0500
+# Last Change: Mon Feb 12, 2018 at 06:01 PM -0500
 
 from multiprocessing import Process as Container
 
@@ -17,15 +17,13 @@ def parse_size_limit(size):
     return int(size_parsed[0]) * size_dict[size_parsed[1]]
 
 
-def log_queue_configure(log_queue, log_level='INFO'):
+def log_queue_configure(log_queue, log_level='DEBUG'):
     '''
-    Since we a using a POSIX-compatible (and NOT Windows) OS, each subprocess
-    would inherent the logging configuration, so this only needs to be
-    configured at the main process.
+    The generated configuration needs to be configured at each worker process.
     '''
     config = {
         'version': 1,
-        'disable_existing_loggers': True,
+        # 'disable_existing_loggers': True,
         'handlers': {
             'queue': {
                 'class': 'logging.handlers.QueueHandler',
@@ -113,9 +111,8 @@ class LoggerMP(SignalHandler):
     '''
     def __init__(self, log_queue, log_config, stop_event):
         self.log_queue = log_queue
+        self.config = log_config
         self.stop_event = stop_event
-
-        logging.config.dictConfig(log_config)
 
         super().__init__()
 
@@ -124,7 +121,13 @@ class LoggerMP(SignalHandler):
         listener.start()
         self.container = listener
 
+        # In the end, configure the queue worker logger
+        # NOTE: The execution order matters!
+        log_queue_configure(self.log_queue)
+
     def listen(self):
+        logging.config.dictConfig(self.config)
+
         listener = logging.handlers.QueueListener(
             self.log_queue, LoggingQueueHandler())
         listener.start()

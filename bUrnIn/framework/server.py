@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 07, 2018 at 08:03 PM -0500
+# Last Change: Mon Feb 12, 2018 at 05:21 PM -0500
 
 import asyncio
 
@@ -11,22 +11,17 @@ class ServerAsync(Server):
     '''
     TCP server that handles all connections in a single process using asyncio.
     '''
-    def __init__(self,
-                 ip, port,
-                 msg_queue,
-                 timeout=5, size=4096, max_retries=3):
+    def start(self):
         # Store all unterminated clients in a dictionary
         self.clients = dict()
 
-        super().__init__(ip, port, msg_queue, timeout, size, max_retries)
-
-    def start(self):
         loop = asyncio.get_event_loop()
         coro = asyncio.start_server(self.client_accept, self.ip, self.port,
                                     loop=loop)
         server = loop.run_until_complete(coro)
 
         try:
+            self.logger.info("Starting TCP server.")
             loop.run_forever()
         except KeyboardInterrupt:
             self.logger.info("Shutdown signal received. Prepare TCP server shutdown.")
