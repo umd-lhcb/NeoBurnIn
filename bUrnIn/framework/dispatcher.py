@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Feb 11, 2018 at 10:54 PM -0500
-
-from datetime import datetime
+# Last Change: Mon Feb 12, 2018 at 12:24 AM -0500
 
 from bUrnIn.framework.base import Dispatcher
-from bUrnIn.framework.base import standard_time_format
 from bUrnIn.filters.base import apply_filters
-from bUrnIn.filters.base import FilterExitCode
 from bUrnIn.filters.io import FilterLogWriter
 from bUrnIn.filters.qc import FilterSplitData
 
@@ -40,49 +36,6 @@ class DispatcherServer(Dispatcher):
     def filter(self, data):
         for entry in data:
             apply_filters(entry, self.filter_list)
-            # try:
-                # # We require '|' to be the delimiter inside an entry
-                # date, ch_name, value = entry.split('|')[:-1]
-            # except Exception as err:
-                # self.log.error("{}: Corrupted data: {}.".format(
-                    # err.__class__.__name__, entry))
-                # break
-
-            # # Make sure the datetime is valid
-            # try:
-                # # timestamp = datetime.strptime(
-                    # # date, standard_time_format).timestamp()
-                # datetime.strptime(date, standard_time_format)
-            # except Exception as err:
-                # self.log.error("{}: Corrupted date entry: {}.".format(
-                    # err.__class__.__name__, date
-                # ))
-                # break
-
-            # try:
-                # value = float(value)
-
-                # if value >= self.hardware_failure:
-                    # warning = "WARNING: A hardware failure is detected: The {} reads a voltage of {}".format(
-                        # ch_name, value
-                    # )
-                    # self.log.error(warning)
-                    # self.email_antiflood(warning)
-            # except Exception as err:
-                # self.log.error("{}: Corrupted value entry: {}.".format(
-                    # err.__class__.__name__, value
-                # ))
-                # break
-
-            # try:
-                # self.datalog.info('{}, {}, {}'.format(
-                    # date, ch_name, value))
-            # except Exception as err:
-                # self.log.error("{}: Cannot write to CSV file.".format(
-                    # err.__class__.__name__
-                # ))
-                # break
-        # self.log.debug('Message processing finished...')
 
     def email_antiflood(self, warning):
         pass
