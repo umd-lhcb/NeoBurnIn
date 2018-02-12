@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Feb 11, 2018 at 11:30 PM -0500
-# 'qc' stands for 'Quality Assurance'. These filters test if a given data is
+# Last Change: Mon Feb 12, 2018 at 12:18 AM -0500
+# 'qa' stands for 'Quality Assurance'. These filters test if a given data is
 # valid and within expectation.
 
 from datetime import datetime
