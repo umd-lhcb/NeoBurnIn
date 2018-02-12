@@ -1,17 +1,24 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Feb 08, 2018 at 01:23 PM -0500
+# Last Change: Sun Feb 11, 2018 at 10:54 PM -0500
 
 from datetime import datetime
 
 from bUrnIn.framework.base import Dispatcher
 from bUrnIn.framework.base import standard_time_format
+from bUrnIn.filters.base import apply_filters
+from bUrnIn.filters.base import FilterExitCode
+from bUrnIn.filters.io import FilterLogWriter
+from bUrnIn.filters.qc import FilterSplitData
 
 
 class DispatcherServer(Dispatcher):
     '''
     Dispatch received data. This Dispatcher runs in a separated process.
     '''
+    def __init__(self):
+        self.filter_list = [FilterSplitData(), FilterLogWriter()]
+
     def dispatch(self):
         self.logger.info("Dispatcher starting.")
         while True:
@@ -32,8 +39,7 @@ class DispatcherServer(Dispatcher):
 
     def filter(self, data):
         for entry in data:
-            self.logger.info(data)
-            self.datalogger.info('test')
+            apply_filters(entry, self.filter_list)
             # try:
                 # # We require '|' to be the delimiter inside an entry
                 # date, ch_name, value = entry.split('|')[:-1]

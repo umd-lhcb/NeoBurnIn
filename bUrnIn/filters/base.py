@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Feb 11, 2018 at 09:50 PM -0500
+# Last Change: Sun Feb 11, 2018 at 10:55 PM -0500
 
 import logging
 
 
-def apply_filters(msg, filter_list):
+def apply_filters(data, filter_list):
     for filter in filter_list:
-        (msg, exit_status) = filter.do(msg)
+        (data, exit_status) = filter.do(data)
         if exit_status == FilterExitCode().error:
             break
 
-    return (msg, exit_status)
+    return (data, exit_status)
 
 
 class FilterExitCode(object):
@@ -25,6 +25,6 @@ class Filter(object):
     def __init__(self, logger_name='log'):
         self.logger = logging.getLogger(logger_name)
 
-    def do(self, msg):
-        msg_filtered = msg
-        return (msg_filtered, FilterExitCode().default)
+    def do(self, data):
+        data_filtered = data
+        return (data_filtered, FilterExitCode().default)
