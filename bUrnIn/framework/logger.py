@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 12, 2018 at 06:01 PM -0500
+# Last Change: Mon Feb 12, 2018 at 06:58 PM -0500
 
 from multiprocessing import Process as Container
+from multiprocessing import Event
 
 import logging
 import logging.handlers
@@ -117,16 +118,22 @@ class LoggerMP(SignalHandler):
         super().__init__()
 
     def start(self):
-        listener = Container(target=self.listen)
+        # This is used to make sure the listener process finishes its internal
+        # logging initialization.
+        wait_event = Event()
+        listener = Container(target=self.listen, args=(wait_event,))
+
         listener.start()
         self.container = listener
+        wait_event.wait()
 
         # In the end, configure the queue worker logger
         # NOTE: The execution order matters!
         log_queue_configure(self.log_queue)
 
-    def listen(self):
+    def listen(self, wait_event):
         logging.config.dictConfig(self.config)
+        wait_event.set()
 
         listener = logging.handlers.QueueListener(
             self.log_queue, LoggingQueueHandler())
