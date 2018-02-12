@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Feb 11, 2018 at 10:56 PM -0500
+# Last Change: Mon Feb 12, 2018 at 12:21 AM -0500
 
 import sqlite3
 import logging
 
 from bUrnIn.filters.base import Filter
+from bUrnIn.filters.base import FilterExitCode
 
 
 def sql_init(db):
@@ -30,6 +31,7 @@ class FilterSQLWriter(Filter):
     def do(self, data):
         date, ch_name, value = data
         self.write(date, ch_name, value)
+        return (data, FilterExitCode().ok)
 
     def exit(self):
         self.conn.commit()
@@ -49,3 +51,4 @@ class FilterLogWriter(Filter):
 
     def do(self, data):
         self.data_logger.info("%s,%s,%s" % data)
+        return (data, FilterExitCode().ok)
