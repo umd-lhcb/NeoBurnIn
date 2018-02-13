@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 12, 2018 at 05:21 PM -0500
+# Last Change: Mon Feb 12, 2018 at 11:01 PM -0500
 
 import asyncio
 
@@ -11,7 +11,7 @@ class ServerAsync(Server):
     '''
     TCP server that handles all connections in a single process using asyncio.
     '''
-    def start(self):
+    def start(self, wait_event=None):
         # Store all unterminated clients in a dictionary
         self.clients = dict()
 
@@ -19,6 +19,9 @@ class ServerAsync(Server):
         coro = asyncio.start_server(self.client_accept, self.ip, self.port,
                                     loop=loop)
         server = loop.run_until_complete(coro)
+
+        if wait_event is not None:
+            wait_event.set()
 
         try:
             self.logger.info("Starting TCP server.")
@@ -65,6 +68,7 @@ class ServerAsync(Server):
             except asyncio.TimeoutError:
                 # Keep trying until we reach the maximum retries
                 retries += 1
+                self.logger.warning("Failed to receive: %s time(s)" % retries)
                 # Also, clear the full buffer and start from scratch
                 msg.clear()
 
