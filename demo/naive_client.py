@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 13, 2018 at 06:00 AM -0500
+# Last Change: Tue Feb 13, 2018 at 02:56 PM -0500
 
 import socket
 
@@ -44,7 +44,7 @@ if __name__ == "__main__":
                 msg = msg + key + '|'
                 msg = msg + dataset[key][1] + '\n'
 
-            print(msg)
+            print(msg.strip('\n'))
 
             client = NaiveClient(sys.argv[1], 45678)
             client.send(msg)
