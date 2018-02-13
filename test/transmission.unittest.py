@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 12, 2018 at 11:25 PM -0500
+# Last Change: Tue Feb 13, 2018 at 01:13 PM -0500
 
 import socket
 import unittest
@@ -29,17 +29,17 @@ def get_free_tcp_port():
 
 
 class ClientTester(object):
-    def __init__(self, host, port):
+    def __init__(self, ip, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock = sock
-        self.host = host
+        self.ip = ip
         self.port = port
 
         self.EOM = 'EOM'
 
     def send(self, msg, delay=0, corrupted=False):
         try:
-            self.sock.connect((self.host, self.port))
+            self.sock.connect((self.ip, self.port))
             sleep(delay)
             msg = msg + self.EOM if not corrupted else msg
             self.sock.sendall(bytes(msg, 'utf-8'))
@@ -136,13 +136,13 @@ class TestTransTimeout(unittest.TestCase):
 
     def test_timeout_once(self):
         print('\nTesting Timeout once, expecting 1 log line:')
-        self.client.send(self.text, delay=0.13)
+        self.client.send(self.text, delay=0.2)
         self.assertEqual(self.msgs.get(), self.text)
 
     def test_msg_corrupted(self):
         print('\nTesting corrupted msg, expecting 3 log lines:')
         self.client.send(self.text, corrupted=True)
-        sleep(0.23)
+        sleep(0.3)
         self.assertEqual(self.msgs.qsize(), 0)
 
     def doCleanups(self):
