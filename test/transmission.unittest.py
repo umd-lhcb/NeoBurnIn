@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 12, 2018 at 07:04 PM -0500
+# Last Change: Mon Feb 12, 2018 at 11:25 PM -0500
 
 import socket
 import unittest
@@ -18,6 +18,16 @@ sys.path.insert(0, '..')
 from bUrnIn.framework.server import ServerAsync
 
 
+def get_free_tcp_port():
+    tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp.bind(('', 0))  # Get any available port
+
+    _, port = tcp.getsockname()
+    tcp.close()
+
+    return port
+
+
 class ClientTester(object):
     def __init__(self, host, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,11 +37,12 @@ class ClientTester(object):
 
         self.EOM = 'EOM'
 
-    def send(self, msg, delay=0):
+    def send(self, msg, delay=0, corrupted=False):
         try:
             self.sock.connect((self.host, self.port))
             sleep(delay)
-            self.sock.sendall(bytes(msg + self.EOM, 'utf-8'))
+            msg = msg + self.EOM if not corrupted else msg
+            self.sock.sendall(bytes(msg, 'utf-8'))
 
         # NOTE: 'finally' is for clean-up, and will be always executed after
         #       'try'.
@@ -40,16 +51,6 @@ class ClientTester(object):
 
     def exit(self):
         self.sock.close()
-
-
-def get_free_tcp_port():
-    tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp.bind(('', 0))  # Get any available port
-
-    _, port = tcp.getsockname()
-    tcp.close()
-
-    return port
 
 
 class TestTransferMsgSmSize(unittest.TestCase):
@@ -107,6 +108,42 @@ class TestTransferMsgLgSize(unittest.TestCase):
         utf8_text = "苟利国家生死以"
         self.client.send(utf8_text)
         self.assertEqual(self.msgs.get(), utf8_text)
+
+    def doCleanups(self):
+        self.client.exit()
+        kill(self.container.pid, SIGTERM)
+
+
+class TestTransTimeout(unittest.TestCase):
+    def setUp(self):
+        self.msgs = Queue()
+        self.text = "Gou Li Guo Jia Sheng Si Yi"
+
+        port = get_free_tcp_port()
+        server = ServerAsync("", port, self.msgs, max_retries=2, timeout=0.1)
+        wait_event = Event()
+
+        self.container = Container(target=server.start, args=(wait_event,))
+        self.container.start()
+
+        wait_event.wait()
+        self.client = ClientTester("localhost", port)
+
+    def test_timeout_error(self):
+        print('\nTesting Timeout, expecting 3 log lines:')
+        self.client.send(self.text, delay=0.5)
+        self.assertEqual(self.msgs.qsize(), 0)
+
+    def test_timeout_once(self):
+        print('\nTesting Timeout once, expecting 1 log line:')
+        self.client.send(self.text, delay=0.13)
+        self.assertEqual(self.msgs.get(), self.text)
+
+    def test_msg_corrupted(self):
+        print('\nTesting corrupted msg, expecting 3 log lines:')
+        self.client.send(self.text, corrupted=True)
+        sleep(0.23)
+        self.assertEqual(self.msgs.qsize(), 0)
 
     def doCleanups(self):
         self.client.exit()
