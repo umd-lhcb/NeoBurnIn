@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 06, 2018 at 06:55 PM -0500
+# Last Change: Mon Feb 12, 2018 at 07:04 PM -0500
 
 import socket
 import unittest
@@ -8,6 +8,7 @@ import unittest
 from time import sleep
 from multiprocessing import Queue
 from multiprocessing import Process as Container
+from multiprocessing import Event
 from os import kill
 from signal import SIGTERM
 
@@ -58,11 +59,13 @@ class TestTransferMsgSmSize(unittest.TestCase):
         port = get_free_tcp_port()
         size = 3
         server = ServerAsync("", port, self.msgs, size=size)
+        wait_event = Event()
 
-        self.container = Container(target=server.start)
+        self.container = Container(target=server.start, args=(wait_event,))
         self.container.start()
-        sleep(0.5)  # Need this to make sure server is properly initialized
 
+        # Need this to make sure server is properly initialized
+        wait_event.wait()
         self.client = ClientTester("localhost", port)
 
     def test_ascii_text(self):
@@ -87,11 +90,12 @@ class TestTransferMsgLgSize(unittest.TestCase):
         port = get_free_tcp_port()
         size = 81920
         server = ServerAsync("", port, self.msgs, size=size)
+        wait_event = Event()
 
-        self.container = Container(target=server.start)
+        self.container = Container(target=server.start, args=(wait_event,))
         self.container.start()
-        sleep(0.5)  # Need this to make sure server is properly initialized
 
+        wait_event.wait()
         self.client = ClientTester("localhost", port)
 
     def test_ascii_text(self):
