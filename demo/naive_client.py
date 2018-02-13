@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 06, 2018 at 07:32 PM -0500
+# Last Change: Tue Feb 13, 2018 at 06:00 AM -0500
 
 import socket
 
@@ -42,7 +42,7 @@ if __name__ == "__main__":
             for key in dataset.keys():
                 msg = msg + dataset[key][0] + '|'
                 msg = msg + key + '|'
-                msg = msg + dataset[key][1] + '|'
+                msg = msg + dataset[key][1] + '\n'
 
             print(msg)
 
