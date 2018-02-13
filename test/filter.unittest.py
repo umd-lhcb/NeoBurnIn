@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 12, 2018 at 01:24 AM -0500
+# Last Change: Mon Feb 12, 2018 at 09:38 PM -0500
 
 import unittest
-
-from testfixtures import LogCapture
 
 import sys
 sys.path.insert(0, '..')
@@ -71,27 +69,27 @@ class TestDataSplit(unittest.TestCase):
     def test_data_split_wrong_date(self):
         test_data = '2018-02-09 01:05:25|ch0|2.34414987196'
 
-        with LogCapture() as mock_logger:
+        with self.assertLogs('log', level='INFO') as mock_logger:
             (data, exit_code) = apply_filters(test_data, self.filter_list)
             self.assertEqual(data, test_data)
             self.assertFalse(self.filter_list[1].used)
 
-            mock_logger.check(
-                ('log', 'ERROR',
-                '2018-02-09 01:05:25: Date is not in the correct format')
+            self.assertEqual(
+                mock_logger.output,
+                ['ERROR:log:2018-02-09 01:05:25: Date is not in the correct format']
             )
 
     def test_data_split_wrong_value(self):
         test_data = '2018-02-09 01:05:25.1926|ch0|EXCITED'
 
-        with LogCapture() as mock_logger:
+        with self.assertLogs('log', level='INFO') as mock_logger:
             (data, exit_code) = apply_filters(test_data, self.filter_list)
             self.assertEqual(data, test_data)
             self.assertFalse(self.filter_list[1].used)
 
-            mock_logger.check(
-                ('log', 'ERROR',
-                'EXCITED: Value is not in the correct format')
+            self.assertEqual(
+                mock_logger.output,
+                ['ERROR:log:EXCITED: Value is not in the correct format']
             )
 
 
