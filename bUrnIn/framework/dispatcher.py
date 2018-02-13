@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 12, 2018 at 04:45 PM -0500
+# Last Change: Tue Feb 13, 2018 at 05:57 AM -0500
 
 from bUrnIn.framework.base import Dispatcher
 from bUrnIn.filters.base import apply_filters
@@ -38,24 +38,3 @@ class DispatcherServer(Dispatcher):
     def filter(self, data):
         for entry in data:
             apply_filters(entry, self.filter_list)
-
-    def email_antiflood(self, warning):
-        pass
-        # if self.last_sent_timestamp is None:
-            # # We never sent any email before
-            # self.log.critical(warning)
-            # self.last_sent_timestamp = datetime.now()
-
-        # else:
-            # # If we have sent emails recently, don't send any email again
-            # # This is to prevent email flooding
-            # delta_t = \
-                # (datetime.now() - self.last_sent_timestamp).total_seconds() / 60
-            # self.log.debug(delta_t)
-
-            # if delta_t >= self.log_email_interval:
-                # self.log.critical(warning)
-                # # Update the timestamp, only if we sent a new email.
-                # self.last_sent_timestamp = datetime.now()
-            # else:
-                # pass
