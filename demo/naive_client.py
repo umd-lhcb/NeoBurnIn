@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 13, 2018 at 02:56 PM -0500
+# Last Change: Tue Feb 13, 2018 at 03:25 PM -0500
 
 import socket
 
@@ -13,17 +13,16 @@ sys.path.insert(0, '..')
 
 
 class NaiveClient():
-    def __init__(self, host, port):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock = sock
-        self.host = host
+    def __init__(self, ip, port):
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.ip = ip
         self.port = port
 
         self.EOM = 'EOM'
 
     def send(self, msg):
         try:
-            self.sock.connect((self.host, self.port))
+            self.sock.connect((self.ip, self.port))
             self.sock.sendall(bytes(msg + self.EOM, 'utf-8'))
 
         finally:
