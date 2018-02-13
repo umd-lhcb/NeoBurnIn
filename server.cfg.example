@@ -1,7 +1,7 @@
 [main]
 ip=0.0.0.0
 port=45678
-timeout=3
+timeout=8
 
 [log]
 filename=data/server.log
