@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 12, 2018 at 06:01 PM -0500
+# Last Change: Wed Feb 14, 2018 at 06:52 PM -0500
 
 from configparser import SafeConfigParser
 from os import getcwd
@@ -29,8 +29,8 @@ if __name__ == "__main__":
     ################################
     # Prepare inter-process queues #
     ################################
-    msg_queue  = Queue(-1)
-    log_queue  = Queue(-1)
+    msg_queue  = Queue()
+    log_queue  = Queue()
     stop_event = Event()
 
     ####################

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Feb 12, 2018 at 06:58 PM -0500
+# Last Change: Wed Feb 14, 2018 at 06:53 PM -0500
 
 from multiprocessing import Process as Container
 from multiprocessing import Event
@@ -24,7 +24,6 @@ def log_queue_configure(log_queue, log_level='DEBUG'):
     '''
     config = {
         'version': 1,
-        # 'disable_existing_loggers': True,
         'handlers': {
             'queue': {
                 'class': 'logging.handlers.QueueHandler',
@@ -49,7 +48,6 @@ def log_config_generate(log_file,
     '''
     config = {
         'version': 1,
-        'disable_existing_loggers': True,
         'formatters': {
             'detailed': {
                 'class': 'logging.Formatter',
@@ -128,7 +126,9 @@ class LoggerMP(SignalHandler):
         wait_event.wait()
 
         # In the end, configure the queue worker logger
-        # NOTE: The execution order matters!
+        # NOTE: The execution order matters! Because we have to make sure the
+        # logger process does not have a configured 'root' logger with a 'queue'
+        # handler, otherwise we would get infinite repeating messages.
         log_queue_configure(self.log_queue)
 
     def listen(self, wait_event):
