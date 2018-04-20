@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 13, 2018 at 02:40 PM -0500
+# Last Change: Wed Feb 14, 2018 at 09:13 PM -0500
 
 import signal
 import logging
@@ -18,10 +18,9 @@ def time_now_formatted():
 
 class SignalHandler(object):
     '''
-    This class defers SIGINT and SIGTERM signals.
-    It is assumed that any subclass would deal with that explicitly.
-    This is a delicate matter, as each instance of 'SignalHandler' would deal
-    the termination signal in the reverse order of their instantiation.
+    This class register a SIGINT and SIGTERM handler.
+    This is a delicate matter, as only the last registered handler would be
+    effective.
     '''
     def __init__(self):
         self.signal_register()
@@ -62,7 +61,7 @@ class Server(SignalHandler):
     A template server class.
     '''
     def __init__(self, ip, port, msg_queue,
-                 timeout=8, size=4096, max_retries=3,
+                 timeout=3, size=4096, max_retries=3,
                  logger_name='log'):
         self.ip = ip
         self.port = port
@@ -75,6 +74,9 @@ class Server(SignalHandler):
 
         super().__init__()
 
+    def signal_handle(self, signum, frame):
+        raise KeyboardInterrupt
+
     def start(self):
         pass
 
@@ -83,6 +85,3 @@ class Server(SignalHandler):
 
     def client_handle(self, client_reader, client_writer):
         pass
-
-    def signal_handle(self, signum, frame):
-        raise KeyboardInterrupt
