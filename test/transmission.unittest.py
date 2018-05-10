@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 13, 2018 at 01:13 PM -0500
+# Last Change: Thu May 10, 2018 at 03:18 PM -0400
 
 import socket
 import unittest
@@ -151,4 +151,5 @@ class TestTransTimeout(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    pass
+    #unittest.main()
