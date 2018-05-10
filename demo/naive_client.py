@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 13, 2018 at 03:25 PM -0500
+# Last Change: Thu May 10, 2018 at 03:16 PM -0400
 
 import socket
 
@@ -13,20 +13,22 @@ sys.path.insert(0, '..')
 
 
 class NaiveClient():
+    EOM = 'EOM'
+
     def __init__(self, ip, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ip = ip
         self.port = port
 
-        self.EOM = 'EOM'
-
     def send(self, msg):
         try:
             self.sock.connect((self.ip, self.port))
-            self.sock.sendall(bytes(msg + self.EOM, 'utf-8'))
+            self.sock.send(bytes(msg, 'utf-8'))
+            self.sock.send(bytes(self.EOM, 'utf-8'))
 
         finally:
-            self.sock.close()
+            pass
+            # self.sock.close()
 
 
 if __name__ == "__main__":
@@ -47,8 +49,7 @@ if __name__ == "__main__":
 
             client = NaiveClient(sys.argv[1], 45678)
             client.send(msg)
-
-            sleep(1)
+            break
 
         except KeyboardInterrupt:
             break

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 06, 2018 at 07:38 PM -0500
+# Last Change: Wed Feb 14, 2018 at 11:08 PM -0500
 
 from multiprocessing import Queue
 
@@ -20,7 +20,7 @@ class NaiveDispatcher(Dispatcher):
             msg = self.queue.get()
 
             if msg is not None:
-                print(msg)
+                print(msg.strip('\n'))
             else:
                 break
 
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     dispatcher = NaiveDispatcher(msg_queue)
     dispatcher.start()
 
-    server = ServerAsync('localhost', 45678, msg_queue)
-    server.start()
+    server = ServerAsync('localhost', 45678, msg_queue, timeout=1)
+    server.run()
 
     dispatcher.container.join()
