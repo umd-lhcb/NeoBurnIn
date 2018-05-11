@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu May 10, 2018 at 03:18 PM -0400
+# Last Change: Fri May 11, 2018 at 02:05 PM -0400
 
 import socket
 import unittest
@@ -62,7 +62,7 @@ class TestTransferMsgSmSize(unittest.TestCase):
         server = ServerAsync("", port, self.msgs, size=size)
         wait_event = Event()
 
-        self.container = Container(target=server.start, args=(wait_event,))
+        self.container = Container(target=server.run, args=(wait_event,))
         self.container.start()
 
         # Need this to make sure server is properly initialized
@@ -93,7 +93,7 @@ class TestTransferMsgLgSize(unittest.TestCase):
         server = ServerAsync("", port, self.msgs, size=size)
         wait_event = Event()
 
-        self.container = Container(target=server.start, args=(wait_event,))
+        self.container = Container(target=server.run, args=(wait_event,))
         self.container.start()
 
         wait_event.wait()
@@ -123,7 +123,7 @@ class TestTransTimeout(unittest.TestCase):
         server = ServerAsync("", port, self.msgs, max_retries=2, timeout=0.1)
         wait_event = Event()
 
-        self.container = Container(target=server.start, args=(wait_event,))
+        self.container = Container(target=server.run, args=(wait_event,))
         self.container.start()
 
         wait_event.wait()
@@ -151,5 +151,4 @@ class TestTransTimeout(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    pass
-    #unittest.main()
+    unittest.main()
