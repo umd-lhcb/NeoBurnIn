@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue May 22, 2018 at 05:17 PM -0400
+# Last Change: Thu May 24, 2018 at 03:28 AM -0400
 
 import socket
 import unittest
@@ -67,70 +67,70 @@ class MockLogger(object):
         self.logs.put(msg)
 
 
-# class TestTransferMsgSmSize(unittest.TestCase):
-    # def setUp(self):
-        # self.msgs = Queue()
+class TestTransferMsgSmSize(unittest.TestCase):
+    def setUp(self):
+        self.msgs = Queue()
 
-        # port = get_free_tcp_port()
-        # size = 3
-        # server = ServerAsync("", port, self.msgs, size=size)
-        # wait_event = Event()
+        port = get_free_tcp_port()
+        size = 3
+        server = ServerAsync('', port, self.msgs, size=size)
+        wait_event = Event()
 
-        # self.container = Container(target=server.run, args=(wait_event,))
-        # self.container.start()
+        self.container = Container(target=server.run, args=(wait_event,))
+        self.container.start()
 
-        # # Need this to make sure server is properly initialized
-        # wait_event.wait()
-        # self.client = ClientTester("localhost", port)
+        # Need this to make sure server is properly initialized
+        wait_event.wait()
+        self.client = ClientTester('localhost', port)
 
-    # def test_ascii_text(self):
-        # ascii_text = "Gou Li Guo Jia Sheng Si Yi"
-        # self.client.send(ascii_text)
-        # self.assertEqual(self.msgs.get(), ascii_text)
+    def test_ascii_text(self):
+        ascii_text = 'Gou Li Guo Jia Sheng Si Yi'
+        self.client.send(ascii_text)
+        self.assertEqual(self.msgs.get(), ascii_text)
 
-    # def test_utf8_text(self):
-        # utf8_text = "苟利国家生死以"
-        # self.client.send(utf8_text)
-        # self.assertEqual(self.msgs.get(), utf8_text)
+    def test_utf8_text(self):
+        utf8_text = '苟利国家生死以'
+        self.client.send(utf8_text)
+        self.assertEqual(self.msgs.get(), utf8_text)
 
-    # def doCleanups(self):
-        # self.client.exit()
-        # kill(self.container.pid, SIGTERM)
+    def doCleanups(self):
+        self.client.exit()
+        kill(self.container.pid, SIGTERM)
 
 
-# class TestTransferMsgLgSize(unittest.TestCase):
-    # def setUp(self):
-        # self.msgs = Queue()
+class TestTransferMsgLgSize(unittest.TestCase):
+    def setUp(self):
+        self.msgs = Queue()
 
-        # port = get_free_tcp_port()
-        # size = 81920
-        # server = ServerAsync("", port, self.msgs, size=size)
-        # wait_event = Event()
+        port = get_free_tcp_port()
+        size = 81920
+        server = ServerAsync('', port, self.msgs, size=size)
+        wait_event = Event()
 
-        # self.container = Container(target=server.run, args=(wait_event,))
-        # self.container.start()
+        self.container = Container(target=server.run, args=(wait_event,))
+        self.container.start()
 
-        # wait_event.wait()
-        # self.client = ClientTester("localhost", port)
+        wait_event.wait()
+        self.client = ClientTester('localhost', port)
 
-    # def test_ascii_text(self):
-        # ascii_text = "Gou Li Guo Jia Sheng Si Yi"
-        # self.client.send(ascii_text)
-        # self.assertEqual(self.msgs.get(), ascii_text)
+    def test_ascii_text(self):
+        ascii_text = 'Gou Li Guo Jia Sheng Si Yi'
+        self.client.send(ascii_text)
+        self.assertEqual(self.msgs.get(), ascii_text)
 
-    # def test_utf8_text(self):
-        # utf8_text = "苟利国家生死以"
-        # self.client.send(utf8_text)
-        # self.assertEqual(self.msgs.get(), utf8_text)
+    def test_utf8_text(self):
+        utf8_text = '苟利国家生死以'
+        self.client.send(utf8_text)
+        self.assertEqual(self.msgs.get(), utf8_text)
 
-    # def doCleanups(self):
-        # self.client.exit()
-        # kill(self.container.pid, SIGTERM)
+    def doCleanups(self):
+        self.client.exit()
+        kill(self.container.pid, SIGTERM)
 
 
 class TestTransTimeout(unittest.TestCase):
     def setUp(self):
-        self.text = "苟利国家生死以"
+        self.text = '苟利国家生死以'
 
         self.msgs = Queue()
 
@@ -139,7 +139,7 @@ class TestTransTimeout(unittest.TestCase):
         self.logger = MockLogger(self.logs)
 
         port = get_free_tcp_port()
-        server = ServerAsync("", port, self.msgs, max_retries=2, timeout=0.1)
+        server = ServerAsync('', port, self.msgs, max_retries=2, timeout=0.1)
         server.logger = self.logger
         wait_event = Event()
 
@@ -147,7 +147,7 @@ class TestTransTimeout(unittest.TestCase):
         self.container.start()
 
         wait_event.wait()
-        self.client = ClientTester("localhost", port)
+        self.client = ClientTester('localhost', port)
 
     def test_timeout_error(self):
         self.client.send(self.text, delay=0.5)
@@ -181,5 +181,5 @@ class TestTransTimeout(unittest.TestCase):
         kill(self.container.pid, SIGTERM)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
