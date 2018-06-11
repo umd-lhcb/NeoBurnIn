@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 13, 2018 at 05:57 AM -0500
+# Last Change: Mon Jun 11, 2018 at 04:07 AM -0400
 # 'qa' stands for 'Quality Assurance'. These filters test if a given data is
 # valid and within expectation.
 
@@ -46,13 +46,18 @@ class FilterDataSplit(Filter):
         return ((date, ch_name, value), FilterExitCode().ok)
 
 
+class FilterDataLearn(Filter):
+    def __init__(self):
+        pass
+
+
 class FilterDataMonitor(Filter):
     def __init__(self,
                  std_limit=4,
                  temp_limit=60,
                  learn_duration='10 MIN', check_duration='4 HRS',
                  log_email_interval='1 HRS',
-                 temp_ch_names='',
+                 temp_ch_names=list(),
                  stats_logger_name='stats'):
         self.std_limit = std_limit
         self.temp_limit = temp_limit

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Feb 11, 2018 at 10:55 PM -0500
+# Last Change: Mon Jun 11, 2018 at 04:08 AM -0400
 
 import logging
 
@@ -8,7 +8,7 @@ import logging
 def apply_filters(data, filter_list):
     for filter in filter_list:
         (data, exit_status) = filter.do(data)
-        if exit_status == FilterExitCode().error:
+        if exit_status != FilterExitCode().ok:
             break
 
     return (data, exit_status)
@@ -18,6 +18,7 @@ class FilterExitCode(object):
     def __init__(self):
         self.ok = 0
         self.error = 1
+        self.premature = 2
         self.default = self.ok
 
 
