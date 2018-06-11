@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu May 24, 2018 at 03:28 AM -0400
+# Last Change: Mon Jun 11, 2018 at 02:50 PM -0400
 
 import unittest
+import datetime
 
 import sys
 sys.path.insert(0, '..')
@@ -55,14 +56,14 @@ class TestDataSplit(unittest.TestCase):
     def test_data_split(self):
         test_data = '2018-02-09 01:05:25.753840|ch0|2.34414987196'
         (data, exit_code) = apply_filters(test_data, self.filter_list)
-        self.assertEqual(data[0], test_data.split('|')[0])
+        self.assertTrue(isinstance(data[0], datetime.datetime))
         self.assertEqual(data[2], float(test_data.split('|')[2]))
         self.assertTrue(self.filter_list[1].used)
 
     def test_data_split_alt_data(self):
         test_data = '2018-02-09 01:05:25.7|ch0|2'
         (data, exit_code) = apply_filters(test_data, self.filter_list)
-        self.assertEqual(data[0], test_data.split('|')[0])
+        self.assertTrue(isinstance(data[0], datetime.datetime))
         self.assertEqual(data[2], float(test_data.split('|')[2]))
         self.assertTrue(self.filter_list[1].used)
 
@@ -76,7 +77,7 @@ class TestDataSplit(unittest.TestCase):
 
             self.assertEqual(
                 mock_logger.output,
-                ['ERROR:log:2018-02-09 01:05:25: Date is not in the correct format']
+                ['ERROR:log:2018-02-09 01:05:25: Date is not in the correct format.']
             )
 
     def test_data_split_wrong_value(self):
@@ -89,7 +90,7 @@ class TestDataSplit(unittest.TestCase):
 
             self.assertEqual(
                 mock_logger.output,
-                ['ERROR:log:EXCITED: Value is not in the correct format']
+                ['ERROR:log:EXCITED: Value is not in the correct format.']
             )
 
 

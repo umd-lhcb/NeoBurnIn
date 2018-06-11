@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 11, 2018 at 04:07 AM -0400
+# Last Change: Mon Jun 11, 2018 at 02:46 PM -0400
 # 'qa' stands for 'Quality Assurance'. These filters test if a given data is
 # valid and within expectation.
 
@@ -28,27 +28,35 @@ class FilterDataSplit(Filter):
         try:
             date, ch_name, value = data.split("|")
         except Exception:
-            self.logger.error("%s: Data entry not correctly delimited" % data)
+            self.logger.error("%s: Data entry not correctly delimited." % data)
             return (data, FilterExitCode().error)
 
         try:
-            datetime.strptime(date, standard_time_format)
+            date = datetime.strptime(date, standard_time_format)
         except Exception:
-            self.logger.error("%s: Date is not in the correct format" % date)
+            self.logger.error("%s: Date is not in the correct format." % date)
             return (data, FilterExitCode().error)
 
         try:
             value = float(value)
         except Exception:
-            self.logger.error("%s: Value is not in the correct format" % value)
+            self.logger.error("%s: Value is not in the correct format." % value)
             return (data, FilterExitCode().error)
 
         return ((date, ch_name, value), FilterExitCode().ok)
 
 
 class FilterDataLearn(Filter):
-    def __init__(self):
-        pass
+    def __init__(self,
+                 temp_chs=list(),
+                 learn_duration='10 MIN', stats_time_delta='4 HRS',
+                 stats_logger_name='stats'):
+        self.temp_chs = temp_chs
+
+        self.learn_duration = parse_time_limit(learn_duration)
+        self.stats_time_delta = parse_time_limit(stats_time_delta)
+
+        super().__init__(logger_name=stats_logger_name)
 
 
 class FilterDataMonitor(Filter):
