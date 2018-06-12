@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jun 12, 2018 at 03:15 AM -0400
+# Last Change: Tue Jun 12, 2018 at 03:38 AM -0400
 # 'qa' stands for 'Quality Assurance'. These filters test if a given data is
 # valid and within expectation.
 
@@ -32,7 +32,7 @@ class FilterDataSplit(Filter):
             return (data, FilterExitCode().error)
 
         try:
-            date = datetime.strptime(date, standard_time_format)
+            datetime.strptime(date, standard_time_format)
         except Exception:
             self.logger.error("%s: Date is not in the correct format." % date)
             return (data, FilterExitCode().error)
