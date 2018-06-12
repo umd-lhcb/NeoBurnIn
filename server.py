@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 14, 2018 at 06:52 PM -0500
+# Last Change: Tue Jun 12, 2018 at 03:32 AM -0400
 
 from configparser import SafeConfigParser
 from os import getcwd
@@ -11,6 +11,9 @@ from bUrnIn.framework.logger import log_config_generate
 from bUrnIn.framework.logger import LoggerMP
 from bUrnIn.framework.dispatcher import DispatcherServer
 from bUrnIn.framework.server import ServerAsync
+
+from bUrnIn.filters.qa import FilterDataSplit
+from bUrnIn.filters.io import FilterLogWriter
 
 
 def parse_config(config):
@@ -54,7 +57,8 @@ if __name__ == "__main__":
     ####################
     # Start dispatcher #
     ####################
-    dispatcher = DispatcherServer(msg_queue)
+    filter_list = [FilterDataSplit(), FilterLogWriter()]
+    dispatcher = DispatcherServer(msg_queue, filter_list)
     dispatcher.start()
 
     ############################################
@@ -65,7 +69,7 @@ if __name__ == "__main__":
         msg_queue,
         timeout=int(opts['main']['timeout'])
     )
-    server.start()
+    server.run()
 
     ###########
     # Cleanup #
