@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 11, 2018 at 02:50 PM -0400
+# Last Change: Tue Jun 12, 2018 at 03:40 AM -0400
 
 import unittest
-import datetime
 
 import sys
 sys.path.insert(0, '..')
@@ -56,14 +55,14 @@ class TestDataSplit(unittest.TestCase):
     def test_data_split(self):
         test_data = '2018-02-09 01:05:25.753840|ch0|2.34414987196'
         (data, exit_code) = apply_filters(test_data, self.filter_list)
-        self.assertTrue(isinstance(data[0], datetime.datetime))
+        self.assertEqual(data[0], test_data.split('|')[0])
         self.assertEqual(data[2], float(test_data.split('|')[2]))
         self.assertTrue(self.filter_list[1].used)
 
     def test_data_split_alt_data(self):
         test_data = '2018-02-09 01:05:25.7|ch0|2'
         (data, exit_code) = apply_filters(test_data, self.filter_list)
-        self.assertTrue(isinstance(data[0], datetime.datetime))
+        self.assertEqual(data[0], test_data.split('|')[0])
         self.assertEqual(data[2], float(test_data.split('|')[2]))
         self.assertTrue(self.filter_list[1].used)
 
