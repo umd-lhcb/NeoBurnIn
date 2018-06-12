@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu May 10, 2018 at 03:16 PM -0400
+# Last Change: Tue Jun 12, 2018 at 03:20 AM -0400
 
 import socket
 
-from time import sleep
 from datetime import datetime
 from random import uniform
 
@@ -27,8 +26,7 @@ class NaiveClient():
             self.sock.send(bytes(self.EOM, 'utf-8'))
 
         finally:
-            pass
-            # self.sock.close()
+            self.sock.close()
 
 
 if __name__ == "__main__":
