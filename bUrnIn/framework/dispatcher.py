@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Feb 13, 2018 at 05:57 AM -0500
+# Last Change: Tue Jun 12, 2018 at 03:34 AM -0400
 
 from bUrnIn.framework.base import Dispatcher
 from bUrnIn.filters.base import apply_filters
@@ -12,8 +12,9 @@ class DispatcherServer(Dispatcher):
     '''
     Dispatch received data. This Dispatcher runs in a separated process.
     '''
-    def __init__(self, msg_queue):
-        self.filter_list = [FilterDataSplit(), FilterLogWriter()]
+    def __init__(self, msg_queue, filter_list=[FilterDataSplit(),
+                                               FilterLogWriter()]):
+        self.filter_list = filter_list
 
         super().__init__(msg_queue)
 
