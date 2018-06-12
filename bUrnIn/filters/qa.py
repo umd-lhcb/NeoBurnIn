@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 11, 2018 at 02:46 PM -0400
+# Last Change: Tue Jun 12, 2018 at 03:15 AM -0400
 # 'qa' stands for 'Quality Assurance'. These filters test if a given data is
 # valid and within expectation.
 
@@ -47,6 +47,13 @@ class FilterDataSplit(Filter):
 
 
 class FilterDataLearn(Filter):
+    first_run_timestamp = None
+    last_stats_output_timestampe = None
+    stats_never_logged_before = True
+
+    normal_chs_stats = dict()
+    temp_chs_stats = dict()
+
     def __init__(self,
                  temp_chs=list(),
                  learn_duration='10 MIN', stats_time_delta='4 HRS',
@@ -56,25 +63,51 @@ class FilterDataLearn(Filter):
         self.learn_duration = parse_time_limit(learn_duration)
         self.stats_time_delta = parse_time_limit(stats_time_delta)
 
-        super().__init__(logger_name=stats_logger_name)
+        self.stats_logger = logging.getLogger(stats_logger_name)
+
+        super().__init__()
+
+    def do(self, data):
+        if self.first_run_timestamp is None:
+            self.first_run_timestamp = datetime.now()
+            self.last_stats_output_timestampe = self.first_run_timestamp
+
+        date, ch_name, value = data
+        # Convert date string to a datetime object
+        date = datetime.strptime(date, standard_time_format)
+
+        # Output statistics for all channels if last such action was before
+        # 'stats_time_delta'
+        now = datetime.now()
+        if time_delta(now, self.last_stats_output_timestampe) >= \
+                self.stats_time_delta:
+            self.stats_log(now)
+
+        if time_delta(date, self.first_run_timestamp) <= self.learn_duration:
+            data = self.learn(ch_name, value)
+        else:
+            data = self.summarize(ch_name, value)
+
+        return (data, FilterExitCode().premature)
+
+    def learn(ch_name, value):
+        pass
+
+    def stats_log(self, now):
+        pass
+
+    def summarize(self, ch_name, value):
+        pass
 
 
 class FilterDataMonitor(Filter):
     def __init__(self,
                  std_limit=4,
                  temp_limit=60,
-                 learn_duration='10 MIN', check_duration='4 HRS',
-                 log_email_interval='1 HRS',
-                 temp_ch_names=list(),
-                 stats_logger_name='stats'):
+                 log_email_interval='1 HRS'):
         self.std_limit = std_limit
         self.temp_limit = temp_limit
-        self.learn_duration = parse_time_limit(learn_duration)
-        self.check_duration = parse_time_limit(check_duration)
         self.log_email_interval = parse_time_limit(log_email_interval)
-
-        self.temp_ch_list = temp_ch_names.split(',')
-        self.statslogger = logging.getLogger(stats_logger_name)
 
         self.email_last_sent_timestamp = None
         self.first_received = None
@@ -116,10 +149,6 @@ class FilterDataMonitor(Filter):
 
         else:
             return FilterExitCode.ok
-
-    def data_learn(self, data, timestamp, data_status):
-        date, ch_name, value = data
-        pass
 
     def log_email(self, msg):
         if self.email_last_sent_timestamp is None:
