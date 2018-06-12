@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jun 08, 2018 at 05:19 PM -0400
+# Last Change: Tue Jun 12, 2018 at 03:04 AM -0400
 
 import sqlite3
 import logging
@@ -44,9 +44,8 @@ class FilterSQLWriter(Filter):
 
 class FilterLogWriter(Filter):
     def __init__(self, data_logger_name='data'):
-        self.datalogger = logging.getLogger(data_logger_name)
-        super().__init__()
+        super().__init__(logger_name=data_logger_name)
 
     def do(self, data):
-        self.datalogger.info("%s,%s,%s" % data)
+        self.logger.info("%s,%s,%s" % data)
         return (data, FilterExitCode().ok)
