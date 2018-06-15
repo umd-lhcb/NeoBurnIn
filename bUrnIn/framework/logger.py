@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 14, 2018 at 06:53 PM -0500
+# Last Change: Thu Jun 14, 2018 at 03:30 PM -0400
 
 from multiprocessing import Process as Container
 from multiprocessing import Event
@@ -42,7 +42,10 @@ def log_config_generate(log_file,
                         email_recipients, email_credentials,
                         data_file,
                         data_file_max_size='50 MB',
-                        data_file_backup_count=9999):
+                        data_file_backup_count=9999,
+                        # By default we don't generate stats summary
+                        stats_file='/dev/null'
+                        ):
     '''
     The generated configuration needs to be configured at the logger process.
     '''
@@ -84,10 +87,17 @@ def log_config_generate(log_file,
                 'filename': data_file,
                 'maxBytes': parse_size_limit(data_file_max_size),
                 'backupCount': int(data_file_backup_count)
+            },
+            # For logging the stats summary
+            'statsfile': {
+                'level': 'INFO',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'filename': stats_file
             }
         },
         'loggers': {
             'data': {'handlers': ['datafile']},
+            'stats': {'handlers': ['stats_file']},
             'log': {'handlers': ['file', 'console', 'email']}
         }
     }
