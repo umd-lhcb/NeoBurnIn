@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jun 12, 2018 at 03:38 AM -0400
+# Last Change: Thu Jun 21, 2018 at 05:52 PM -0400
 # 'qa' stands for 'Quality Assurance'. These filters test if a given data is
 # valid and within expectation.
 
 import logging
 
 from datetime import datetime
+from statistics import mean, stdev
 
 from bUrnIn.framework.base import standard_time_format
 from bUrnIn.filters.base import Filter
@@ -49,10 +50,15 @@ class FilterDataSplit(Filter):
 class FilterDataLearn(Filter):
     first_run_timestamp = None
     last_stats_output_timestampe = None
-    stats_never_logged_before = True
+    learning_results_never_logged_before = True
 
+    # These lists store statistics that gets printed out to some log files every
+    # couple of hours.
     normal_chs_stats = dict()
     temp_chs_stats = dict()
+
+    # These lists store the learning result for the first couple of minutes.
+    normal_chs_learn = dict()
 
     def __init__(self,
                  temp_chs=list(),
@@ -76,6 +82,11 @@ class FilterDataLearn(Filter):
         # Convert date string to a datetime object
         date = datetime.strptime(date, standard_time_format)
 
+        # If it is a temperature channel, don't learn.
+        if ch_name in self.temp_chs:
+            data = self.summarize_temp(ch_name, value)
+            return (data, FilterExitCode().ok)
+
         # Output statistics for all channels if last such action was before
         # 'stats_time_delta'
         now = datetime.now()
@@ -85,10 +96,10 @@ class FilterDataLearn(Filter):
 
         if time_delta(date, self.first_run_timestamp) <= self.learn_duration:
             data = self.learn(ch_name, value)
+            return (data, FilterExitCode().premature)
         else:
             data = self.summarize(ch_name, value)
-
-        return (data, FilterExitCode().premature)
+            return (data, FilterExitCode().ok)
 
     def learn(ch_name, value):
         pass
@@ -97,13 +108,23 @@ class FilterDataLearn(Filter):
         pass
 
     def summarize(self, ch_name, value):
+        if self.learning_results_never_logged_before:
+            # Send a summary email on learning results if it is never sent
+            self.email_learn_results()
+
+        return (ch_name, value,
+                self.normal_chs_learn['mean'], self.normal_chs_learn['std'])
+
+    def summarize_temp(self, ch_name, value):
+        return (ch_name, value, None, None)
+
+    def email_learn_results(self):
         pass
 
 
 class FilterDataMonitor(Filter):
     def __init__(self,
-                 std_limit=4,
-                 temp_limit=60,
+                 std_limit=4, temp_limit=70,
                  log_email_interval='1 HRS'):
         self.std_limit = std_limit
         self.temp_limit = temp_limit
