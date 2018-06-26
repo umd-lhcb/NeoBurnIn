@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jun 21, 2018 at 05:52 PM -0400
+# Last Change: Tue Jun 26, 2018 at 01:24 PM -0400
 # 'qa' stands for 'Quality Assurance'. These filters test if a given data is
 # valid and within expectation.
 
@@ -76,7 +76,7 @@ class FilterDataLearn(Filter):
     def do(self, data):
         if self.first_run_timestamp is None:
             self.first_run_timestamp = datetime.now()
-            self.last_stats_output_timestampe = self.first_run_timestamp
+            self.last_stats_output_timestamp = self.first_run_timestamp
 
         date, ch_name, value = data
         # Convert date string to a datetime object
@@ -88,16 +88,19 @@ class FilterDataLearn(Filter):
             return (data, FilterExitCode().ok)
 
         # Output statistics for all channels if last such action was before
-        # 'stats_time_delta'
+        # 'stats_time_delta'.
         now = datetime.now()
-        if time_delta(now, self.last_stats_output_timestampe) >= \
+        if time_delta(now, self.last_stats_output_timestamp) >= \
                 self.stats_time_delta:
             self.stats_log(now)
+            self.last_stats_output_timestamp = now
 
         if time_delta(date, self.first_run_timestamp) <= self.learn_duration:
             data = self.learn(ch_name, value)
             return (data, FilterExitCode().premature)
         else:
+            if self.learning_results_never_logged_before:
+                self.email_learn_results()
             data = self.summarize(ch_name, value)
             return (data, FilterExitCode().ok)
 
@@ -108,10 +111,6 @@ class FilterDataLearn(Filter):
         pass
 
     def summarize(self, ch_name, value):
-        if self.learning_results_never_logged_before:
-            # Send a summary email on learning results if it is never sent
-            self.email_learn_results()
-
         return (ch_name, value,
                 self.normal_chs_learn['mean'], self.normal_chs_learn['std'])
 
