@@ -1,16 +1,27 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Feb 08, 2018 at 01:15 AM -0500
+# Last Change: Thu Jun 28, 2018 at 11:06 PM -0400
 
 import logging
 import logging.config
 
 from tempfile import NamedTemporaryFile
+from collections import defaultdict
 
 import sys
 sys.path.insert(0, '..')
 
-from bUrnIn.framework.logger import log_config_generate
+from bUrnIn.base import nested_dict
+from bUrnIn.io.logging import log_email_configure
+
+# Configure logger
+logger_settings = nested_dict()
+log_email_configure(logger_settings,
+                    'burnin.umd.lhb@gmail.com',
+                    ['syp@umd.edu'],
+                    'burnin@umd@lhcb',
+                    )
+logging.config.dictConfig(logger_settings)
 
 
 def cprint(msg):
@@ -22,14 +33,6 @@ def cprint(msg):
 if __name__ == "__main__":
     log_file = NamedTemporaryFile()
     data_file = NamedTemporaryFile()
-
-    log_config = log_config_generate(
-        log_file.name,
-        ['syp@umd.edu', 'yipengsun@ucla.edu'],
-        ['burnin.umd.lhb@gmail.com', 'burnin@umd@lhcb'],
-        data_file.name,
-    )
-    logging.config.dictConfig(log_config)
 
     logger = logging.getLogger('log')
     datalogger = logging.getLogger('data')
