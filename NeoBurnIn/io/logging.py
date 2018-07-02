@@ -1,14 +1,44 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jul 01, 2018 at 12:08 AM -0400
+# Last Change: Mon Jul 02, 2018 at 01:15 AM -0400
 # Too bad. Impurities everywhere.
 
 import logging
 import logging.config
 import logging.handlers
 
+from datetime import datetime
+
 from NeoBurnIn.base import standard_time_format
-from NeoBurnIn.base import nested_dict
+
+
+class LoggingThread(object):
+    def __init__(self, queue,
+                 filename, maxSize, backupCount,
+                 fromaddr, toaddrs, credentials, interval
+                 ):
+        # Handlers for listener
+        console_handler = log_handler_console()
+        file_handler = log_handler_file(filename, maxSize, backupCount)
+        email_handler = log_handler_email(fromaddr, toaddrs, credentials,
+                                          interval)
+        # Record detailed messages
+        file_handler.setFormatter(log_formatter_detailed())
+
+        self.listener = logging.handlers.QueueListener(
+            queue, console_handler, file_handler, email_handler,
+            respect_handler_level=True)
+
+        # For the main logger, attach queue handler only
+        queue_handler = logging.handlers.QueueHandler(queue)
+        self.logger = logging.getLogger()
+        self.logger.addHandler(queue_handler)
+
+    def start(self):
+        self.listener.start()
+
+    def stop(self):
+        self.listener.stop()
 
 
 ###################
@@ -21,97 +51,81 @@ def parse_size_limit(size):
     return int(size_parsed[0]) * size_dict[size_parsed[1]]
 
 
-def configure_logger(
-    log_file,
-    src_addr, dst_addrs, credentials,
-    data_file, data_file_max_size, data_file_backup_count
-):
-    config_dict = nested_dict()
-
-    log_default_version(config_dict)
-    log_formatter_detailed(config_dict)
-
-    log_handler_console(config_dict)
-    log_handler_file(config_dict, log_file)
-    log_handler_email(config_dict, src_addr, dst_addrs, credentials)
-    log_handler_data(config_dict,
-                     data_file,
-                     data_file_max_size, data_file_backup_count)
-
-    config_dict['loggers']['log']  = {'handlers': ['console', 'file', 'email']}
-    config_dict['loggers']['data'] = {'handlers': ['datafile']}
-
-    logging.config.dictConfig(config_dict)
-
-
-def log_default_version(config_dict, version=1):
-    config_dict['version'] = version
+def parse_time_limit(time):
+    time_dict = {'SEC': 1, 'MIN': 60*1, 'HRS': 60*60}
+    time_parsed = time.split(' ')
+    return int(time_parsed[0] * time_dict[time_parsed[1]])
 
 
 ##############
 # Formatters #
 ##############
 
-def log_formatter_detailed(config_dict):
-    settings = {
-        'class': 'logging.Formatter',
-        'format': '%(asctime)s.%(msecs)03d %(levelname)-8s %(processName)-8s %(message)s',
-        'datefmt': standard_time_format
-    }
-    config_dict['formatters']['detailed'] = settings
+def log_formatter_detailed(
+    fmt='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+    datefmt=standard_time_format
+):
+    return logging.Formatter(fmt=fmt, datefmt=datefmt)
 
 
 ############
 # Handlers #
 ############
 
-def log_handler_console(config_dict, level='WARNING'):
-    settings = {
-        'level': level,
-        'class': 'logging.StreamHandler'
-    }
-    config_dict['handlers']['console'] = settings
+def log_handler_console(level=logging.WARNING):
+    handler = logging.StreamHandler()
+    handler.setLevel(level)
+    return handler
 
 
-def log_handler_file(config_dict, log_file, formatter='detailed'):
-    settings = {
-        'level': 'INFO',
-        'class': 'logging.FileHandler',
-        'filename': log_file,
-        'formatter': formatter
-    }
-    config_dict['handlers']['file'] = settings
+# It seems, after all, that it makes sense to log data with error messages.
+def log_handler_file(filename,
+                     maxSize, backupCount,
+                     level=logging.INFO):
+    handler = logging.handlers.RotatingFileHandler(
+        filename=filename,
+        maxBytes=parse_size_limit(maxSize),
+        backupCount=backupCount
+    )
+    handler.setLevel(level)
+    return handler
 
 
-def log_handler_email(config_dict,
-                      src_addr, dst_addrs,
-                      credentials,
-                      level='CRITICAL',
-                      email_title='[BurnIn]: Summary / An error has occurred'
+class AntiFloodSMTPHandler(logging.handlers.SMTPHandler):
+    def __init__(self, interval_in_seconds, *args, **kwargs):
+        self.last_sent = None
+        self.interval_in_seconds = interval_in_seconds
+
+        super().__init__(*args, **kwargs)
+
+    def emit(self, record):
+        if self.last_sent is None:
+            # ...which means that we've never sent any email before
+            self.last_sent = datetime.now()
+            super().emit(record)
+
+        else:
+            now = datetime.now()
+            time_elapsed_since_last_sent = self.time_delta_in_seconds(
+                now, self.last_sent
+            )
+            if time_elapsed_since_last_sent >= self.interval_in_seconds:
+                self.last_sent = now
+                super().emit(record)
+
+    @staticmethod
+    def time_delta_in_seconds(later_time, previous_time):
+        return (later_time - previous_time).total_seconds()
+
+
+def log_handler_email(fromaddr, toaddrs, credentials, interval,
+                      subject='[BurnIn]: Summary / An error has occurred',
+                      mailhost=('smtp.gmail.com', 587),
+                      level=logging.CRITICAL
                       ):
-    settings = {
-        'level': level,
-        'class': 'logging.handlers.SMTPHandler',
-        'formatter': 'detailed',
-        'fromaddr': src_addr,
-        'mailhost': ('smtp.gmail.com', 587),
-        'toaddrs': dst_addrs,
-        'subject': email_title,
-        'credentials': credentials,
-        'secure': ()
-    }
-    config_dict['handlers']['email'] = settings
-
-
-# This is for data logging
-def log_handler_data(config_dict,
-                     data_file,
-                     data_file_max_size, data_file_backup_count):
-    settings = {
-        'level': 'INFO',
-        'class': 'logging.handlers.RotatingFileHandler',
-        'filename': data_file,
-        'maxBytes': parse_size_limit(data_file_max_size),
-        'backupCount': int(data_file_backup_count)
-    }
-    config_dict['handlers']['datafile'] = settings
+    handler = AntiFloodSMTPHandler(
+        parse_time_limit(interval),
+        mailhost, fromaddr, toaddrs, subject, credentials
+    )
+    handler.setLevel(level)
+    return handler
