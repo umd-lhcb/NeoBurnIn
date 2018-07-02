@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 02, 2018 at 01:46 AM -0400
+# Last Change: Mon Jul 02, 2018 at 05:16 PM -0400
 
 from configparser import SafeConfigParser
 from pathlib import Path
@@ -45,9 +45,12 @@ if __name__ == "__main__":
     logging_thread.start()
     logger = logging_thread.logger
 
+    # Note that logging handling is in a separate thread, so that printout may
+    # be out of order.
     logger.info("Test message with level info.")
     logger.warning("Test message with level WARNING.")
     logger.critical("Test message with level CRITICAL.")
+    print('This message should be printed out immediately by the master thread.')
     logger.critical("Test message with level CRITICAL, should be suppressed by email handler.")
 
     sleep(6)
