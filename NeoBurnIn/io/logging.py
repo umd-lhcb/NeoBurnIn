@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 02, 2018 at 01:15 AM -0400
+# Last Change: Mon Jul 02, 2018 at 01:35 AM -0400
 # Too bad. Impurities everywhere.
 
 import logging
@@ -8,8 +8,6 @@ import logging.config
 import logging.handlers
 
 from datetime import datetime
-
-from NeoBurnIn.base import standard_time_format
 
 
 class LoggingThread(object):
@@ -63,7 +61,7 @@ def parse_time_limit(time):
 
 def log_formatter_detailed(
     fmt='%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
-    datefmt=standard_time_format
+    datefmt='%Y-%m-%d %H:%M:%S'
 ):
     return logging.Formatter(fmt=fmt, datefmt=datefmt)
 
