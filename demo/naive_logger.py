@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 02, 2018 at 01:32 AM -0400
+# Last Change: Mon Jul 02, 2018 at 01:46 AM -0400
 
 from configparser import SafeConfigParser
 from pathlib import Path
@@ -53,8 +53,8 @@ if __name__ == "__main__":
     sleep(6)
     logger.critical("Test message with level CRITICAL, reprise.")
 
+    logging_thread.stop()
+
     print('Now inspect the full logging file:')
     cprint(logging_file.read().decode("utf-8").strip('\n'))
-
-    logging_thread.stop()
     logging_file.close()
