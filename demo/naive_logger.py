@@ -1,29 +1,27 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jun 28, 2018 at 11:06 PM -0400
+# Last Change: Mon Jul 02, 2018 at 01:32 AM -0400
 
-import logging
-import logging.config
-
+from configparser import SafeConfigParser
+from pathlib import Path
 from tempfile import NamedTemporaryFile
-from collections import defaultdict
+from queue import Queue
+from time import sleep
 
 import sys
 sys.path.insert(0, '..')
 
-from bUrnIn.base import nested_dict
-from bUrnIn.io.logging import log_email_configure
-
-# Configure logger
-logger_settings = nested_dict()
-log_email_configure(logger_settings,
-                    'burnin.umd.lhb@gmail.com',
-                    ['syp@umd.edu'],
-                    'burnin@umd@lhcb',
-                    )
-logging.config.dictConfig(logger_settings)
+from NeoBurnIn.io.logging import LoggingThread
 
 
+# Parse logger configuration
+def parse_config(config_file):
+    parsed = SafeConfigParser()
+    parsed.read(config_file)
+    return parsed
+
+
+# Print file with color green
 def cprint(msg):
     RESET = '\033[0m'
     GREEN = '\033[92m'
@@ -31,18 +29,32 @@ def cprint(msg):
 
 
 if __name__ == "__main__":
-    log_file = NamedTemporaryFile()
-    data_file = NamedTemporaryFile()
+    # The configuration file will not be distributed with this repo, due to the
+    # fact that it contain sensitive information i.e. password.
+    # Its format is exactly the same as shown in 'server.cfg.example'.
+    options = parse_config(Path('.') / 'naive_logger.cfg')
 
-    logger = logging.getLogger('log')
-    datalogger = logging.getLogger('data')
+    logging_file = NamedTemporaryFile()
+    logging_queue = Queue(-1)
 
-    logger.warning("Test message from 'log' logger.")
-    datalogger.warning("Test message from 'data' logger.")
-    logger.critical("Critical test message from 'log' logger.")
+    logging_thread = LoggingThread(
+        logging_queue,
+        logging_file.name, maxSize='100 MB', backupCount=1000,
+        **options['log']
+    )
+    logging_thread.start()
+    logger = logging_thread.logger
 
-    print(log_file.read().decode("utf-8").strip('\n'))
-    cprint(data_file.read().decode("utf-8").strip('\n'))
+    logger.info("Test message with level info.")
+    logger.warning("Test message with level WARNING.")
+    logger.critical("Test message with level CRITICAL.")
+    logger.critical("Test message with level CRITICAL, should be suppressed by email handler.")
 
-    log_file.close()
-    data_file.close()
+    sleep(6)
+    logger.critical("Test message with level CRITICAL, reprise.")
+
+    print('Now inspect the full logging file:')
+    cprint(logging_file.read().decode("utf-8").strip('\n'))
+
+    logging_thread.stop()
+    logging_file.close()
