@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 02, 2018 at 01:35 AM -0400
+# Last Change: Mon Jul 02, 2018 at 10:53 AM -0400
 # Too bad. Impurities everywhere.
 
 import logging
@@ -30,6 +30,7 @@ class LoggingThread(object):
         # For the main logger, attach queue handler only
         queue_handler = logging.handlers.QueueHandler(queue)
         self.logger = logging.getLogger()
+        self.logger.setLevel(logging.INFO)
         self.logger.addHandler(queue_handler)
 
     def start(self):
@@ -121,9 +122,12 @@ def log_handler_email(fromaddr, toaddrs, credentials, interval,
                       mailhost=('smtp.gmail.com', 587),
                       level=logging.CRITICAL
                       ):
+    # Split 'toaddrs'
+    toaddrs_splitted = toaddrs.split(',')
     handler = AntiFloodSMTPHandler(
         parse_time_limit(interval),
-        mailhost, fromaddr, toaddrs, subject, credentials
+        mailhost, fromaddr, toaddrs_splitted, subject, (fromaddr, credentials),
+        secure=()  # 'secure' cannot be 'None'
     )
     handler.setLevel(level)
     return handler
