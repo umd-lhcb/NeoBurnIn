@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jun 29, 2018 at 10:15 PM -0400
+# Last Change: Wed Jul 04, 2018 at 03:30 PM -0400
 
 from datetime import datetime
 from collections import defaultdict
@@ -21,3 +21,7 @@ def nested_dict():
     Recursive defaultdict that handles variable depth keys.
     '''
     return defaultdict(nested_dict)
+
+
+def time_delta_in_seconds(later_time, previous_time):
+    return (later_time - previous_time).total_seconds()

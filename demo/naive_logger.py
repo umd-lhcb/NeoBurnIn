@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 02, 2018 at 05:16 PM -0400
+# Last Change: Wed Jul 04, 2018 at 03:32 PM -0400
+
+import queue
 
 from configparser import SafeConfigParser
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from queue import Queue
 from time import sleep
 
 import sys
@@ -35,7 +36,7 @@ if __name__ == "__main__":
     options = parse_config(Path('.') / 'naive_logger.cfg')
 
     logging_file = NamedTemporaryFile()
-    logging_queue = Queue(-1)
+    logging_queue = queue.Queue(-1)
 
     logging_thread = LoggingThread(
         logging_queue,

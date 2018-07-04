@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 02, 2018 at 10:53 AM -0400
+# Last Change: Wed Jul 04, 2018 at 03:30 PM -0400
 # Too bad. Impurities everywhere.
 
 import logging
@@ -8,6 +8,8 @@ import logging.config
 import logging.handlers
 
 from datetime import datetime
+
+from NeoBurnIn.base import time_delta_in_seconds
 
 
 class LoggingThread(object):
@@ -105,16 +107,12 @@ class AntiFloodSMTPHandler(logging.handlers.SMTPHandler):
 
         else:
             now = datetime.now()
-            time_elapsed_since_last_sent = self.time_delta_in_seconds(
+            time_elapsed_since_last_sent = time_delta_in_seconds(
                 now, self.last_sent
             )
             if time_elapsed_since_last_sent >= self.interval_in_seconds:
                 self.last_sent = now
                 super().emit(record)
-
-    @staticmethod
-    def time_delta_in_seconds(later_time, previous_time):
-        return (later_time - previous_time).total_seconds()
 
 
 def log_handler_email(fromaddr, toaddrs, credentials, interval,
