@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 05, 2018 at 02:06 PM -0400
+# Last Change: Thu Jul 05, 2018 at 02:28 PM -0400
 
 import sys
 sys.path.insert(0, '..')
@@ -43,7 +43,7 @@ def test_json_str_overflow(data_stream):
     assert data_stream.json_str == expected_str
 
 
-@pytest.mark.skip(reason="Not implemented yet.")
+@pytest.mark.xfail(reason="Not implemented yet.")
 def test_pass_generator_as_an_argument():
     data_stream = DataStream(range(0, 6), max_length=5)
     assert data_stream == [i for i in range(1, 6)]
