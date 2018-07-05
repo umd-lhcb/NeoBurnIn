@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 04, 2018 at 03:30 PM -0400
+# Last Change: Wed Jul 04, 2018 at 09:51 PM -0400
 # Too bad. Impurities everywhere.
 
 import logging
@@ -15,7 +15,8 @@ from NeoBurnIn.base import time_delta_in_seconds
 class LoggingThread(object):
     def __init__(self, queue,
                  filename, maxSize, backupCount,
-                 fromaddr, toaddrs, credentials, interval
+                 fromaddr, toaddrs, credentials, interval,
+                 level=logging.INFO
                  ):
         # Handlers for listener
         console_handler = log_handler_console()
@@ -32,7 +33,7 @@ class LoggingThread(object):
         # For the main logger, attach queue handler only
         queue_handler = logging.handlers.QueueHandler(queue)
         self.logger = logging.getLogger()
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(level)
         self.logger.addHandler(queue_handler)
 
     def start(self):
