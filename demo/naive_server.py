@@ -1,37 +1,32 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 14, 2018 at 11:08 PM -0500
+# Last Change: Mon Jul 16, 2018 at 05:29 PM -0400
 
-from multiprocessing import Queue
+from aiohttp import web
 
 import sys
 sys.path.insert(0, '..')
 
-from bUrnIn.framework.server import ServerAsync
-from bUrnIn.framework.base import Dispatcher
+routes = web.RouteTableDef()
 
 
-class NaiveDispatcher(Dispatcher):
-    '''
-    A simple dispatch that prints everything that throws at it.
-    '''
-    def dispatch(self):
-        while True:
-            msg = self.queue.get()
+class NaiveServer(object):
+    def __init__(self, host='localhost', port=45678):
+        self.host = host
+        self.port = port
 
-            if msg is not None:
-                print(msg.strip('\n'))
-            else:
-                break
+        self.app = web.Application()
+
+    def run(self):
+        web.run_app(self.app, host=self.host, port=self.port)
+
+    @routes.post('/datacollect')
+    async def handler_data_collect(self, request):
+        data = await request.text()
+        print(data)
+        return web.Response(text='Successfully received')
 
 
 if __name__ == "__main__":
-    msg_queue = Queue()
-
-    dispatcher = NaiveDispatcher(msg_queue)
-    dispatcher.start()
-
-    server = ServerAsync('localhost', 45678, msg_queue, timeout=1)
+    server = NaiveServer()
     server.run()
-
-    dispatcher.container.join()
