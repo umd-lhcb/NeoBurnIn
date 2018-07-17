@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 17, 2018 at 11:00 AM -0400
+# Last Change: Tue Jul 17, 2018 at 12:44 PM -0400
 
+import asyncio
 import aiohttp
 
 from datetime import datetime
@@ -23,13 +24,18 @@ def msg_gen(ch_name):
 class NaiveClient():
     def __init__(self, ip='localhost', port='45678'):
         self.url = 'http://{}:{}/datacollect'.format(ip, port)
+        self.loop = asyncio.get_event_loop()
 
-    async def send(self, msg):
+    async def client_send(self, msg):
+        print(msg)
         async with aiohttp.ClientSession() as session:
-            async with session.put(self.url,
+            async with session.post(self.url,
                                    data=bytearray(msg, 'utf8')) as resp:
                 print(resp.status)
                 print(await resp.text())
+
+    def send(self, msg):
+        self.loop.run_until_complete(self.client_send(msg))
 
 
 if __name__ == "__main__":
@@ -37,7 +43,6 @@ if __name__ == "__main__":
     while True:
         try:
             msg = msg_gen(sys.argv[1])
-            print(msg)
             client.send(msg)
             sleep(1)
 
