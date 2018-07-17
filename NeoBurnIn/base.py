@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 05, 2018 at 02:06 PM -0400
+# Last Change: Tue Jul 17, 2018 at 02:25 PM -0400
+
+import abc
 
 from datetime import datetime
 from collections import defaultdict
@@ -8,6 +10,10 @@ from statistics import mean, stdev
 
 standard_time_format = "%Y-%m-%d %H:%M:%S.%f"
 
+
+####################
+# Helper functions #
+####################
 
 def time_now_formatted():
     '''
@@ -30,6 +36,10 @@ def time_delta_in_seconds(later_time, previous_time):
     '''
     return (later_time - previous_time).total_seconds()
 
+
+##########################
+# Data structure classes #
+##########################
 
 class DataStats(list):
     def __init__(self, max_length, renew, *args, **kwargs):
@@ -80,3 +90,47 @@ class DataStream(list):
         # This ensures that the datastream length is, maximally, equal to the
         # designated upper limit.
         self.json_str = ','.join(self)
+
+
+################
+# Meta classes #
+################
+
+class BaseClient(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def post(self, data):
+        '''
+        Use HTTP POST method to transfer encoded data.
+        '''
+
+    @abc.abstractmethod
+    def send(self, msg):
+        '''
+        Send message to remote host.
+        '''
+
+    @abc.abstractmethod
+    def loop_getter(self):
+        '''
+        Return current event loop, if exists.
+        '''
+
+
+class BaseServer(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def run(self):
+        '''
+        Start the server.
+        '''
+
+    @abc.abstractmethod
+    def dispatch(self, msg):
+        '''
+        Dispatch received, decoded msg.
+        '''
+
+    @abc.abstractmethod
+    def loop_getter(self):
+        '''
+        Return current event loop, if exists.
+        '''
