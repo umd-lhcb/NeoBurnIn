@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 17, 2018 at 02:25 PM -0400
+# Last Change: Tue Jul 17, 2018 at 04:11 PM -0400
 
 import abc
 
@@ -96,17 +96,37 @@ class DataStream(list):
 # Meta classes #
 ################
 
+class BaseDataSource(metaclass=abc.ABCMeta):
+    @abc.abstractclassmethod
+    def start(self, interval):
+        '''
+        Run self.run in a thread.
+        '''
+
+    @abc.abstractclassmethod
+    def run(self, interval):
+        '''
+        Continuously providing data at given INTERVAL.
+        '''
+
+    @abc.abstractclassmethod
+    def get(self):
+        '''
+        Return readout data once.
+        '''
+
+
 class BaseClient(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def post(self, data):
+    def run(self):
         '''
-        Use HTTP POST method to transfer encoded data.
+        Start client and send all msgs from a queue.
         '''
 
     @abc.abstractmethod
-    def send(self, msg):
+    def post(self, data):
         '''
-        Send message to remote host.
+        Use HTTP POST method to transfer encoded DATA.
         '''
 
     @abc.abstractmethod
@@ -126,7 +146,7 @@ class BaseServer(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def dispatch(self, msg):
         '''
-        Dispatch received, decoded msg.
+        Dispatch received, decoded MSG.
         '''
 
     @abc.abstractmethod
