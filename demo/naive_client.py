@@ -1,50 +1,71 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 17, 2018 at 12:44 PM -0400
+# Last Change: Tue Jul 17, 2018 at 04:07 PM -0400
 
 import asyncio
 import aiohttp
 
-from datetime import datetime
 from random import uniform
 from time import sleep
+from queue import Queue
+from threading import Thread
 
 import sys
 sys.path.insert(0, '..')
 
-
-def get_current_datetime():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-
-
-def msg_gen(ch_name):
-    return get_current_datetime() + '|' + ch_name + '|' + str(uniform(1, 10))
+from NeoBurnIn.base import time_now_formatted
+from NeoBurnIn.base import BaseDataSource, BaseClient
 
 
-class NaiveClient():
-    def __init__(self, ip='localhost', port='45678'):
+class NaiveRandDataSource(BaseDataSource):
+    def __init__(self, queue, ch_name='ch1'):
+        self.queue = queue
+        self.ch_name = ch_name
+
+    def start(self, interval):
+        self.thread = Thread(target=self.run, args=(interval,))
+        self.thread.start()
+
+    def run(self, interval):
+        while True:
+            sleep(interval)
+            msg = self.get()
+            print(msg)
+            self.queue.put(msg)
+
+    def get(self):
+        return time_now_formatted() + '|' + self.ch_name + '|' + \
+            str(uniform(1, 10))
+
+
+class NaiveClient(BaseClient):
+    def __init__(self, queue, ip='localhost', port='45678'):
+        self.queue = queue
+
         self.url = 'http://{}:{}/datacollect'.format(ip, port)
         self.loop = asyncio.get_event_loop()
 
-    async def client_send(self, msg):
-        print(msg)
-        async with aiohttp.ClientSession() as session:
-            async with session.post(self.url,
-                                   data=bytearray(msg, 'utf8')) as resp:
-                print(resp.status)
+    def run(self):
+        while True:
+            # NOTE: this is a blocking call, which means that all messages will
+            # be sent sequentially---no concurrency.
+            msg = self.queue.get()
+            data = bytearray(msg, 'utf8')
+            self.loop.run_until_complete(self.post(data))
+
+    async def post(self, data):
+        async with aiohttp.ClientSession() as client:
+            async with client.post(self.url, data=data) as resp:
                 print(await resp.text())
 
-    def send(self, msg):
-        self.loop.run_until_complete(self.client_send(msg))
+    def loop_getter(self):
+        return self.loop
 
 
 if __name__ == "__main__":
-    client = NaiveClient()
-    while True:
-        try:
-            msg = msg_gen(sys.argv[1])
-            client.send(msg)
-            sleep(1)
+    data_queue = Queue()
+    datasource = NaiveRandDataSource(data_queue)
+    client = NaiveClient(data_queue)
 
-        except KeyboardInterrupt:
-            break
+    datasource.start(1)
+    client.run()
