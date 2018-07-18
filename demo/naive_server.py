@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 17, 2018 at 12:46 PM -0400
+# Last Change: Tue Jul 17, 2018 at 05:46 PM -0400
 
 from aiohttp import web
 
 import sys
 sys.path.insert(0, '..')
 
+from NeoBurnIn.base import BaseServer
 
-class NaiveServer(object):
+
+class NaiveServer(BaseServer):
     def __init__(self, host='localhost', port=45678):
         self.host = host
         self.port = port
@@ -21,9 +23,15 @@ class NaiveServer(object):
     def run(self):
         web.run_app(self.app, host=self.host, port=self.port)
 
+    def dispatch(self, msg):
+        print(msg)
+
+    def loop_getter(self):
+        return None
+
     async def handler_data_collect(self, request):
-        data = await request.text()
-        print(data)
+        msg = await request.text()
+        self.dispatch(msg)
         return web.Response(text='Successfully received')
 
 
