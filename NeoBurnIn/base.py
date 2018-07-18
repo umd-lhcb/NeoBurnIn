@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 17, 2018 at 05:06 PM -0400
+# Last Change: Wed Jul 18, 2018 at 11:51 AM -0400
 
 import abc
 
@@ -104,9 +104,9 @@ class DataStream(list):
         self.json_str = ','.join(self)
 
 
-################
-# Meta classes #
-################
+####################
+# Abstract classes #
+####################
 
 class BaseDataSource(metaclass=abc.ABCMeta):
     @abc.abstractclassmethod
@@ -132,7 +132,19 @@ class BaseClient(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def run(self):
         '''
-        Start client and send all msgs from a queue.
+        Start client and send all received msgs from a queue.
+        '''
+
+    @abc.abstractmethod
+    def cleanup(self):
+        '''
+        Do cleanups on exit. Typically it is needed to clear the queue.
+        '''
+
+    @abc.abstractmethod
+    def send(self, msg):
+        '''
+        Send a single MSG.
         '''
 
     @abc.abstractmethod

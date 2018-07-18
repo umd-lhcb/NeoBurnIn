@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 18, 2018 at 10:45 AM -0400
+# Last Change: Wed Jul 18, 2018 at 12:06 PM -0400
 
 import asyncio
 import aiohttp
@@ -55,9 +55,21 @@ class NaiveClient(ThreadTerminator, BaseClient):
                 msg = self.queue.get()
                 data = bytearray(msg, 'utf8')
                 self.loop.run_until_complete(self.post(data))
+                self.queue.task_done()
             except KeyboardInterrupt:
-                super().killall()
+                self.killall()
                 break
+        self.cleanup()
+
+    def cleanup(self):
+        while not self.queue.empty():
+            msg = self.queue.get()
+            self.send(msg)
+            self.queue.task_done()
+
+    def send(self, msg):
+        data = bytearray(msg, 'utf8')
+        self.loop.run_until_complete(self.post(data))
 
     async def post(self, data):
         async with aiohttp.ClientSession() as client:
@@ -80,3 +92,4 @@ if __name__ == "__main__":
 
     client = NaiveClient(data_queue, stop_event, thread_list=thread_list)
     client.run()
+    data_queue.join()
