@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 17, 2018 at 04:11 PM -0400
+# Last Change: Tue Jul 17, 2018 at 05:06 PM -0400
 
 import abc
 
@@ -11,9 +11,9 @@ from statistics import mean, stdev
 standard_time_format = "%Y-%m-%d %H:%M:%S.%f"
 
 
-####################
-# Helper functions #
-####################
+###########
+# Helpers #
+###########
 
 def time_now_formatted():
     '''
@@ -35,6 +35,18 @@ def time_delta_in_seconds(later_time, previous_time):
     Computer time difference.
     '''
     return (later_time - previous_time).total_seconds()
+
+
+class ThreadTerminator(object):
+    def __init__(self, stop_event, thread_list=[], join_timeout=10):
+        self.stop_event = stop_event
+        self.thread_list = thread_list
+        self.join_timeout = join_timeout
+
+    def killall(self):
+        self.stop_event.set()
+        for th in self.thread_list:
+            th.join(self.join_timeout)
 
 
 ##########################
