@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 18, 2018 at 12:06 PM -0400
+# Last Change: Wed Jul 18, 2018 at 02:05 PM -0400
 
-import asyncio
-import aiohttp
+import logging
 
 from random import uniform
 from queue import Queue
@@ -12,8 +11,9 @@ from threading import Thread, Event
 import sys
 sys.path.insert(0, '..')
 
-from NeoBurnIn.base import time_now_formatted, ThreadTerminator
-from NeoBurnIn.base import BaseDataSource, BaseClient
+from NeoBurnIn.base import time_now_formatted
+from NeoBurnIn.base import BaseDataSource
+from NeoBurnIn.io.client import Client
 
 
 class NaiveRandDataSource(BaseDataSource):
@@ -37,59 +37,16 @@ class NaiveRandDataSource(BaseDataSource):
             str(uniform(1, 10))
 
 
-class NaiveClient(ThreadTerminator, BaseClient):
-    def __init__(self, queue, *args,
-                 ip='localhost', port='45678', **kwargs):
-        self.queue = queue
-
-        self.url = 'http://{}:{}/datacollect'.format(ip, port)
-        self.loop = asyncio.get_event_loop()
-
-        super().__init__(*args, **kwargs)
-
-    def run(self):
-        while True:
-            # NOTE: this is a blocking call, which means that all messages will
-            # be sent sequentially---no concurrency.
-            try:
-                msg = self.queue.get()
-                data = bytearray(msg, 'utf8')
-                self.loop.run_until_complete(self.post(data))
-                self.queue.task_done()
-            except KeyboardInterrupt:
-                self.killall()
-                break
-        self.cleanup()
-
-    def cleanup(self):
-        while not self.queue.empty():
-            msg = self.queue.get()
-            self.send(msg)
-            self.queue.task_done()
-
-    def send(self, msg):
-        data = bytearray(msg, 'utf8')
-        self.loop.run_until_complete(self.post(data))
-
-    async def post(self, data):
-        async with aiohttp.ClientSession() as client:
-            async with client.post(self.url, data=data) as resp:
-                print(await resp.text())
-
-    def loop_getter(self):
-        return self.loop
-
-
 if __name__ == "__main__":
     data_queue = Queue()
     stop_event = Event()
+    logger = logging.getLogger()
     thread_list = []
 
-    datasource = NaiveRandDataSource(data_queue, stop_event)
-    datasource.start(1)
+    rand_data_source = NaiveRandDataSource(data_queue, stop_event)
+    rand_data_source.start(0.01)
 
-    thread_list.append(datasource.thread)
+    thread_list.append(rand_data_source.thread)
 
-    client = NaiveClient(data_queue, stop_event, thread_list=thread_list)
+    client = Client(data_queue, logger, stop_event, thread_list=thread_list)
     client.run()
-    data_queue.join()
