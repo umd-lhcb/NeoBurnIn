@@ -3,3 +3,4 @@ __pycache__
 *.pdf
 *.cfg
 data
+.pytest_cache
