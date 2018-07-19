@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 19, 2018 at 12:23 PM -0400
+# Last Change: Thu Jul 19, 2018 at 12:49 PM -0400
 
 import asyncio
 import aiohttp
@@ -29,15 +29,23 @@ class Client(ThreadTerminator, BaseClient):
                 self.loop.run_until_complete(self.post(data))
                 self.queue.task_done()
             except KeyboardInterrupt:
-                self.killall()
                 break
+
         self.cleanup()
 
     def cleanup(self):
+        # Kill all sub-threads first
+        self.killall()
+
+        # Now process all remaining info in the queue
         while not self.queue.empty():
             msg = self.queue.get()
             self.send(msg)
             self.queue.task_done()
+
+        # All existing items have been processed. All items added after the
+        # termination is issued will not be processed.
+        self.queue.join()
 
     def send(self, msg):
         data = bytearray(msg, 'utf8')

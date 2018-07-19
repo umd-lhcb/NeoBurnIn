@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 18, 2018 at 02:05 PM -0400
+# Last Change: Thu Jul 19, 2018 at 01:02 PM -0400
 
 import logging
+import janus
 
 from random import uniform
-from queue import Queue
 from threading import Thread, Event
 
 import sys
@@ -38,15 +38,15 @@ class NaiveRandDataSource(BaseDataSource):
 
 
 if __name__ == "__main__":
-    data_queue = Queue()
+    data_queue = janus.Queue()
     stop_event = Event()
     logger = logging.getLogger()
     thread_list = []
 
-    rand_data_source = NaiveRandDataSource(data_queue, stop_event)
+    rand_data_source = NaiveRandDataSource(data_queue.sync_q, stop_event)
     rand_data_source.start(0.01)
 
     thread_list.append(rand_data_source.thread)
 
-    client = Client(data_queue, logger, stop_event, thread_list=thread_list)
+    client = Client(data_queue.sync_q, logger, stop_event, thread_list=thread_list)
     client.run()

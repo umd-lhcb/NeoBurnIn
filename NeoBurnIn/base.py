@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 18, 2018 at 11:51 AM -0400
+# Last Change: Wed Jul 18, 2018 at 11:57 PM -0400
 
 import abc
 
@@ -145,12 +145,6 @@ class BaseClient(metaclass=abc.ABCMeta):
     def send(self, msg):
         '''
         Send a single MSG.
-        '''
-
-    @abc.abstractmethod
-    def post(self, data):
-        '''
-        Use HTTP POST method to transfer encoded DATA.
         '''
 
     @abc.abstractmethod
