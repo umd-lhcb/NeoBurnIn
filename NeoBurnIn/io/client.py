@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 18, 2018 at 01:52 PM -0400
+# Last Change: Thu Jul 19, 2018 at 12:23 PM -0400
 
 import asyncio
 import aiohttp
@@ -43,10 +43,10 @@ class Client(ThreadTerminator, BaseClient):
         data = bytearray(msg, 'utf8')
         self.loop.run_until_complete(self.post(data))
 
+    def loop_getter(self):
+        return self.loop
+
     async def post(self, data):
         async with aiohttp.ClientSession() as client:
             async with client.post(self.url, data=data) as resp:
                 print(await resp.text())
-
-    def loop_getter(self):
-        return self.loop
