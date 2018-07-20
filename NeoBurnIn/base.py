@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 18, 2018 at 11:57 PM -0400
+# Last Change: Thu Jul 19, 2018 at 04:34 PM -0400
 
 import abc
 
@@ -38,15 +38,15 @@ def time_delta_in_seconds(later_time, previous_time):
 
 
 class ThreadTerminator(object):
-    def __init__(self, stop_event, thread_list=[], join_timeout=10):
+    def __init__(self, stop_event, thread_list=[]):
         self.stop_event = stop_event
         self.thread_list = thread_list
-        self.join_timeout = join_timeout
 
     def killall(self):
         self.stop_event.set()
         for th in self.thread_list:
-            th.join(self.join_timeout)
+            # Blocking until all slave threads are terminated.
+            th.cleanup()
 
 
 ##########################
@@ -118,13 +118,20 @@ class BaseDataSource(metaclass=abc.ABCMeta):
     @abc.abstractclassmethod
     def run(self, interval):
         '''
-        Continuously providing data at given INTERVAL.
+        Continuously providing data at given INTERVAL. Running in the current
+        thread.
         '''
 
     @abc.abstractclassmethod
     def get(self):
         '''
         Return readout data once.
+        '''
+
+    @abc.abstractmethod
+    def cleanup(self):
+        '''
+        Return if current thread is closed.
         '''
 
 

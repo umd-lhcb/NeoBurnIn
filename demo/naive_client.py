@@ -1,52 +1,43 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 19, 2018 at 01:02 PM -0400
+# Last Change: Fri Jul 20, 2018 at 01:36 PM -0400
 
 import logging
 import janus
 
-from random import uniform
-from threading import Thread, Event
+from threading import Event
 
 import sys
 sys.path.insert(0, '..')
 
-from NeoBurnIn.base import time_now_formatted
-from NeoBurnIn.base import BaseDataSource
 from NeoBurnIn.io.client import Client
+from NeoBurnIn.DataSource.RandUniform import RandUniformDataSource
+from NeoBurnIn.io.logging import log_handler_console
 
+#########################
+# Configure root logger #
+#########################
 
-class NaiveRandDataSource(BaseDataSource):
-    def __init__(self, queue, stop_event, ch_name='ch1'):
-        self.queue = queue
-        self.stop_event = stop_event
-        self.ch_name = ch_name
-
-    def start(self, interval):
-        self.thread = Thread(target=self.run, args=(stop_event, interval))
-        self.thread.start()
-
-    def run(self, stop_event, interval):
-        while not stop_event.wait(interval):
-            msg = self.get()
-            print(msg)
-            self.queue.put(msg)
-
-    def get(self):
-        return time_now_formatted() + '|' + self.ch_name + '|' + \
-            str(uniform(1, 10))
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+handler = log_handler_console(level=logging.DEBUG)
+logger.addHandler(handler)
 
 
 if __name__ == "__main__":
     data_queue = janus.Queue()
     stop_event = Event()
-    logger = logging.getLogger()
     thread_list = []
 
-    rand_data_source = NaiveRandDataSource(data_queue.sync_q, stop_event)
+    rand_data_source = RandUniformDataSource(data_queue.sync_q, stop_event,
+                                             num_of_chs=3)
     rand_data_source.start(0.01)
+    thread_list.append(rand_data_source)
 
-    thread_list.append(rand_data_source.thread)
-
-    client = Client(data_queue.sync_q, logger, stop_event, thread_list=thread_list)
+    client = Client(data_queue.sync_q, stop_event, thread_list=thread_list)
     client.run()
+
+    # data_queue.sync_q.join()
+    # logger.debug('sync q joined')
+    # data_queue.async_q.join()
+    # logger.debug('async q joined')

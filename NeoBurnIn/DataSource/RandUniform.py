@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 19, 2018 at 11:48 PM -0400
+# Last Change: Fri Jul 20, 2018 at 01:52 PM -0400
 
 import logging
 
@@ -36,6 +36,7 @@ class RandUniformDataSource(BaseDataSource):
 
     def cleanup(self, timeout=10):
         self.thread.join(timeout)
+        logging.debug('Data source closed.')
 
     def get(self):
         msg = ''
