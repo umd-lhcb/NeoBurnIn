@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 04, 2018 at 03:32 PM -0400
+# Last Change: Fri Jul 20, 2018 at 04:30 PM -0400
 
+import logging
 import queue
 
 from configparser import SafeConfigParser
@@ -14,6 +15,10 @@ sys.path.insert(0, '..')
 
 from NeoBurnIn.io.logging import LoggingThread
 
+
+###########
+# Helpers #
+###########
 
 # Parse logger configuration
 def parse_config(config_file):
@@ -29,6 +34,13 @@ def cprint(msg):
     print('{}{}{}{}'.format(RESET, GREEN, msg, RESET))
 
 
+####################
+# Configure logger #
+####################
+
+logger = logging.getLogger()
+
+
 if __name__ == "__main__":
     # The configuration file will not be distributed with this repo, due to the
     # fact that it contain sensitive information i.e. password.
@@ -36,7 +48,7 @@ if __name__ == "__main__":
     options = parse_config(Path('.') / 'naive_logger.cfg')
 
     logging_file = NamedTemporaryFile()
-    logging_queue = queue.Queue(-1)
+    logging_queue = queue.Queue()
 
     logging_thread = LoggingThread(
         logging_queue,
@@ -44,7 +56,6 @@ if __name__ == "__main__":
         **options['log']
     )
     logging_thread.start()
-    logger = logging_thread.logger
 
     # Note that logging handling is in a separate thread, so that printout may
     # be out of order.

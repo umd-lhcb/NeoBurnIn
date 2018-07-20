@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 04, 2018 at 09:51 PM -0400
+# Last Change: Fri Jul 20, 2018 at 04:28 PM -0400
 # Too bad. Impurities everywhere.
 
 import logging
@@ -30,11 +30,11 @@ class LoggingThread(object):
             queue, console_handler, file_handler, email_handler,
             respect_handler_level=True)
 
-        # For the main logger, attach queue handler only
+        # Configure the root logger by attaching queue handler only
         queue_handler = logging.handlers.QueueHandler(queue)
-        self.logger = logging.getLogger()
-        self.logger.setLevel(level)
-        self.logger.addHandler(queue_handler)
+        logger = logging.getLogger()
+        logger.setLevel(level)
+        logger.addHandler(queue_handler)
 
     def start(self):
         self.listener.start()
