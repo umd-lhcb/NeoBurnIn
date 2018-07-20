@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jul 20, 2018 at 01:36 PM -0400
+# Last Change: Fri Jul 20, 2018 at 04:26 PM -0400
 
 import logging
 import janus
@@ -14,14 +14,13 @@ from NeoBurnIn.io.client import Client
 from NeoBurnIn.DataSource.RandUniform import RandUniformDataSource
 from NeoBurnIn.io.logging import log_handler_console
 
-#########################
-# Configure root logger #
-#########################
+####################
+# Configure logger #
+####################
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-handler = log_handler_console(level=logging.DEBUG)
-logger.addHandler(handler)
+logger.addHandler(log_handler_console(level=logging.DEBUG))
 
 
 if __name__ == "__main__":
@@ -31,7 +30,7 @@ if __name__ == "__main__":
 
     rand_data_source = RandUniformDataSource(data_queue.sync_q, stop_event,
                                              num_of_chs=3)
-    rand_data_source.start(0.01)
+    rand_data_source.start(0.3)
     thread_list.append(rand_data_source)
 
     client = Client(data_queue.sync_q, stop_event, thread_list=thread_list)
