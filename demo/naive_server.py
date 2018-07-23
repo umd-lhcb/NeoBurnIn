@@ -1,18 +1,42 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jul 20, 2018 at 04:20 PM -0400
+# Last Change: Mon Jul 23, 2018 at 01:49 PM -0400
 
 import logging
 import asyncio
 
 from aiohttp import web
 from random import uniform
+from argparse import ArgumentParser
 
 import sys
 sys.path.insert(0, '..')
 
 from NeoBurnIn.io.server import GroundServer
 from NeoBurnIn.io.logging import log_handler_console
+
+
+###################
+# Parse arguments #
+###################
+
+def parse_input():
+    parser = ArgumentParser(
+        description='A naive http server that adds random lags per request.'
+    )
+
+    parser.add_argument(
+        '--randRange',
+        dest='randRange',
+        help='''
+        specify the range of random lags.
+        ''',
+        type=str,
+        default='1,2'
+    )
+
+    return parser.parse_args()
+
 
 ####################
 # Configure logger #
@@ -24,6 +48,13 @@ logger.addHandler(log_handler_console(level=logging.DEBUG))
 
 
 class NaiveServer(GroundServer):
+    def __init__(self, randRange, *args, **kwargs):
+        randLower, randUpper = randRange.split(',')
+        self.randLower = int(randLower)
+        self.randUpper = int(randUpper)
+
+        super().__init__(*args, **kwargs)
+
     def register_routes(self):
         self.app.add_routes([
             web.post('/datacollect', self.handler_data_collect)
@@ -34,11 +65,14 @@ class NaiveServer(GroundServer):
 
     async def handler_data_collect(self, request):
         msg = await request.text()
-        await asyncio.sleep(uniform(0, 1))
+        sleep_interval = uniform(self.randLower, self.randUpper)
+        await asyncio.sleep(sleep_interval)
         self.dispatch(msg)
-        return web.Response(text='Successfully received')
+        return web.Response(
+            text='Received after sleeping for {} sec.'.format(sleep_interval))
 
 
 if __name__ == "__main__":
-    server = NaiveServer()
+    args = parse_input()
+    server = NaiveServer(args.randRange)
     server.run()
