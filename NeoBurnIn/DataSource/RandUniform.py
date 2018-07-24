@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jul 20, 2018 at 02:13 PM -0400
+# Last Change: Tue Jul 24, 2018 at 10:48 AM -0400
 
 import logging
 
@@ -18,10 +18,10 @@ class RandUniformDataSource(BaseDataSource):
     separator = '|'
     line_end  = '\n'
 
-    def __init__(self, queue, stop_event, num_of_chs=1):
+    def __init__(self, queue, stop_event, numOfChs=1):
         self.queue = queue
         self.stop_event = stop_event
-        self.num_of_chs = num_of_chs
+        self.num_of_chs = numOfChs
 
     def start(self, interval):
         self.thread = Thread(target=self.run, args=(interval, ))
