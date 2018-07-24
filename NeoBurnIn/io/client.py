@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 24, 2018 at 10:22 AM -0400
+# Last Change: Tue Jul 24, 2018 at 11:55 AM -0400
 
 import logging
 import asyncio
@@ -42,23 +42,19 @@ class Client(ThreadTerminator, BaseClient):
 
         # Now process all remaining info in the queue
         # logger.debug('Process all remaining items in the queue')
-        # with aiohttp.ClientSession() as session:
-            # while not self.queue.empty():
-                # self.loop.run_until_complete(self.send(session))
-                # self.queue.task_done()
-                # logger.debug('An item has been processed.')
+        while not self.queue.empty():
+            self.loop.run_until_complete(self.send())
+            logger.debug('An item has been processed.')
 
         # All existing items have been processed. All items added after the
         # termination is issued will not be processed.
-        # self.queue.join()
-
-    # def send(self, session, msg):
-        # data = bytearray(msg, 'utf8')
-        # self.loop.run_until_complete(self.post(session, data))
+        self.queue.join()
+        logger.debug('Asynchronous queue joined.')
 
     def loop_getter(self):
         return self.loop
 
+    # Recursively handle all messages, up to maxConcurrency
     async def handle_single_msg(self):
         asyncio.ensure_future(self.send())
 
@@ -71,11 +67,23 @@ class Client(ThreadTerminator, BaseClient):
         logger.debug('Got a new message, start transmission...')
         data = bytearray(msg, 'utf8')
         await self.post(data)
+        self.queue.task_done()
         # FIXME: here we have to decouple semaphore acquire and release
         self.sem.release()
 
     async def post(self, data):
-        async with aiohttp.ClientSession() as session:
-            async with session.post(self.url, data=data) as resp:
-                logger.debug(await resp.text())
-                return resp.status
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(self.url, data=data) as resp:
+                    if resp.status != 200:
+                        logger.warning(
+                            'Transmission for the following msg unsuccessful, with a HTTP error code {}: {}'.format(
+                                resp.status, data.decode('utf8')
+                            ))
+                    logger.debug(await resp.text())
+
+        except Exception as err:
+            logger.warning(
+                'Transmission for the following msg failed, with the following exception {}: {}'.format(
+                    err.__class__.__name__, data.decode('utf8')
+                ))
