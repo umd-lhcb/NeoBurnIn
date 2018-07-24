@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 23, 2018 at 01:49 PM -0400
+# Last Change: Tue Jul 24, 2018 at 10:44 AM -0400
 
 import logging
 import asyncio
@@ -27,7 +27,6 @@ def parse_input():
 
     parser.add_argument(
         '--randRange',
-        dest='randRange',
         help='''
         specify the range of random lags.
         ''',
@@ -47,11 +46,15 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(log_handler_console(level=logging.DEBUG))
 
 
+#################
+# Define server #
+#################
+
 class NaiveServer(GroundServer):
     def __init__(self, randRange, *args, **kwargs):
         randLower, randUpper = randRange.split(',')
-        self.randLower = int(randLower)
-        self.randUpper = int(randUpper)
+        self.randLower = float(randLower)
+        self.randUpper = float(randUpper)
 
         super().__init__(*args, **kwargs)
 
