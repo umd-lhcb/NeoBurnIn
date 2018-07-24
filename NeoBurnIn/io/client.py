@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 24, 2018 at 01:04 AM -0400
+# Last Change: Tue Jul 24, 2018 at 10:22 AM -0400
 
 import logging
 import asyncio
@@ -14,11 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 class Client(ThreadTerminator, BaseClient):
+    POST_API = 'datacollect'
+
     def __init__(self, queue, *args,
-              ip='localhost', port='45678', maxConcurrency=5, **kwargs):
+              ip='localhost', port='45678', maxConcurrency=3, **kwargs):
         self.queue = queue
 
-        self.url = 'http://{}:{}/datacollect'.format(ip, port)
+        self.url = 'http://{}:{}/{}'.format(ip, port, self.POST_API)
         self.sem = asyncio.BoundedSemaphore(maxConcurrency)
         self.loop = asyncio.get_event_loop()
 
