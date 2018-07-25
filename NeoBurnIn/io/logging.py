@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 25, 2018 at 10:53 AM -0400
+# Last Change: Wed Jul 25, 2018 at 11:06 AM -0400
 # Too bad. Impurities everywhere.
 
 import logging
 import logging.config
 import logging.handlers
-import sys
 
 from datetime import datetime
 from rainbow_logging_handler import RainbowLoggingHandler
@@ -84,7 +83,7 @@ def log_handler_console(level=logging.WARNING):
 
 
 def log_handler_colored_console(level=logging.WARNING):
-    handler = RainbowLoggingHandler(sys.stderr,
+    handler = RainbowLoggingHandler(None,
                                     color_funcName=('black', 'yellow', True))
     handler.setLevel(level)
     return handler
