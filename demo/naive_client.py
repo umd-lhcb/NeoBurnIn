@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 24, 2018 at 11:24 AM -0400
+# Last Change: Tue Jul 24, 2018 at 02:08 PM -0400
 
 import logging
 import janus
@@ -78,6 +78,3 @@ if __name__ == "__main__":
     client = Client(data_queue.async_q, stop_event,
                     thread_list=thread_list, maxConcurrency=args.maxConcurrency)
     client.run()
-
-    data_queue.sync_q.join()
-    logger.debug('Synchronous queue joined.')
