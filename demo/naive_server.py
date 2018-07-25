@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 24, 2018 at 10:44 AM -0400
+# Last Change: Wed Jul 25, 2018 at 10:54 AM -0400
 
 import logging
 import asyncio
@@ -13,7 +13,7 @@ import sys
 sys.path.insert(0, '..')
 
 from NeoBurnIn.io.server import GroundServer
-from NeoBurnIn.io.logging import log_handler_console
+from NeoBurnIn.io.logging import log_handler_colored_console
 
 
 ###################
@@ -43,7 +43,7 @@ def parse_input():
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-logger.addHandler(log_handler_console(level=logging.DEBUG))
+logger.addHandler(log_handler_colored_console(level=logging.DEBUG))
 
 
 #################
