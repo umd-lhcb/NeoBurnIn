@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 25, 2018 at 12:39 AM -0400
+# Last Change: Wed Jul 25, 2018 at 05:12 PM -0400
 
 import logging
 import asyncio
@@ -40,50 +40,59 @@ class Client(ThreadTerminator, BaseClient):
             self.cleanup()
 
     def cleanup(self):
-        logger.debug('Kill all sub-threads first.')
+        logger.info('Kill all sub-threads first.')
         self.killall()
 
-        pending_send_tasks = [self.pending_send_tasks[key] for key in
-                              self.pending_send_tasks.keys()]
-        for task in pending_send_tasks:
+        pending_tasks = asyncio.Task.all_tasks()
+        for task in pending_tasks:
+            task.cancel()
             self.loop.run_until_complete(task)
 
-        logger.debug('Process all remaining items in the queue, possibly none.')
+        logger.info('Process all remaining items in the queue, possibly none.')
         while not self.queue.empty():
             self.loop.run_until_complete(self.send())
-            logger.debug('An item has been processed.')
+            logger.info('An item has been processed.')
 
-        logger.debug('Finally, stop the loop.')
+        logger.info('Finally, stop the loop.')
         self.loop.stop()
 
     def loop_getter(self):
         return self.loop
 
-    async def handle_single_msg(self, num_of_iteration=1):
-        # Proceed if more client sessions are allowed; otherwise block.
-        await self.sem.acquire()
+    async def handle_single_msg(self):
+        try:
+            # Proceed if more client sessions are allowed; otherwise block.
+            await self.sem.acquire()
 
-        # Register 'send' tasks so that we have a handle on them, and can cancel
-        # them gracefully on shutdown.
-        send_task = self.loop.create_task(self.send(num_of_iteration))
-        self.pending_send_tasks[num_of_iteration] = send_task
+            # Schedule send msg to the remote host
+            self.loop.create_task(self.send())
 
-        # Recursively handle all messages, up to maxConcurrency
-        self.handler = self.loop.create_task(
-            self.handle_single_msg(num_of_iteration+1))
+            # Recursively handle all messages, up to maxConcurrency
+            self.handler = self.loop.create_task(
+                self.handle_single_msg())
 
-    async def send(self, task_dict_handle=None):
-        data = bytearray(await self.queue.get(), 'utf8')
-        logger.debug('Got a new message, start transmission...')
+        except Exception as err:
+            logger.debug(
+                'The recursive msg handler has been canceled with the following exception: {}'.format(
+                    err.__class__.__name__
+                ))
 
-        await self.post(data)
-        self.queue.task_done()
+    async def send(self):
+        try:
+            data = bytearray(await self.queue.get(), 'utf8')
+            logger.debug('Got a new message, start transmission...')
 
-        if task_dict_handle is not None:
-            self.pending_send_tasks.pop(task_dict_handle, None)
+            await self.post(data)
+            self.queue.task_done()
 
-        # NOTE: here we have to decouple semaphore acquire and release
-        self.sem.release()
+            # NOTE: here we have to decouple semaphore acquire and release
+            self.sem.release()
+
+        except Exception as err:
+            logger.debug(
+                'The sender has been canceled with the following exception: {}'.format(
+                    err.__class__.__name__
+                ))
 
     async def post(self, data):
         try:
@@ -95,6 +104,10 @@ class Client(ThreadTerminator, BaseClient):
                                 resp.status, data.decode('utf8')
                             ))
                     logger.debug(await resp.text())
+
+        except asyncio.CancelledError:
+            logging.info('Transmission canceled by cleanup sequence, adding msg back to the queue')
+            await self.queue.put(data.decode('utf8'))
 
         except Exception as err:
             logger.warning(
