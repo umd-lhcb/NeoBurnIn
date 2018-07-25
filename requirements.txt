@@ -1,3 +1,4 @@
 aiohttp
 pytest
 janus
+rainbow_logging_handler

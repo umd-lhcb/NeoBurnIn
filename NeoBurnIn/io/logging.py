@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jul 20, 2018 at 04:28 PM -0400
+# Last Change: Wed Jul 25, 2018 at 10:53 AM -0400
 # Too bad. Impurities everywhere.
 
 import logging
 import logging.config
 import logging.handlers
+import sys
 
 from datetime import datetime
+from rainbow_logging_handler import RainbowLoggingHandler
 
 from NeoBurnIn.base import time_delta_in_seconds
 
@@ -19,7 +21,8 @@ class LoggingThread(object):
                  level=logging.INFO
                  ):
         # Handlers for listener
-        console_handler = log_handler_console()
+        console_handler = log_handler_colored_console()
+        # console_handler = log_handler_console()
         file_handler = log_handler_file(filename, maxSize, backupCount)
         email_handler = log_handler_email(fromaddr, toaddrs, credentials,
                                           interval)
@@ -76,6 +79,13 @@ def log_formatter_detailed(
 
 def log_handler_console(level=logging.WARNING):
     handler = logging.StreamHandler()
+    handler.setLevel(level)
+    return handler
+
+
+def log_handler_colored_console(level=logging.WARNING):
+    handler = RainbowLoggingHandler(sys.stderr,
+                                    color_funcName=('black', 'yellow', True))
     handler.setLevel(level)
     return handler
 
