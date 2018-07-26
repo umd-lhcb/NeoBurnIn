@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 25, 2018 at 05:12 PM -0400
+# Last Change: Thu Jul 26, 2018 at 12:32 AM -0400
 
 import logging
 import asyncio
@@ -64,7 +64,8 @@ class Client(ThreadTerminator, BaseClient):
             # Proceed if more client sessions are allowed; otherwise block.
             await self.sem.acquire()
 
-            # Schedule send msg to the remote host
+            # Schedule send msg to the remote host.
+            # Functionality-wise, this is equivalent to 'asyncio.ensure_future'.
             self.loop.create_task(self.send())
 
             # Recursively handle all messages, up to maxConcurrency
@@ -73,7 +74,7 @@ class Client(ThreadTerminator, BaseClient):
 
         except Exception as err:
             logger.debug(
-                'The recursive msg handler has been canceled with the following exception: {}'.format(
+                'The recursive msg handler has been interrupted with the following exception: {}'.format(
                     err.__class__.__name__
                 ))
 
@@ -90,7 +91,7 @@ class Client(ThreadTerminator, BaseClient):
 
         except Exception as err:
             logger.debug(
-                'The sender has been canceled with the following exception: {}'.format(
+                'The sender has been interrupted with the following exception: {}'.format(
                     err.__class__.__name__
                 ))
 
