@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 25, 2018 at 10:54 AM -0400
+# Last Change: Thu Jul 26, 2018 at 10:09 AM -0400
 
 import logging
 import asyncio
@@ -77,5 +77,5 @@ class NaiveServer(GroundServer):
 
 if __name__ == "__main__":
     args = parse_input()
-    server = NaiveServer(args.randRange)
+    server = NaiveServer(args.randRange, host='0.0.0.0')
     server.run()

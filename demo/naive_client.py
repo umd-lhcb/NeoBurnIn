@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 25, 2018 at 10:55 AM -0400
+# Last Change: Thu Jul 26, 2018 at 10:11 AM -0400
 
 import logging
 import janus
@@ -52,6 +52,15 @@ def parse_input():
         default=3
     )
 
+    parser.add_argument(
+        '--host',
+        help='''
+        specify remote server address.
+        ''',
+        type=str,
+        default='localhost'
+    )
+
     return parser.parse_args()
 
 
@@ -76,5 +85,6 @@ if __name__ == "__main__":
     thread_list.append(rand_data_source)
 
     client = Client(data_queue.async_q, stop_event,
+                    host=args.host,
                     thread_list=thread_list, maxConcurrency=args.maxConcurrency)
     client.run()
