@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 26, 2018 at 09:49 AM -0400
+# Last Change: Thu Jul 26, 2018 at 09:55 AM -0400
 
 import logging
 import asyncio
@@ -119,7 +119,7 @@ class Client(ThreadTerminator, BaseClient):
                     logger.debug(await resp.text())
 
         except asyncio.CancelledError:
-            logger.debug('Transmission canceled by cleanup sequence, retry sending before cancellation.')
+            logger.debug('Transmission canceled by cleanup sequence, putting the msg back to queue.')
             await self.queue.put(data.decode('utf8'))
             # We need to raise this error so that the task is marked as
             # canceled.
