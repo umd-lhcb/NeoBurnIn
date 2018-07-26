@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 26, 2018 at 12:43 AM -0400
+# Last Change: Thu Jul 26, 2018 at 12:57 AM -0400
 
 import logging
 import asyncio
@@ -72,9 +72,12 @@ class Client(ThreadTerminator, BaseClient):
             self.handler = self.loop.create_task(
                 self.handle_single_msg())
 
+        except asyncio.CancelledError:
+            logger.debug('Recursive msg handler cancellation has been requested.')
+
         except Exception as err:
             logger.debug(
-                'The recursive msg handler has been interrupted with the following exception: {}'.format(
+                'Recursive msg handler has been interrupted with the following exception: {}'.format(
                     err.__class__.__name__
                 ))
 
@@ -89,9 +92,12 @@ class Client(ThreadTerminator, BaseClient):
             # NOTE: here we have to decouple semaphore acquire and release
             self.sem.release()
 
+        except asyncio.CancelledError:
+            logger.debug('Sender cancellation has been requested.')
+
         except Exception as err:
-            logger.debug(
-                'The sender has been interrupted with the following exception: {}'.format(
+            logger.warning(
+                'Sender has been interrupted with the following exception: {}'.format(
                     err.__class__.__name__
                 ))
 
@@ -107,8 +113,8 @@ class Client(ThreadTerminator, BaseClient):
                     logger.debug(await resp.text())
 
         except asyncio.CancelledError:
-            logging.debug('Transmission canceled by cleanup sequence, retry sending before cancellation.')
-            await self.post(data)
+            logger.debug('Transmission canceled by cleanup sequence, retry sending before cancellation.')
+            await self.queue.put(data.decode('utf8'))
             # We need to raise this error so that the task is marked as
             # canceled.
             raise
