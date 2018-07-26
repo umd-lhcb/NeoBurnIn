@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 26, 2018 at 12:57 AM -0400
+# Last Change: Thu Jul 26, 2018 at 09:49 AM -0400
 
 import logging
 import asyncio
@@ -14,6 +14,12 @@ logger = logging.getLogger(__name__)
 
 
 class Client(ThreadTerminator, BaseClient):
+    '''
+    A http client that sends msgs in queue to remote server concurrently.
+    It guarantees the queue is cleared on shutdown (but this cleanup operation
+    may take an infinite amount of time), but does not guarantee maintaining the
+    order of the messages.
+    '''
     POST_API = 'datacollect'
 
     def __init__(self, queue, *args,
