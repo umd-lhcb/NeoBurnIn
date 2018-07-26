@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 19, 2018 at 04:34 PM -0400
+# Last Change: Thu Jul 26, 2018 at 09:43 AM -0400
 
 import abc
 
@@ -125,13 +125,13 @@ class BaseDataSource(metaclass=abc.ABCMeta):
     @abc.abstractclassmethod
     def get(self):
         '''
-        Return readout data once.
+        Return readout data once, if supported.
         '''
 
     @abc.abstractmethod
     def cleanup(self):
         '''
-        Return if current thread is closed.
+        Join spawned thread.
         '''
 
 
