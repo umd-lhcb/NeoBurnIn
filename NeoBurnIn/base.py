@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 26, 2018 at 09:43 AM -0400
+# Last Change: Sun Jul 29, 2018 at 03:19 AM -0400
 
 import abc
 
@@ -53,55 +53,84 @@ class ThreadTerminator(object):
 # Data structure classes #
 ##########################
 
-class DataStats(list):
-    def __init__(self, max_length, renew, *args, **kwargs):
-        self.max_length = max_length
-        self.renew = renew
-
-        self.reference = None
-
-        super().__init__(*args, **kwargs)
-
-    def append(self, item):
-        length = len(self)
-
-        if length == self.max_length:
-            if not self.renew:
-                self.pop(0)
-            else:
-                super().clear()
-            stats = (mean(self), stdev(self))
-
-        else:
-            stats = None
-
-        super().append(item)
-        return stats
-
-
 class DataStream(list):
     '''
-    Store received data, up to max_length. Data will be appended to a string on
-    append. The string will be used for json output, which will be used for
+    Store received data, up to 'max_length'. Data will be appended to a string
+    on append. The string will be used for json output, which will be used for
     visualization.
     '''
     def __init__(self, *args, max_length=5, **kwargs):
         self.max_length = max_length
         self.json_str = ''
+
         super().__init__(*args, **kwargs)
 
     def append(self, item):
         # Append unconditionally.
         super().append(item)
+        list_is_full = False
 
         # If the total length is strictly greater than designated upper limit,
         # pop the oldest item.
         if len(self) > self.max_length:
             self.pop(0)
+            list_is_full = True
 
-        # This ensures that the datastream length is, maximally, equal to the
+        # This ensures that the datastream length is at most equal to the
         # designated upper limit.
         self.json_str = ','.join(self)
+
+        return list_is_full
+
+
+class DataStats(DataStream):
+    '''
+    Store data, up to 'max_length', and generate related statistics on list
+    full.  The first statistics is stored for future reference.
+
+    If 'defer_until_full_renewal' is set to True, a new statistics will
+    NOT be generated until the list is full again with each single entry
+    renewed.
+
+    Otherwise a new statistics is generated on next 'append()'.
+    '''
+    def __init__(self, *args,
+                 defer_until_full_renewal=True, **kwargs):
+        self.defer_until_full_renewal = defer_until_full_renewal
+        if self.defer_until_full_renewal:
+            self.renewal_counter = 0
+
+        self.reference_exists = False
+        self.reference_mean = None
+        self.reference_stdev = None
+
+        super().__init__(*args, **kwargs)
+
+    def append(self, item):
+        if super().append(item):
+            if self.defer_until_full_renewal:
+                self.post_append_full_defer()
+            else:
+                self.post_append_partial_defer()
+
+        else:
+            return None
+
+    def post_append_full_defer(self):
+        self.renewal_counter += 1
+
+        if self.renewal_counter > self.max_length:
+            self.renewal_counter = 0
+
+
+    def post_append_partial_defer(self):
+        return (mean(self), stdev(self))
+
+    def store_reference(self, reference_mean, reference_stdev):
+        if not self.reference_exists:
+            self.reference_mean = reference_mean
+            self.reference_stdev = reference_stdev
+            self.reference_exists = True
 
 
 ####################

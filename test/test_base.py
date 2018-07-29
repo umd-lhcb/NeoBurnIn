@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 05, 2018 at 02:28 PM -0400
+# Last Change: Sun Jul 29, 2018 at 03:21 AM -0400
 
 import sys
 sys.path.insert(0, '..')
@@ -41,6 +41,13 @@ def test_json_str_overflow(data_stream):
     for i in range(0, 6):
         data_stream.append(str(i))
     assert data_stream.json_str == expected_str
+
+
+def test_return_val_of_append(data_stream):
+    for i in range(5):
+        assert data_stream.append(str(i)) is False
+    for i in range(6, 8):
+        assert data_stream.append(str(i)) is True
 
 
 @pytest.mark.xfail(reason="Not implemented yet.")
