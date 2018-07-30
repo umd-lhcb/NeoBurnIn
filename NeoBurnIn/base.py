@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jul 29, 2018 at 03:19 AM -0400
+# Last Change: Sun Jul 29, 2018 at 04:32 PM -0400
 
 import abc
 
@@ -59,7 +59,8 @@ class DataStream(list):
     on append. The string will be used for json output, which will be used for
     visualization.
     '''
-    def __init__(self, *args, max_length=5, **kwargs):
+    def __init__(self, *args,
+                 max_length=5, **kwargs):
         self.max_length = max_length
         self.json_str = ''
 
@@ -109,21 +110,38 @@ class DataStats(DataStream):
     def append(self, item):
         if super().append(item):
             if self.defer_until_full_renewal:
-                self.post_append_full_defer()
+                return self.post_append_full_defer()
             else:
-                self.post_append_partial_defer()
+                return self.post_append_partial_defer()
 
         else:
-            return None
+            return False
 
     def post_append_full_defer(self):
         self.renewal_counter += 1
 
-        if self.renewal_counter > self.max_length:
-            self.renewal_counter = 0
+        # If we've never updated the learning result, do it.
+        if not self.reference_exists:
+            stats = self.compute_mean_and_std()
+            self.store_reference(*stats)
+            return stats
 
+        # If it is full again, compute stats, but don't store them internally.
+        elif self.renewal_counter > self.max_length:
+            self.renewal_counter = 0
+            stats = self.compute_mean_and_std()
+            return stats
+
+        else:
+            return False
 
     def post_append_partial_defer(self):
+        mean_value = mean(self)
+        standard_dev = stdev(self)
+        self.store_reference(mean_value, standard_dev)
+        return (mean_value, standard_dev)
+
+    def compute_mean_and_std(self):
         return (mean(self), stdev(self))
 
     def store_reference(self, reference_mean, reference_stdev):
