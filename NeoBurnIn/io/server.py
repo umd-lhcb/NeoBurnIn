@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jul 20, 2018 at 04:17 PM -0400
+# Last Change: Mon Jul 30, 2018 at 05:09 PM -0400
 
 import logging
-import asyncio
 
 from aiohttp import web
 
 from NeoBurnIn.base import BaseServer
+from NeoBurnIn.base import stash_create
 
 
 logger = logging.getLogger(__name__)
@@ -29,3 +29,72 @@ class GroundServer(BaseServer):
 
     def register_routes(self):
         pass
+
+
+class DataServer(GroundServer):
+    def __init__(self, *args,
+                 stdev_range=3, **kwargs):
+        self.stdev_range = stdev_range
+        self.stash = stash_create()
+
+        super().__init__(*args, **kwargs)
+
+    def register_routes(self):
+        self.app.add_routes([
+            web.post(
+                '/datacollect',
+                self.handler_data_collect),
+            web.get(
+                '/get/{name}',
+                self.handler_get_json)
+        ])
+
+    async def handler_get_json(self, request):
+        pass
+
+    async def handler_data_collect(self, request):
+        msg = await request.text()
+        self.dispatch(msg)
+        return web.Response(text='Successfully received.')
+
+    def dispatch(self, msg):
+        splitted = self.split_input(msg)
+        for entry in splitted:
+            date, ch_name, value = self.validate_input(entry)
+
+            # First store the data
+            results = self.stash[ch_name]['data'].append(value)
+            if not results:
+                self.stash[ch_name]['summary'].append(results[0])
+
+            # Now check if this data point is ok
+            if self.stash[ch_name]['data'].reference_exists:
+                mean = self.stash[ch_name]['data'].reference_mean
+                envelop = self.stash[ch_name]['data'].reference_stdev * \
+                    self.stdev_range
+                if value <= mean-envelop or value >= mean+envelop:
+                    logger.critical('Channel {} measured a value of {}, which is outside of {} stds.'.format(
+                        ch_name, value, self.stdev_range
+                    ))
+
+    @staticmethod
+    def split_input(msg, delimiter='\n'):
+        splitted = msg.split(delimiter)
+        if splitted[-1] == '':
+            return splitted[:-1]
+        else:
+            return splitted
+
+    @staticmethod
+    def validate_input(entry, delimiter='|'):
+        try:
+            date, ch_name, value = entry.split(delimiter)
+        except Exception:
+            logger.error('Entry not correctly delimited: {}'.format(entry))
+
+        try:
+            value = float(value)
+        except Exception:
+            logger.error('Measured value is corrupt: {}'.format(value))
+
+        return (date, ch_name, value)
