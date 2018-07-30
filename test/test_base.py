@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 30, 2018 at 11:00 AM -0400
+# Last Change: Mon Jul 30, 2018 at 11:16 AM -0400
 
 import pytest
 import statistics
@@ -194,4 +194,20 @@ def test_data_stats_full_compute_third_stats(data_stats_full):
     assert data_stats_full.append(15) == (
         statistics.mean([11, 12, 13, 14, 15]),
         statistics.stdev([11, 12, 13, 14, 15]),
+    )
+
+
+def test_data_stats_full_after_third_full(data_stats_full):
+    for i in range(0, 16):
+        data_stats_full.append(i)
+    for i in range(16, 20):
+        assert data_stats_full.append(i) is False
+
+
+def test_data_stats_full_compute_fourth_stats(data_stats_full):
+    for i in range(0, 20):
+        data_stats_full.append(i)
+    assert data_stats_full.append(20) == (
+        statistics.mean([16, 17, 18, 19, 20]),
+        statistics.stdev([16, 17, 18, 19, 20]),
     )

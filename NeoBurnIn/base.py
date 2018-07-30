@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 30, 2018 at 10:14 AM -0400
+# Last Change: Mon Jul 30, 2018 at 11:07 AM -0400
 
 import abc
 
@@ -128,7 +128,7 @@ class DataStats(DataStream):
 
         # If it is full again, compute stats, but don't store them internally.
         elif self.renewal_counter > self.max_length:
-            self.renewal_counter = 0
+            self.renewal_counter = 1
             return self.compute_mean_and_std()
 
         else:
