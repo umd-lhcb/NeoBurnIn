@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jul 29, 2018 at 04:32 PM -0400
+# Last Change: Sun Jul 29, 2018 at 09:02 PM -0400
 
 import abc
 
@@ -129,26 +129,24 @@ class DataStats(DataStream):
         # If it is full again, compute stats, but don't store them internally.
         elif self.renewal_counter > self.max_length:
             self.renewal_counter = 0
-            stats = self.compute_mean_and_std()
-            return stats
+            return self.compute_mean_and_std()
 
         else:
             return False
 
     def post_append_partial_defer(self):
-        mean_value = mean(self)
-        standard_dev = stdev(self)
-        self.store_reference(mean_value, standard_dev)
-        return (mean_value, standard_dev)
+        stats = self.compute_mean_and_std()
+        if not self.reference_exists:
+            self.store_reference(*stats)
+        return stats
 
     def compute_mean_and_std(self):
         return (mean(self), stdev(self))
 
     def store_reference(self, reference_mean, reference_stdev):
-        if not self.reference_exists:
-            self.reference_mean = reference_mean
-            self.reference_stdev = reference_stdev
-            self.reference_exists = True
+        self.reference_mean = reference_mean
+        self.reference_stdev = reference_stdev
+        self.reference_exists = True
 
 
 ####################
