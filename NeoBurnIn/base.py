@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jul 29, 2018 at 09:02 PM -0400
+# Last Change: Mon Jul 30, 2018 at 10:14 AM -0400
 
 import abc
 
@@ -79,7 +79,7 @@ class DataStream(list):
 
         # This ensures that the datastream length is at most equal to the
         # designated upper limit.
-        self.json_str = ','.join(self)
+        self.json_str = ','.join(str(x) for x in self)
 
         return list_is_full
 
