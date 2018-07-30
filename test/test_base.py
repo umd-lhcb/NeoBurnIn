@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 30, 2018 at 11:16 AM -0400
+# Last Change: Mon Jul 30, 2018 at 11:27 AM -0400
 
 import pytest
 import statistics
@@ -202,6 +202,13 @@ def test_data_stats_full_after_third_full(data_stats_full):
         data_stats_full.append(i)
     for i in range(16, 20):
         assert data_stats_full.append(i) is False
+
+
+def test_data_stats_json_str_after_third_full(data_stats_full):
+    for i in range(0, 16):
+        data_stats_full.append(i)
+    data_stats_full.append(17)
+    assert data_stats_full.json_str == '12,13,14,15,17'
 
 
 def test_data_stats_full_compute_fourth_stats(data_stats_full):
