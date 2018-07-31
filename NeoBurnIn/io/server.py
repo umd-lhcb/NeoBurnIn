@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 09:58 AM -0400
+# Last Change: Tue Jul 31, 2018 at 10:06 AM -0400
 
 import logging
 
@@ -73,12 +73,16 @@ class DataServer(GroundServer):
         for entry in splitted:
             date, ch_name, value = self.validate_input(entry)
 
-            # First store the data
+            # Log the whole entry to a file if it's valid.
+            if date is not None:
+                logger.info('Received: {}'.format(entry))
+
+            # First store the data.
             results = self.stash[ch_name]['data'].append(value)
             if results is not False:
                 self.stash[ch_name]['summary'].append(results[0])
 
-            # Now check if this data point is ok
+            # Now check if this data point is OK.
             if self.stash[ch_name]['data'].reference_exists:
                 mean = self.stash[ch_name]['data'].reference_mean
                 envelop = self.stash[ch_name]['data'].reference_stdev * \
@@ -88,7 +92,7 @@ class DataServer(GroundServer):
                         ch_name, value, self.stdev_range
                     ))
 
-            # Store the time, unconditionally
+            # Store the time, unconditionally.
             self.stash[ch_name]['time'].append(date)
 
     @staticmethod
@@ -105,10 +109,12 @@ class DataServer(GroundServer):
             date, ch_name, value = entry.split(delimiter)
         except Exception:
             logger.error('Entry not correctly delimited: {}'.format(entry))
+            return (None, None, None)
 
         try:
             value = float(value)
         except Exception:
             logger.error('Measured value is corrupt: {}'.format(value))
+            return (None, None, None)
 
         return (date, ch_name, value)
