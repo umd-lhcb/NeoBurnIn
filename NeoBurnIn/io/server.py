@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 05:12 PM -0400
+# Last Change: Tue Jul 31, 2018 at 05:20 PM -0400
 
 import logging
 
@@ -40,6 +40,10 @@ class DataServer(GroundServer):
 
         super().__init__(*args, **kwargs)
 
+    ###############
+    # HTTP routes #
+    ###############
+
     def register_routes(self):
         self.app.add_routes([
             web.post(
@@ -69,6 +73,10 @@ class DataServer(GroundServer):
         self.dispatch(msg)
         return web.Response(text='Successfully received.')
 
+    ############
+    # Dispatch #
+    ############
+
     def dispatch(self, msg):
         splitted = self.split_input(msg)
         for entry in splitted:
@@ -96,23 +104,6 @@ class DataServer(GroundServer):
             # Store the time, unconditionally.
             self.stash[ch_name]['time'].append(date)
 
-    def stash_create(self, overall_stats_length=10000):
-        '''
-        Store data. If a root-level key does not exist, create it, along with
-        specified empty leaves.
-        '''
-        stash = defaultdict(self.default_item)
-        stash['overall'] = DataStream(max_length=overall_stats_length)
-        return stash
-
-    @staticmethod
-    def default_item(item_length=1000):
-        return {
-            'summary': DataStream(max_length=item_length),
-            'time': DataStream(max_length=item_length),
-            'data': DataStats(max_length=item_length)
-        }
-
     @staticmethod
     def split_input(msg, delimiter='\n'):
         splitted = msg.split(delimiter)
@@ -136,3 +127,24 @@ class DataServer(GroundServer):
             return (None, None, None)
 
         return (date, ch_name, value)
+
+    #############################
+    # Create initial data stash #
+    #############################
+
+    def stash_create(self, overall_stats_length=10000):
+        '''
+        Store data. If a root-level key does not exist, create it, along with
+        specified empty leaves.
+        '''
+        stash = defaultdict(self.default_item)
+        stash['overall'] = DataStream(max_length=overall_stats_length)
+        return stash
+
+    @staticmethod
+    def default_item(item_length=1000):
+        return {
+            'summary': DataStream(max_length=item_length),
+            'time': DataStream(max_length=item_length),
+            'data': DataStats(max_length=item_length)
+        }
