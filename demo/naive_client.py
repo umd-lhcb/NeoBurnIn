@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 26, 2018 at 10:11 AM -0400
+# Last Change: Tue Jul 31, 2018 at 09:51 AM -0400
 
 import logging
 import janus
@@ -11,7 +11,7 @@ from argparse import ArgumentParser
 import sys
 sys.path.insert(0, '..')
 
-from NeoBurnIn.io.client import Client
+from NeoBurnIn.io.client import DataClient
 from NeoBurnIn.DataSource.RandUniform import RandUniformDataSource
 from NeoBurnIn.io.logging import log_handler_colored_console
 
@@ -84,7 +84,8 @@ if __name__ == "__main__":
     rand_data_source.start(args.sleep)
     thread_list.append(rand_data_source)
 
-    client = Client(data_queue.async_q, stop_event,
-                    host=args.host,
-                    thread_list=thread_list, maxConcurrency=args.maxConcurrency)
+    client = DataClient(data_queue.async_q, stop_event,
+                        host=args.host,
+                        thread_list=thread_list,
+                        maxConcurrency=args.maxConcurrency)
     client.run()

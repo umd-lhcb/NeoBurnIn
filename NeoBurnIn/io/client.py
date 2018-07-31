@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jul 26, 2018 at 10:12 AM -0400
+# Last Change: Tue Jul 31, 2018 at 09:51 AM -0400
 
 import logging
 import asyncio
@@ -13,7 +13,7 @@ from NeoBurnIn.base import ThreadTerminator, BaseClient
 logger = logging.getLogger(__name__)
 
 
-class Client(ThreadTerminator, BaseClient):
+class DataClient(ThreadTerminator, BaseClient):
     '''
     A http client that sends msgs in queue to remote server concurrently.
     It guarantees the queue is cleared on shutdown (but this cleanup operation
