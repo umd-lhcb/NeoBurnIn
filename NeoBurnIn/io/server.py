@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 30, 2018 at 05:09 PM -0400
+# Last Change: Tue Jul 31, 2018 at 09:41 AM -0400
 
 import logging
 
@@ -45,12 +45,14 @@ class DataServer(GroundServer):
                 '/datacollect',
                 self.handler_data_collect),
             web.get(
-                '/get/{name}',
+                '/get/{ch_name}/{part}',
                 self.handler_get_json)
         ])
 
     async def handler_get_json(self, request):
         pass
+        # try:
+            # return
 
     async def handler_data_collect(self, request):
         msg = await request.text()
@@ -76,6 +78,9 @@ class DataServer(GroundServer):
                     logger.critical('Channel {} measured a value of {}, which is outside of {} stds.'.format(
                         ch_name, value, self.stdev_range
                     ))
+
+            # Store the time, unconditionally
+            self.stash[ch_name]['time'].append(date)
 
     @staticmethod
     def split_input(msg, delimiter='\n'):

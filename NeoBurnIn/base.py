@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jul 30, 2018 at 02:43 PM -0400
+# Last Change: Tue Jul 31, 2018 at 09:40 AM -0400
 
 import abc
 
@@ -40,6 +40,7 @@ def time_delta_in_seconds(later_time, previous_time):
 def default_item(item_length=1000):
     return {
         'summary': DataStream(max_length=item_length),
+        'time': DataStream(max_length=item_length),
         'data': DataStats(max_length=item_length)
     }
 
