@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jul 20, 2018 at 04:30 PM -0400
+# Last Change: Tue Jul 31, 2018 at 12:16 PM -0400
 
 import logging
 import queue
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     # The configuration file will not be distributed with this repo, due to the
     # fact that it contain sensitive information i.e. password.
     # Its format is exactly the same as shown in 'server.cfg.example'.
-    options = parse_config(Path('.') / 'naive_logger.cfg')
+    options = parse_config(Path('.') / 'NaiveLogger.cfg')
 
     logging_file = NamedTemporaryFile()
     logging_queue = queue.Queue()
