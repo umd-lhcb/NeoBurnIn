@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 09:50 AM -0400
+# Last Change: Tue Jul 31, 2018 at 09:58 AM -0400
 
 import logging
 
@@ -75,7 +75,7 @@ class DataServer(GroundServer):
 
             # First store the data
             results = self.stash[ch_name]['data'].append(value)
-            if not results:
+            if results is not False:
                 self.stash[ch_name]['summary'].append(results[0])
 
             # Now check if this data point is ok
