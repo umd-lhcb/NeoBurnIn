@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 09:40 AM -0400
+# Last Change: Tue Jul 31, 2018 at 05:09 PM -0400
 
 import abc
 
@@ -35,24 +35,6 @@ def time_delta_in_seconds(later_time, previous_time):
     Computer time difference.
     '''
     return (later_time - previous_time).total_seconds()
-
-
-def default_item(item_length=1000):
-    return {
-        'summary': DataStream(max_length=item_length),
-        'time': DataStream(max_length=item_length),
-        'data': DataStats(max_length=item_length)
-    }
-
-
-def stash_create(overall_stats_length=10000, per_item_stats_length=1000):
-    '''
-    Store data. If a root-level key does not exist, create it, along with
-    specified empty leaves.
-    '''
-    stash = defaultdict(default_item)
-    stash['overall'] = DataStream(max_length=overall_stats_length)
-    return stash
 
 
 class ThreadTerminator(object):

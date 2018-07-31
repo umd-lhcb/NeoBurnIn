@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 10:06 AM -0400
+# Last Change: Tue Jul 31, 2018 at 05:12 PM -0400
 
 import logging
 
 from aiohttp import web
+from collections import defaultdict
 
 from NeoBurnIn.base import BaseServer
-from NeoBurnIn.base import stash_create
+from NeoBurnIn.base import DataStream, DataStats
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +36,7 @@ class DataServer(GroundServer):
     def __init__(self, *args,
                  stdev_range=3, **kwargs):
         self.stdev_range = stdev_range
-        self.stash = stash_create()
+        self.stash = self.stash_create()
 
         super().__init__(*args, **kwargs)
 
@@ -94,6 +95,23 @@ class DataServer(GroundServer):
 
             # Store the time, unconditionally.
             self.stash[ch_name]['time'].append(date)
+
+    def stash_create(self, overall_stats_length=10000):
+        '''
+        Store data. If a root-level key does not exist, create it, along with
+        specified empty leaves.
+        '''
+        stash = defaultdict(self.default_item)
+        stash['overall'] = DataStream(max_length=overall_stats_length)
+        return stash
+
+    @staticmethod
+    def default_item(item_length=1000):
+        return {
+            'summary': DataStream(max_length=item_length),
+            'time': DataStream(max_length=item_length),
+            'data': DataStats(max_length=item_length)
+        }
 
     @staticmethod
     def split_input(msg, delimiter='\n'):
