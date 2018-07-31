@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 09:41 AM -0400
+# Last Change: Tue Jul 31, 2018 at 09:50 AM -0400
 
 import logging
 
@@ -45,14 +45,23 @@ class DataServer(GroundServer):
                 '/datacollect',
                 self.handler_data_collect),
             web.get(
-                '/get/{ch_name}/{part}',
+                '/get/{ch_name}',
                 self.handler_get_json)
         ])
 
     async def handler_get_json(self, request):
-        pass
-        # try:
-            # return
+        try:
+            json = {
+                'time': self.stash[request.match_info['ch_name']]['time'],
+                'data': self.stash[request.match_info['ch_name']]['data']
+            }
+            return web.json_response(json)
+
+        except Exception as err:
+            logger.warning('Cannot form json response due to {}'.format(
+                err.__class__.__name__
+            ))
+            raise web.HTTPNotFound
 
     async def handler_data_collect(self, request):
         msg = await request.text()
