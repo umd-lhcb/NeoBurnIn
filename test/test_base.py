@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 10:11 AM -0400
+# Last Change: Fri Aug 10, 2018 at 12:54 AM -0400
 
 import pytest
 import statistics
@@ -10,7 +10,6 @@ sys.path.insert(0, '..')
 
 from NeoBurnIn.base import DataStream
 from NeoBurnIn.base import DataStats
-from NeoBurnIn.base import stash_create
 
 
 ####################
@@ -219,29 +218,3 @@ def test_data_stats_full_compute_fourth_stats(data_stats_full):
         statistics.mean([16, 17, 18, 19, 20]),
         statistics.stdev([16, 17, 18, 19, 20]),
     )
-
-
-######################
-# For 'stash_create' #
-######################
-
-@pytest.fixture
-def stash():
-    return stash_create()
-
-
-def test_initial_value(stash):
-    assert stash['overall'] == DataStream(max_length=10000)
-
-
-def test_default_value_to_a_new_key(stash):
-    assert stash['something'] == {
-        'summary': DataStream(max_length=1000),
-        'time': DataStream(max_length=1000),
-        'data': DataStats(max_length=1000)
-    }
-
-
-def test_appendable(stash):
-    assert stash['something']['data'].append(1) is False
-    assert stash['something']['data'].json_str == '1'
