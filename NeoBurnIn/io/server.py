@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Aug 10, 2018 at 12:30 AM -0400
+# Last Change: Fri Aug 10, 2018 at 02:39 PM -0400
 
 import logging
+import datetime as dt
 
 from aiohttp import web
 from collections import defaultdict
 
 from NeoBurnIn.base import BaseServer
 from NeoBurnIn.base import DataStream, DataStats
+from NeoBurnIn.base import standard_time_format
 
 
 logger = logging.getLogger(__name__)
@@ -91,27 +93,28 @@ class DataServer(GroundServer):
         for entry in splitted:
             date, ch_name, value = self.validate_input(entry)
 
-            # Log the whole entry to a file if it's valid.
+            # Proceed only if the data entry is valid
             if date is not None:
+                # Log the whole entry
                 logger.info('Received: {}'.format(entry))
 
-            # First store the data.
-            results = self.stash[ch_name]['data'].append(value)
-            if results is not False:
-                self.stash[ch_name]['summary'].append(results[0])
+                # First store the data.
+                results = self.stash[ch_name]['data'].append(value)
+                if results is not False:
+                    self.stash[ch_name]['summary'].append(results[0])
 
-            # Now check if this data point is OK.
-            if self.stash[ch_name]['data'].reference_exists:
-                mean = self.stash[ch_name]['data'].reference_mean
-                envelop = self.stash[ch_name]['data'].reference_stdev * \
-                    self.stdev_range
-                if value <= mean-envelop or value >= mean+envelop:
-                    logger.critical('Channel {} measured a value of {}, which is outside of {} stds.'.format(
-                        ch_name, value, self.stdev_range
-                    ))
+                # Now check if this data point is OK.
+                if self.stash[ch_name]['data'].reference_exists:
+                    mean = self.stash[ch_name]['data'].reference_mean
+                    envelop = self.stash[ch_name]['data'].reference_stdev * \
+                        self.stdev_range
+                    if value <= mean-envelop or value >= mean+envelop:
+                        logger.critical('Channel {} measured a value of {}, which is outside of {} stds.'.format(
+                            ch_name, value, self.stdev_range
+                        ))
 
-            # Store the time, unconditionally.
-            self.stash[ch_name]['time'].append(date)
+                # Store the time, unconditionally.
+                self.stash[ch_name]['time'].append(date)
 
     @staticmethod
     def split_input(msg, delimiter='\n'):
@@ -127,6 +130,12 @@ class DataServer(GroundServer):
             date, ch_name, value = entry.split(delimiter)
         except Exception:
             logger.error('Entry not correctly delimited: {}'.format(entry))
+            return (None, None, None)
+
+        try:
+            dt.datetime.strptime(date, standard_time_format)
+        except Exception:
+            logger.error('Datetime is not formatted correctly: {}'.format(date))
             return (None, None, None)
 
         try:
