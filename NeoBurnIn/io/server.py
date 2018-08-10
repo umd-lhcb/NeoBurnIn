@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Aug 10, 2018 at 02:39 PM -0400
+# Last Change: Fri Aug 10, 2018 at 03:44 PM -0400
 
 import logging
 import datetime as dt
+import json
 
 from aiohttp import web
 from collections import defaultdict
@@ -56,6 +57,10 @@ class DataServer(GroundServer):
                 '/get/{ch_name}',
                 self.handler_get_json
             ),
+            web.post(
+                '/get/{ch_name}',
+                self.handler_get_json
+            )
         ])
 
         # For feeding the data to bokeh-based visualization app
@@ -67,11 +72,11 @@ class DataServer(GroundServer):
 
     async def handler_get_json(self, request):
         try:
-            json = {
-                'time': self.stash[request.match_info['ch_name']]['time'],
-                'data': self.stash[request.match_info['ch_name']]['data']
+            data_dump = {
+                'x': [1,2,3,4],
+                'y': [2,3,4,5]
             }
-            return web.json_response(json)
+            return web.Response(text=json.dumps(data_dump))
 
         except Exception as err:
             logger.warning('Cannot form json response due to {}'.format(
@@ -114,7 +119,8 @@ class DataServer(GroundServer):
                         ))
 
                 # Store the time, unconditionally.
-                self.stash[ch_name]['time'].append(date)
+                self.stash[ch_name]['time'].append(
+                    self.convert_to_bokeh_time(date))
 
     @staticmethod
     def split_input(msg, delimiter='\n'):
@@ -133,7 +139,7 @@ class DataServer(GroundServer):
             return (None, None, None)
 
         try:
-            dt.datetime.strptime(date, standard_time_format)
+            date = dt.datetime.strptime(date, standard_time_format)
         except Exception:
             logger.error('Datetime is not formatted correctly: {}'.format(date))
             return (None, None, None)
@@ -145,6 +151,11 @@ class DataServer(GroundServer):
             return (None, None, None)
 
         return (date, ch_name, value)
+
+    @staticmethod
+    def convert_to_bokeh_time(date, scale=1000):
+        epoch_date = dt.datetime.utcfromtimestamp(0)
+        return scale * (date - epoch_date).total_seconds()
 
     #############################
     # Create initial data stash #
