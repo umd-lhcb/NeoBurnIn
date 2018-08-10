@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 05:20 PM -0400
+# Last Change: Fri Aug 10, 2018 at 12:30 AM -0400
 
 import logging
 
@@ -48,11 +48,20 @@ class DataServer(GroundServer):
         self.app.add_routes([
             web.post(
                 '/datacollect',
-                self.handler_data_collect),
+                self.handler_data_collect
+            ),
             web.get(
                 '/get/{ch_name}',
-                self.handler_get_json)
+                self.handler_get_json
+            ),
         ])
+
+        # For feeding the data to bokeh-based visualization app
+        self.app.router.add_route(
+            'OPTIONS',
+            '/get/{ch_name}',
+            self.handler_get_json
+        )
 
     async def handler_get_json(self, request):
         try:
