@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Aug 10, 2018 at 03:44 PM -0400
+# Last Change: Sat Aug 11, 2018 at 08:25 PM -0400
 
 import logging
 import datetime as dt
-import json
+import aiohttp_cors
 
 from aiohttp import web
 from collections import defaultdict
@@ -63,20 +63,26 @@ class DataServer(GroundServer):
             )
         ])
 
-        # For feeding the data to bokeh-based visualization app
-        self.app.router.add_route(
-            'OPTIONS',
-            '/get/{ch_name}',
-            self.handler_get_json
-        )
+        # Add CORS support
+        self.cors = aiohttp_cors.setup(self.app, defaults={
+            '*': aiohttp_cors.ResourceOptions(
+                allow_credentials=True,
+                expose_headers='*',
+                allow_headers='*',
+                max_age=21600
+            )
+        })
+
+        for route in list(self.app.router.routes()):
+            self.cors.add(route)
 
     async def handler_get_json(self, request):
         try:
             data_dump = {
-                'x': [1,2,3,4],
-                'y': [2,3,4,5]
+                'x': [1, 2, 3, 4],
+                'y': [2, 3, 4, 5]
             }
-            return web.Response(text=json.dumps(data_dump))
+            return web.json_response(data_dump)
 
         except Exception as err:
             logger.warning('Cannot form json response due to {}'.format(
