@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sat Aug 11, 2018 at 08:25 PM -0400
+# Last Change: Sat Aug 11, 2018 at 10:50 PM -0400
 
 import logging
 import datetime as dt
@@ -79,8 +79,8 @@ class DataServer(GroundServer):
     async def handler_get_json(self, request):
         try:
             data_dump = {
-                'x': [1, 2, 3, 4],
-                'y': [2, 3, 4, 5]
+                'time': self.stash[request.match_info['ch_name']]['time'],
+                'data': self.stash[request.match_info['ch_name']]['data']
             }
             return web.json_response(data_dump)
 
