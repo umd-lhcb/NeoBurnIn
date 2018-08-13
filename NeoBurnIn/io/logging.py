@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jul 25, 2018 at 11:06 AM -0400
+# Last Change: Mon Aug 13, 2018 at 03:09 PM -0400
 # Too bad. Impurities everywhere.
 
 import logging
@@ -11,6 +11,18 @@ from datetime import datetime
 from rainbow_logging_handler import RainbowLoggingHandler
 
 from NeoBurnIn.base import time_delta_in_seconds
+
+
+def configure_client_logger(filename, maxSize, backupCount,
+                            level=logging.INFO
+                            ):
+    console_handler = log_handler_colored_console()
+    file_handler = log_handler_file(filename, maxSize, backupCount)
+
+    logger = logging.getLogger()
+    logger.setLevel(level)
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
 
 
 class LoggingThread(object):
