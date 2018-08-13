@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 12:16 PM -0400
+# Last Change: Mon Aug 13, 2018 at 04:13 PM -0400
 
 import logging
 import queue
 
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from time import sleep
@@ -22,7 +22,7 @@ from NeoBurnIn.io.logging import LoggingThread
 
 # Parse logger configuration
 def parse_config(config_file):
-    parsed = SafeConfigParser()
+    parsed = ConfigParser()
     parsed.read(config_file)
     return parsed
 
