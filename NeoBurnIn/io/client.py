@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 09:51 AM -0400
+# Last Change: Mon Aug 13, 2018 at 11:56 PM -0400
 
 import logging
 import asyncio
@@ -25,7 +25,7 @@ class DataClient(ThreadTerminator, BaseClient):
     def __init__(self, queue, *args,
                  host='localhost', port='45678',
                  maxConcurrency=3,
-                 **kwargs):
+                 ):
         self.queue = queue
 
         self.url = 'http://{}:{}/{}'.format(host, port, self.POST_API)
@@ -34,7 +34,7 @@ class DataClient(ThreadTerminator, BaseClient):
 
         self.pending_send_tasks = dict()
 
-        super().__init__(*args, **kwargs)
+        super().__init__(*args)
 
     def run(self):
         try:

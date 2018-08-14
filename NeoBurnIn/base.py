@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 13, 2018 at 11:47 PM -0400
+# Last Change: Mon Aug 13, 2018 at 11:56 PM -0400
 
 import abc
 import sys
@@ -52,7 +52,7 @@ def parse_config(config_file):
 
 
 class ThreadTerminator(object):
-    def __init__(self, stop_event, thread_list=[]):
+    def __init__(self, stop_event, thread_list):
         self.stop_event = stop_event
         self.thread_list = thread_list
 

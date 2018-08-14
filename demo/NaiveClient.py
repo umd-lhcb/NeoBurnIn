@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 09:51 AM -0400
+# Last Change: Mon Aug 13, 2018 at 11:57 PM -0400
 
 import logging
 import janus
@@ -84,8 +84,7 @@ if __name__ == "__main__":
     rand_data_source.start(args.sleep)
     thread_list.append(rand_data_source)
 
-    client = DataClient(data_queue.async_q, stop_event,
+    client = DataClient(data_queue.async_q, stop_event, thread_list,
                         host=args.host,
-                        thread_list=thread_list,
                         maxConcurrency=args.maxConcurrency)
     client.run()
