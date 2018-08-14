@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Aug 14, 2018 at 02:42 PM -0400
+# Last Change: Tue Aug 14, 2018 at 02:54 PM -0400
 
 from argparse import ArgumentParser
 from queue import Queue
@@ -39,7 +39,7 @@ def parse_input():
 args = parse_input()
 options = parse_config(args.configFile)
 
-logging_queue = Queue
+logging_queue = Queue()
 logging_thread = LoggingThread(logging_queue, **options['log'])
 
 server = DataServer(**options['server'])
