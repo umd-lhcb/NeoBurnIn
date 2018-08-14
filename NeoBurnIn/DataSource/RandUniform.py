@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 24, 2018 at 10:48 AM -0400
+# Last Change: Tue Aug 14, 2018 at 12:45 PM -0400
 
 import logging
 
@@ -14,17 +14,18 @@ logger = logging.getLogger(__name__)
 
 
 class RandUniformDataSource(BaseDataSource):
-    ch_prefix = 'CHANNEL'
     separator = '|'
     line_end  = '\n'
 
-    def __init__(self, queue, stop_event, numOfChs=1):
+    def __init__(self, queue, stop_event,
+                 interval=1, chPrefix='CHANNEL', numOfChs=1):
         self.queue = queue
         self.stop_event = stop_event
+        self.chPrefix = chPrefix
         self.num_of_chs = numOfChs
 
-    def start(self, interval):
-        self.thread = Thread(target=self.run, args=(interval, ))
+    def start(self):
+        self.thread = Thread(target=self.run, args=(self.interval, ))
         self.thread.start()
 
     def run(self, interval):
@@ -45,5 +46,5 @@ class RandUniformDataSource(BaseDataSource):
 
     def get_single_channel(self, ch_num):
         return time_now_formatted() + self.separator + \
-            self.ch_prefix + ch_num + self.separator + \
+            self.chPrefix + ch_num + self.separator + \
             str(uniform(1, 10)) + self.line_end
