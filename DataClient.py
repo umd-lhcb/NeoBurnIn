@@ -1,25 +1,24 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 13, 2018 at 04:14 PM -0400
+# Last Change: Tue Aug 14, 2018 at 12:41 PM -0400
 
 import janus
+import importlib
 
 from threading import Event
 from argparse import ArgumentParser
-from pathlib import Path
-from configparser import ConfigParser
 
 import sys
 sys.path.insert(0, '..')
 
 from NeoBurnIn.io.client import DataClient
-from NeoBurnIn.DataSource.RandUniform import RandUniformDataSource
 from NeoBurnIn.io.logging import configure_client_logger
+from NeoBurnIn.base import parse_config
 
 
-########################
-# Parse arguments/file #
-########################
+###################
+# Parse arguments #
+###################
 
 def parse_input():
     parser = ArgumentParser(
@@ -33,40 +32,55 @@ def parse_input():
         specify configuration file.
         ''',
         type=str,
-        default='DataClient.cfg'
+        default='DataClient.yml'
     )
 
     return parser.parse_args()
 
 
-def parse_config(config_file):
-    file = Path(config_file)
-    if file.exists():
-        parsed = ConfigParser()
-        parsed.read(config_file)
-        return parsed
-    else:
-        print("{}: configuration file does not exist.".format(config_file))
-        sys.exit(1)
+###########
+# Helpers #
+###########
 
+class SensorEmitter(object):
+    def __init__(self, sensors_list):
+        self.queue = janus.Queue()
+        self.stop_event = Event()
+        self.emitted_sensors = []
+
+        self.sensors_list = sensors_list
+
+    def init_sensors(self):
+        for sensor_spec in self.sensors_list:
+            for name, spec in sensor_spec.items():
+                mod, cls = name.rsplit('.')
+                sensor = getattr(importlib.import_module(
+                    'NeoBurnIn.DataSource.' + mod), cls)
+                self.emitted_sensors.append(sensor(
+                    self.queue.sync_q, self.stop_event, **spec))
+
+    def start(self):
+        for sensor in self.emitted_sensors:
+            sensor.start()
+
+
+#########
+# Setup #
+#########
+
+args = parse_input()
+options = parse_config(args.configFile)
+
+configure_client_logger(**options['log'])
+
+sensors = SensorEmitter(options['sensors'])
+sensors.init_sensors()
+
+client = DataClient(
+    sensors.queue.async_q, sensors.stop_event, sensors.emitted_sensors,
+    **options['client']
+)
 
 if __name__ == "__main__":
-    # Read from input
-    args = parse_input()
-    cfg = parse_config(args.configFile)
-
-    data_queue = janus.Queue()
-    stop_event = Event()
-
-    thread_list = []
-
-    # rand_data_source = RandUniformDataSource(data_queue.sync_q, stop_event,
-                                             # numOfChs=args.numOfChs)
-    # rand_data_source.start(args.sleep)
-    # thread_list.append(rand_data_source)
-
-    # client = DataClient(data_queue.async_q, stop_event,
-                        # host=args.host,
-                        # thread_list=thread_list,
-                        # maxConcurrency=args.maxConcurrency)
-    # client.run()
+    sensors.start()
+    client.run()
