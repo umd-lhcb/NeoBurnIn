@@ -1,0 +1,17 @@
+log:
+    filename: data/DataClient.log
+    maxSize: 100 MB
+    backupCount: 1000
+
+client:
+    host: localhost
+    port: 45678
+    maxConcurrency: 4
+
+sensors:
+    - RandUniform.RandUniformDataSource:
+        chPrefix: Channel
+        numOfChs: 2
+    - RandUniform.RandUniformDataSource:
+        chPrefix: Test
+        numOfChs: 1
