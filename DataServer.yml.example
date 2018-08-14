@@ -1,0 +1,14 @@
+log:
+    filename: data/DataServer.log
+    maxSize: 100 MB
+    backupCount: 1000
+    fromaddr: null@example.com
+    toaddrs:
+        - nil@example.com
+        - void@example.com
+    credentials: yourpassword
+    interval: 1 HRS
+
+server:
+    host: localhost
+    port: 45678
