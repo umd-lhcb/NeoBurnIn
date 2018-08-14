@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Aug 14, 2018 at 12:45 PM -0400
+# Last Change: Tue Aug 14, 2018 at 12:49 PM -0400
 
 import logging
 
@@ -21,6 +21,7 @@ class RandUniformDataSource(BaseDataSource):
                  interval=1, chPrefix='CHANNEL', numOfChs=1):
         self.queue = queue
         self.stop_event = stop_event
+        self.interval = interval
         self.chPrefix = chPrefix
         self.num_of_chs = numOfChs
 

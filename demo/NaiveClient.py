@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 13, 2018 at 11:57 PM -0400
+# Last Change: Tue Aug 14, 2018 at 12:48 PM -0400
 
 import logging
 import janus
@@ -80,8 +80,9 @@ if __name__ == "__main__":
     thread_list = []
 
     rand_data_source = RandUniformDataSource(data_queue.sync_q, stop_event,
-                                             numOfChs=args.numOfChs)
-    rand_data_source.start(args.sleep)
+                                             numOfChs=args.numOfChs,
+                                             interval=args.sleep)
+    rand_data_source.start()
     thread_list.append(rand_data_source)
 
     client = DataClient(data_queue.async_q, stop_event, thread_list,
