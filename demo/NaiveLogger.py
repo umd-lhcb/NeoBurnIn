@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 13, 2018 at 04:13 PM -0400
+# Last Change: Mon Aug 13, 2018 at 11:51 PM -0400
 
 import logging
 import queue
 
-from configparser import ConfigParser
-from pathlib import Path
 from tempfile import NamedTemporaryFile
 from time import sleep
 
@@ -14,18 +12,12 @@ import sys
 sys.path.insert(0, '..')
 
 from NeoBurnIn.io.logging import LoggingThread
+from NeoBurnIn.base import parse_config
 
 
 ###########
 # Helpers #
 ###########
-
-# Parse logger configuration
-def parse_config(config_file):
-    parsed = ConfigParser()
-    parsed.read(config_file)
-    return parsed
-
 
 # Print file with color green
 def cprint(msg):
@@ -41,20 +33,25 @@ def cprint(msg):
 logger = logging.getLogger()
 
 
+#########
+# Setup #
+#########
+
+# The configuration file will not be distributed with this repo, due to the
+# fact that it contain sensitive information i.e. password.
+# Its format is exactly the same as shown in 'server.cfg.example'.
+options = parse_config('NaiveLogger.cfg')
+
+logging_file = NamedTemporaryFile()
+logging_queue = queue.Queue()
+
+logging_thread = LoggingThread(
+    logging_queue,
+    logging_file.name, maxSize='100 MB', backupCount=1000,
+    **options['log']
+)
+
 if __name__ == "__main__":
-    # The configuration file will not be distributed with this repo, due to the
-    # fact that it contain sensitive information i.e. password.
-    # Its format is exactly the same as shown in 'server.cfg.example'.
-    options = parse_config(Path('.') / 'NaiveLogger.cfg')
-
-    logging_file = NamedTemporaryFile()
-    logging_queue = queue.Queue()
-
-    logging_thread = LoggingThread(
-        logging_queue,
-        logging_file.name, maxSize='100 MB', backupCount=1000,
-        **options['log']
-    )
     logging_thread.start()
 
     # Note that logging handling is in a separate thread, so that printout may
