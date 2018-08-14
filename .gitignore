@@ -1,6 +1,5 @@
 __pycache__
 .python-version
-*.pdf
-*.cfg
+*.yml
 data
 .pytest_cache

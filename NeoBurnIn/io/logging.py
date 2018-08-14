@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 13, 2018 at 03:09 PM -0400
+# Last Change: Tue Aug 14, 2018 at 10:41 AM -0400
 # Too bad. Impurities everywhere.
 
 import logging
@@ -142,11 +142,9 @@ def log_handler_email(fromaddr, toaddrs, credentials, interval,
                       mailhost=('smtp.gmail.com', 587),
                       level=logging.CRITICAL
                       ):
-    # Split 'toaddrs'
-    toaddrs_splitted = toaddrs.split(',')
     handler = AntiFloodSMTPHandler(
         parse_time_limit(interval),
-        mailhost, fromaddr, toaddrs_splitted, subject, (fromaddr, credentials),
+        mailhost, fromaddr, toaddrs, subject, (fromaddr, credentials),
         secure=()  # 'secure' cannot be 'None'
     )
     handler.setLevel(level)

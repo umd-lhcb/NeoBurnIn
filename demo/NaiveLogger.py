@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 13, 2018 at 11:51 PM -0400
+# Last Change: Tue Aug 14, 2018 at 10:41 AM -0400
 
 import logging
 import queue
@@ -39,8 +39,7 @@ logger = logging.getLogger()
 
 # The configuration file will not be distributed with this repo, due to the
 # fact that it contain sensitive information i.e. password.
-# Its format is exactly the same as shown in 'server.cfg.example'.
-options = parse_config('NaiveLogger.cfg')
+options = parse_config('NaiveLogger.yml')
 
 logging_file = NamedTemporaryFile()
 logging_queue = queue.Queue()

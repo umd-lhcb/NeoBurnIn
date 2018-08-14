@@ -3,3 +3,4 @@ aiohttp-cors
 pytest
 janus
 rainbow_logging_handler
+pyyaml

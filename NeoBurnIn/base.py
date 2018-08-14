@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 13, 2018 at 11:56 PM -0400
+# Last Change: Tue Aug 14, 2018 at 10:46 AM -0400
 
 import abc
 import sys
+import yaml
 
 from datetime import datetime
 from collections import defaultdict
 from statistics import mean, stdev
 from pathlib import Path
-from configparser import ConfigParser
 
 standard_time_format = "%Y-%m-%d %H:%M:%S.%f"
 
@@ -42,8 +42,8 @@ def time_delta_in_seconds(later_time, previous_time):
 
 def parse_config(config_file):
     if Path(config_file).exists():
-        parsed = ConfigParser()
-        parsed.read(config_file)
+        with open(config_file) as cfg:
+            parsed = yaml.load(cfg)
         return parsed
 
     else:
