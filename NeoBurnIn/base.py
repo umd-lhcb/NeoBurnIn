@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 05:09 PM -0400
+# Last Change: Mon Aug 13, 2018 at 11:47 PM -0400
 
 import abc
+import sys
 
 from datetime import datetime
 from collections import defaultdict
 from statistics import mean, stdev
+from pathlib import Path
+from configparser import ConfigParser
 
 standard_time_format = "%Y-%m-%d %H:%M:%S.%f"
 
@@ -35,6 +38,17 @@ def time_delta_in_seconds(later_time, previous_time):
     Computer time difference.
     '''
     return (later_time - previous_time).total_seconds()
+
+
+def parse_config(config_file):
+    if Path(config_file).exists():
+        parsed = ConfigParser()
+        parsed.read(config_file)
+        return parsed
+
+    else:
+        print('{}: configuration file does not exist.'.format(config_file))
+        sys.exit(1)
 
 
 class ThreadTerminator(object):
