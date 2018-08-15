@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 13, 2018 at 11:56 PM -0400
+# Last Change: Wed Aug 15, 2018 at 10:58 AM -0400
 
 import logging
 import asyncio
 import aiohttp
-
-# from functools import partial
 
 from NeoBurnIn.base import ThreadTerminator, BaseClient
 

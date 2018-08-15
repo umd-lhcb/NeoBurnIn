@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Aug 15, 2018 at 02:11 AM -0400
+# Last Change: Wed Aug 15, 2018 at 10:58 AM -0400
 
 import logging
 import datetime as dt
@@ -12,7 +12,6 @@ from collections import defaultdict
 from NeoBurnIn.base import BaseServer
 from NeoBurnIn.base import DataStream, DataStats
 from NeoBurnIn.base import standard_time_format
-
 
 logger = logging.getLogger(__name__)
 
