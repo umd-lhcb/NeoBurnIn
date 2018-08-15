@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Aug 14, 2018 at 12:49 PM -0400
+# Last Change: Wed Aug 15, 2018 at 11:00 AM -0400
 
 import logging
 
-from threading import Thread
 from random import uniform
 
 from NeoBurnIn.base import BaseDataSource
@@ -17,26 +16,24 @@ class RandUniformDataSource(BaseDataSource):
     separator = '|'
     line_end  = '\n'
 
-    def __init__(self, queue, stop_event,
-                 interval=1, chPrefix='CHANNEL', numOfChs=1):
+    def __init__(self, queue, stop_event, *args,
+                 interval=1, chPrefix='CHANNEL', numOfChs=1, **kwargs):
         self.queue = queue
         self.stop_event = stop_event
         self.interval = interval
         self.chPrefix = chPrefix
         self.num_of_chs = numOfChs
 
-    def start(self):
-        self.thread = Thread(target=self.run, args=(self.interval, ))
-        self.thread.start()
+        super().__init__(*args, **kwargs)
 
-    def run(self, interval):
-        while not self.stop_event.wait(interval):
+    def run(self):
+        while not self.stop_event.wait(self.interval):
             msg = self.get()
             logger.debug(msg)
             self.queue.put(msg)
 
     def cleanup(self, timeout=10):
-        self.thread.join(timeout)
+        self.join(timeout)
         logging.debug('Data source closed.')
 
     def get(self):

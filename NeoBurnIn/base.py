@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Aug 14, 2018 at 10:46 AM -0400
+# Last Change: Wed Aug 15, 2018 at 10:55 AM -0400
 
 import abc
 import sys
@@ -10,6 +10,7 @@ from datetime import datetime
 from collections import defaultdict
 from statistics import mean, stdev
 from pathlib import Path
+from threading import Thread
 
 standard_time_format = "%Y-%m-%d %H:%M:%S.%f"
 
@@ -167,13 +168,7 @@ class DataStats(DataStream):
 # Abstract classes #
 ####################
 
-class BaseDataSource(metaclass=abc.ABCMeta):
-    @abc.abstractclassmethod
-    def start(self, interval):
-        '''
-        Run self.run in a thread.
-        '''
-
+class BaseDataSource(Thread, metaclass=abc.ABCMeta):
     @abc.abstractclassmethod
     def run(self, interval):
         '''
