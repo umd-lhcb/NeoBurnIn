@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Aug 15, 2018 at 11:00 AM -0400
+# Last Change: Wed Aug 15, 2018 at 04:57 PM -0400
 
 import logging
 
@@ -22,7 +22,7 @@ class RandUniformDataSource(BaseDataSource):
         self.stop_event = stop_event
         self.interval = interval
         self.chPrefix = chPrefix
-        self.num_of_chs = numOfChs
+        self.numOfChs = numOfChs
 
         super().__init__(*args, **kwargs)
 
@@ -38,7 +38,7 @@ class RandUniformDataSource(BaseDataSource):
 
     def get(self):
         msg = ''
-        for ch_num in range(1, self.num_of_chs+1):
+        for ch_num in range(1, self.numOfChs+1):
             msg += self.get_single_channel(str(ch_num))
         return msg
 
