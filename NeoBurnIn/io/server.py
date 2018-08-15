@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sat Aug 11, 2018 at 10:50 PM -0400
+# Last Change: Wed Aug 15, 2018 at 02:11 AM -0400
 
 import logging
 import datetime as dt
@@ -26,7 +26,7 @@ class GroundServer(BaseServer):
         self.register_routes()
 
     def run(self):
-        web.run_app(self.app, host=self.host, port=self.port)
+        web.run_app(self.app, host=self.host, port=self.port, access_log=None)
 
     def loop_getter(self):
         return None
