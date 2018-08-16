@@ -1,3 +1,4 @@
 [submodule "submodules/RPiBurnIn"]
 	path = submodules/RPiBurnIn
 	url = https://github.com/umd-lhcb/rpi.burnin.git
+	ignore = dirty
