@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Aug 15, 2018 at 10:55 AM -0400
+# Last Change: Thu Aug 16, 2018 at 12:01 AM -0400
 
 import abc
 import sys
@@ -169,6 +169,9 @@ class DataStats(DataStream):
 ####################
 
 class BaseDataSource(Thread, metaclass=abc.ABCMeta):
+    separator = '|'
+    line_end = '\n'
+
     @abc.abstractclassmethod
     def run(self, interval):
         '''

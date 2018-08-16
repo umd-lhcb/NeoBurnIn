@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Aug 15, 2018 at 04:57 PM -0400
+# Last Change: Thu Aug 16, 2018 at 12:01 AM -0400
 
 import logging
 
@@ -13,9 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class RandUniformDataSource(BaseDataSource):
-    separator = '|'
-    line_end  = '\n'
-
     def __init__(self, queue, stop_event, *args,
                  interval=1, chPrefix='CHANNEL', numOfChs=1, **kwargs):
         self.queue = queue
