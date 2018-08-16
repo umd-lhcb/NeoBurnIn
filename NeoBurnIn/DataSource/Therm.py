@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Aug 16, 2018 at 01:16 AM -0400
+# Last Change: Thu Aug 16, 2018 at 01:39 AM -0400
 
 import logging
 
@@ -13,7 +13,7 @@ from submodules.RPiBurnIn.therm.ThermSensor import ThermSensor
 logger = logging.getLogger(__name__)
 
 
-class ThermDataSource(BaseDataSource, ThermSensor):
+class ThermDataSource(ThermSensor, BaseDataSource):
     def __init__(self, queue, *args, sensorPath=None, **kwargs):
         self.queue = queue
 
