@@ -1,5 +1,5 @@
 __pycache__
 .python-version
 *.yml
-data
+measurements
 .pytest_cache
