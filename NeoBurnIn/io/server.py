@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Aug 15, 2018 at 10:58 AM -0400
+# Last Change: Thu Aug 16, 2018 at 01:43 AM -0400
 
 import logging
 import datetime as dt
@@ -36,8 +36,8 @@ class GroundServer(BaseServer):
 
 class DataServer(GroundServer):
     def __init__(self, *args,
-                 stdev_range=3, **kwargs):
-        self.stdev_range = stdev_range
+                 stdevRange=3, **kwargs):
+        self.stdevRange = stdevRange
         self.stash = self.stash_create()
 
         super().__init__(*args, **kwargs)
@@ -117,10 +117,10 @@ class DataServer(GroundServer):
                 if self.stash[ch_name]['data'].reference_exists:
                     mean = self.stash[ch_name]['data'].reference_mean
                     envelop = self.stash[ch_name]['data'].reference_stdev * \
-                        self.stdev_range
+                        self.stdevRange
                     if value <= mean-envelop or value >= mean+envelop:
                         logger.critical('Channel {} measured a value of {}, which is outside of {} stds.'.format(
-                            ch_name, value, self.stdev_range
+                            ch_name, value, self.stdevRange
                         ))
 
                 # Store the time, unconditionally.

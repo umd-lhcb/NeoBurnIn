@@ -12,3 +12,4 @@ log:
 server:
     host: localhost
     port: 45678
+    stdevRange: 3
