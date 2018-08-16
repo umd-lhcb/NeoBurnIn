@@ -1,7 +1,7 @@
 log:
     filename: data/DataClient.log
     maxSize: 100 MB
-    backupCount: 1000
+    backupCount: 10
 
 client:
     host: localhost
@@ -10,8 +10,8 @@ client:
 
 sensors:
     - RandUniform.RandUniformDataSource:
-        chPrefix: Channel
+        chPrefix: RAND_UNIFORM
         numOfChs: 2
-    - RandUniform.RandUniformDataSource:
-        chPrefix: Test
-        numOfChs: 1
+    - Therm.ThermDataSource:
+        sensorPath: /dev/null
+        displayName: TEMP_1
