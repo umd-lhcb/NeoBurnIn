@@ -1,0 +1,3 @@
+[submodule "submodules/RPiBurnIn"]
+	path = submodules/RPiBurnIn
+	url = git@github.com:umd-lhcb/rpi.burnin.git
