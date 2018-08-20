@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Aug 19, 2018 at 10:19 PM -0400
+# Last Change: Mon Aug 20, 2018 at 01:19 AM -0400
 
 import logging
 import datetime as dt
@@ -82,7 +82,7 @@ class DataServer(GroundServer):
             data_dump = {
                 'time': self.stash[ch_name]['time'],
                 'data': self.stash[ch_name]['data'],
-                'summary': self.stash[ch_name]['summary']
+                # 'summary': self.stash[ch_name]['summary']
             }
             return web.json_response(data_dump)
 
