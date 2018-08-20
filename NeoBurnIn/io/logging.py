@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Aug 14, 2018 at 10:41 AM -0400
+# Last Change: Mon Aug 20, 2018 at 03:54 PM -0400
 # Too bad. Impurities everywhere.
 
 import logging
@@ -27,14 +27,22 @@ def configure_client_logger(filename, maxSize, backupCount,
 
 class LoggingThread(object):
     def __init__(self, queue,
-                 filename, maxSize, backupCount,
+                 filename, backupCount,
                  fromaddr, toaddrs, credentials, interval,
+                 maxSize='100 MB',
+                 when='D', rotateInterval=1,
+                 useTimeRotated=False,
                  level=logging.INFO
                  ):
         # Handlers for listener
         console_handler = log_handler_colored_console()
         # console_handler = log_handler_console()
-        file_handler = log_handler_file(filename, maxSize, backupCount)
+        if useTimeRotated:
+            file_handler = log_hander_file_time_rotated(
+                filename, when, rotateInterval, backupCount)
+        else:
+            file_handler = log_handler_file(filename, maxSize, backupCount)
+
         email_handler = log_handler_email(fromaddr, toaddrs, credentials,
                                           interval)
         # Record detailed messages
@@ -108,6 +116,18 @@ def log_handler_file(filename,
     handler = logging.handlers.RotatingFileHandler(
         filename=filename,
         maxBytes=parse_size_limit(maxSize),
+        backupCount=backupCount
+    )
+    handler.setLevel(level)
+    return handler
+
+
+def log_hander_file_time_rotated(filename,
+                                 when, rotateInterval, backupCount,
+                                 level=logging.INFO):
+    handler = logging.handlers.TimedRotatingFileHandler(
+        filename=filename,
+        when=when, interval=rotateInterval,
         backupCount=backupCount
     )
     handler.setLevel(level)

@@ -1,6 +1,5 @@
 log:
     filename: measurements/DataServer.log
-    maxSize: 100 MB
     backupCount: 1000
     fromaddr: null@example.com
     toaddrs:
@@ -8,6 +7,10 @@ log:
         - void@example.com
     credentials: yourpassword
     interval: 1 HRS
+    maxSize: 100 MB
+    when: D
+    rotateInterval: 1
+    useTimeRotated: False
 
 server:
     host: localhost
