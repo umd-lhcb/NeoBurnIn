@@ -1,5 +1,5 @@
 log:
-    filename: data/DataServer.log
+    filename: measurements/DataServer.log
     maxSize: 100 MB
     backupCount: 1000
     fromaddr: null@example.com
