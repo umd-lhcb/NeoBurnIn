@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Aug 16, 2018 at 01:43 AM -0400
+# Last Change: Sun Aug 19, 2018 at 10:19 PM -0400
 
 import logging
 import datetime as dt
@@ -76,10 +76,13 @@ class DataServer(GroundServer):
             self.cors.add(route)
 
     async def handler_get_json(self, request):
+        ch_name = request.match_info['ch_name']
+
         try:
             data_dump = {
-                'time': self.stash[request.match_info['ch_name']]['time'],
-                'data': self.stash[request.match_info['ch_name']]['data']
+                'time': self.stash[ch_name]['time'],
+                'data': self.stash[ch_name]['data'],
+                'summary': self.stash[ch_name]['summary']
             }
             return web.json_response(data_dump)
 
