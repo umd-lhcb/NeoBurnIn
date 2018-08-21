@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Aug 14, 2018 at 10:41 AM -0400
+# Last Change: Mon Aug 20, 2018 at 10:11 PM -0400
 
 import logging
 import queue
@@ -11,7 +11,7 @@ from time import sleep
 import sys
 sys.path.insert(0, '..')
 
-from NeoBurnIn.io.logging import LoggingThread
+from NeoBurnIn.io.logger import LoggingThread
 from NeoBurnIn.base import parse_config
 
 
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     print('This message should be printed out immediately by the master thread.')
     logger.critical("Test message with level CRITICAL, should be suppressed by email handler.")
 
-    sleep(6)
+    sleep(125)
     logger.critical("Test message with level CRITICAL, reprise.")
 
     logging_thread.stop()
