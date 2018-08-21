@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 20, 2018 at 03:54 PM -0400
+# Last Change: Mon Aug 20, 2018 at 10:07 PM -0400
 # Too bad. Impurities everywhere.
 
 import logging
@@ -78,7 +78,7 @@ def parse_size_limit(size):
 def parse_time_limit(time):
     time_dict = {'SEC': 1, 'MIN': 60*1, 'HRS': 60*60}
     time_parsed = time.split(' ')
-    return int(time_parsed[0] * time_dict[time_parsed[1]])
+    return int(time_parsed[0]) * time_dict[time_parsed[1]]
 
 
 ##############
