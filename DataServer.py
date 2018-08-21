@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Aug 14, 2018 at 02:54 PM -0400
+# Last Change: Mon Aug 20, 2018 at 09:55 PM -0400
 
 from argparse import ArgumentParser
 from queue import Queue
 
 from NeoBurnIn.io.server import DataServer
-from NeoBurnIn.io.logging import LoggingThread
+from NeoBurnIn.io.logger import LoggingThread
 from NeoBurnIn.base import parse_config
 
 

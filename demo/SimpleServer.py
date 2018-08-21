@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jul 31, 2018 at 09:54 AM -0400
+# Last Change: Mon Aug 20, 2018 at 09:55 PM -0400
 
 import logging
 
@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, '..')
 
 from NeoBurnIn.io.server import DataServer
-from NeoBurnIn.io.logging import log_handler_colored_console
+from NeoBurnIn.io.logger import log_handler_colored_console
 
 
 ####################

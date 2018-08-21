@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Aug 14, 2018 at 12:41 PM -0400
+# Last Change: Mon Aug 20, 2018 at 09:55 PM -0400
 
 import janus
 import importlib
@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, '..')
 
 from NeoBurnIn.io.client import DataClient
-from NeoBurnIn.io.logging import configure_client_logger
+from NeoBurnIn.io.logger import configure_client_logger
 from NeoBurnIn.base import parse_config
 
 

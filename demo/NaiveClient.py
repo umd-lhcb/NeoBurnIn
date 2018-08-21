@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Aug 14, 2018 at 12:48 PM -0400
+# Last Change: Mon Aug 20, 2018 at 09:55 PM -0400
 
 import logging
 import janus
@@ -13,7 +13,7 @@ sys.path.insert(0, '..')
 
 from NeoBurnIn.io.client import DataClient
 from NeoBurnIn.DataSource.RandUniform import RandUniformDataSource
-from NeoBurnIn.io.logging import log_handler_colored_console
+from NeoBurnIn.io.logger import log_handler_colored_console
 
 
 ###################
