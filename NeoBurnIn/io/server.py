@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 20, 2018 at 01:19 AM -0400
+# Last Change: Wed Aug 29, 2018 at 12:08 AM -0400
 
 import logging
 import datetime as dt
@@ -54,11 +54,19 @@ class DataServer(GroundServer):
             ),
             web.get(
                 '/get/{ch_name}',
-                self.handler_get_json
+                self.handler_stats_timeseries
             ),
             web.post(
                 '/get/{ch_name}',
-                self.handler_get_json
+                self.handler_stats_timeseries
+            ),
+            web.post(
+                '/stats/timeseries/{ch_name}',
+                self.handler_stats_timeseries
+            ),
+            web.post(
+                '/stats/hist/{ch_name}',
+                self.handler_stats_hist
             )
         ])
 
@@ -75,7 +83,7 @@ class DataServer(GroundServer):
         for route in list(self.app.router.routes()):
             self.cors.add(route)
 
-    async def handler_get_json(self, request):
+    async def handler_stats_timeseries(self, request):
         ch_name = request.match_info['ch_name']
 
         try:
@@ -83,6 +91,22 @@ class DataServer(GroundServer):
                 'time': self.stash[ch_name]['time'],
                 'data': self.stash[ch_name]['data'],
                 # 'summary': self.stash[ch_name]['summary']
+            }
+            return web.json_response(data_dump)
+
+        except Exception as err:
+            logger.warning('Cannot form json response due to {}'.format(
+                err.__class__.__name__
+            ))
+            raise web.HTTPNotFound
+
+    async def handler_stats_hist(self, request):
+        # ch_name = request.match_info['ch_name']
+
+        try:
+            data_dump = {
+                'hist': [1, 2, 3, 4, 5],
+                'freq': [1, 2, 3, 4, 5]
             }
             return web.json_response(data_dump)
 
