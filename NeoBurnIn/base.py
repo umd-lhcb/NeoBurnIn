@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Aug 16, 2018 at 12:01 AM -0400
+# Last Change: Tue Sep 11, 2018 at 05:42 PM -0400
 
 import abc
 import sys
@@ -44,7 +44,7 @@ def time_delta_in_seconds(later_time, previous_time):
 def parse_config(config_file):
     if Path(config_file).exists():
         with open(config_file) as cfg:
-            parsed = yaml.load(cfg)
+            parsed = yaml.safe_load(cfg)
         return parsed
 
     else:
