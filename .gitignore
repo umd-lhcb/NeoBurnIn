@@ -1,5 +1,6 @@
 __pycache__
 .python-version
-*.yml
-measurements
 .pytest_cache
+measurements/test_server/
+*server.yml
+demo/NaiveLogger.yml

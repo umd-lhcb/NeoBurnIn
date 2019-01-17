@@ -1,0 +1,19 @@
+log:
+    filename: measurements/dcb_temp_client.log
+    maxSize: 100 MB
+    backupCount: 10
+
+client:
+    host: 129.2.92.92
+    port: 45678
+    maxConcurrency: 4
+
+sensors:
+    - Therm.ThermDataSource:
+        sensorPath: /sys/bus/w1/devices/28-0000098dd2b8/w1_slave
+        displayName: TEMP_VALVE_BODY
+        interval: 5
+    - Therm.ThermDataSource:
+        sensorPath: /sys/bus/w1/devices/28-0000098d8197/w1_slave
+        displayName: TEMP_VALVE_COIL
+        interval: 5
