@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Aug 16, 2018 at 01:40 AM -0400
+# Last Change: Thu Jan 17, 2019 at 11:43 AM -0500
 
 import logging
 
@@ -23,7 +23,8 @@ class ThermDataSource(ThermSensor, BaseDataSource):
         while not self.stop_event.wait(self.interval):
             therm = self.get()
             logger.debug(therm)
-            self.queue.put(therm)
+            if therm is not None:
+                self.queue.put(therm)
 
     def get(self):
         therm = str(super().get())
