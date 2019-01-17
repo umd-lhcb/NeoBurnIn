@@ -4,3 +4,4 @@ __pycache__
 measurements/test_server/
 *server.yml
 demo/NaiveLogger.yml
+*.log
