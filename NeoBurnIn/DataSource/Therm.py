@@ -14,10 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 class ThermDataSource(ThermSensor, BaseDataSource):
-    def __init__(self, queue, *args, sensorPath=None, **kwargs):
-        self.queue = queue
-
-        super().__init__(*args, sensor=Path(sensorPath), **kwargs)
+    def __init__(self, stop_event, queue, *args, sensor_path=None, **kwargs):
+        super().__init__(stop_event, queue, *args,
+                         sensor=Path(sensor_path), **kwargs)
 
     def run(self):
         while not self.stop_event.wait(self.interval):

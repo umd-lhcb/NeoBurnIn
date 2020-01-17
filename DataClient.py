@@ -44,8 +44,8 @@ def parse_input():
 
 class SensorEmitter(object):
     def __init__(self, sensors_list):
-        self.queue = janus.Queue()
         self.stop_event = Event()
+        self.queue = janus.Queue()
         self.emitted_sensors = []
 
         self.sensors_list = sensors_list
@@ -57,7 +57,7 @@ class SensorEmitter(object):
                 sensor = getattr(importlib.import_module(
                     'NeoBurnIn.DataSource.' + mod), cls)
                 self.emitted_sensors.append(sensor(
-                    self.queue.sync_q, self.stop_event, **spec))
+                    self.stop_event, self.queue.sync_q, **spec))
 
     def start(self):
         for sensor in self.emitted_sensors:

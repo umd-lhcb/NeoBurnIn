@@ -4,28 +4,16 @@ log:
     backupCount: 10
 
 client:
-    host: 129.2.92.92
+    host: 127.0.0.1
     port: 45678
     maxConcurrency: 4
 
 sensors:
     - Therm.ThermDataSource:
-        sensorPath: /sys/bus/w1/devices/28-0000098dd2b8/w1_slave
-        displayName: TEMP_GBLD1
+        sensor_path: /sys/bus/w1/devices/28-0000098d94eb/w1_slave
+        display_name: SHORT_WIRE
         interval: 5
     - Therm.ThermDataSource:
-        sensorPath: /sys/bus/w1/devices/28-0000098d8197/w1_slave
-        displayName: TEMP_ENV
-        interval: 5
-    - Therm.ThermDataSource:
-        sensorPath: /sys/bus/w1/devices/28-0000098d94eb/w1_slave
-        displayName: TEMP_GBT_MC
-        interval: 5
-    - Therm.ThermDataSource:
-        sensorPath: /sys/bus/w1/devices/28-0000098e7ed7/w1_slave
-        displayName: TEMP_GBT_DC1
-        interval: 5
-    - Therm.ThermDataSource:
-        sensorPath: /sys/bus/w1/devices/28-0000099049c6/w1_slave
-        displayName: TEMP_GBT_DC2
+        sensor_path: /sys/bus/w1/devices/28-0000098d8197/w1_slave
+        display_name: LONG_WIRE
         interval: 5
