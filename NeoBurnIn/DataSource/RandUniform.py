@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Aug 16, 2018 at 12:01 AM -0400
+# Last Change: Fri Jan 17, 2020 at 07:13 AM -0500
 
 import logging
 
 from random import uniform
+from threading import Thread
 
 from NeoBurnIn.base import BaseDataSource
 from NeoBurnIn.base import time_now_formatted
@@ -12,7 +13,7 @@ from NeoBurnIn.base import time_now_formatted
 logger = logging.getLogger(__name__)
 
 
-class RandUniformDataSource(BaseDataSource):
+class RandUniformDataSource(Thread, BaseDataSource):
     def __init__(self, queue, stop_event, *args,
                  interval=1, chPrefix='CHANNEL', numOfChs=1, **kwargs):
         self.queue = queue

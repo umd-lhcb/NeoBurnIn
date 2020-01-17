@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jan 17, 2019 at 11:43 AM -0500
+# Last Change: Fri Jan 17, 2020 at 07:16 AM -0500
 
 import logging
 
 from pathlib import Path
+from rpi.burnin.ThermSensor import ThermSensor
 
 from NeoBurnIn.base import BaseDataSource
 from NeoBurnIn.base import time_now_formatted
-from submodules.RPiBurnIn.therm.ThermSensor import ThermSensor
 
 logger = logging.getLogger(__name__)
 
@@ -29,5 +29,5 @@ class ThermDataSource(ThermSensor, BaseDataSource):
     def get(self):
         therm = str(super().get())
         return time_now_formatted() + self.separator + \
-            self.displayName + self.separator + \
+            self.display_name + self.separator + \
             therm + self.line_end
