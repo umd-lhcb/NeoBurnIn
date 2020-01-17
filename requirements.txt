@@ -4,3 +4,4 @@ pytest
 janus
 rainbow_logging_handler
 pyyaml
+git+https://github.com/umd-lhcb/rpi.burnin
