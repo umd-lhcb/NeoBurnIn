@@ -1,6 +1,8 @@
 __pycache__
 .python-version
 .pytest_cache
+.virtualenv/
+
 measurements/test_server/
 *server.yml
 demo/NaiveLogger.yml
