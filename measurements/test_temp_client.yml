@@ -10,10 +10,10 @@ client:
 
 sensors:
     - Therm.ThermDataSource:
-        sensor_path: /sys/bus/w1/devices/28-0000098d94eb/w1_slave
-        display_name: SHORT_WIRE
+        sensorPath: /sys/bus/w1/devices/28-0000098d94eb/w1_slave
+        displayName: SHORT_WIRE
         interval: 5
     - Therm.ThermDataSource:
-        sensor_path: /sys/bus/w1/devices/28-0000098d8197/w1_slave
-        display_name: LONG_WIRE
+        sensorPath: /sys/bus/w1/devices/28-0000098d8197/w1_slave
+        displayName: LONG_WIRE
         interval: 5
