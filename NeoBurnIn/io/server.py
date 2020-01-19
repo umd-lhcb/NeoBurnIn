@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 12:08 AM -0500
+# Last Change: Sun Jan 19, 2020 at 12:40 AM -0500
 
 import logging
 import datetime as dt
@@ -64,10 +64,6 @@ class DataServer(GroundServer):
                 '/stats/timeseries/{ch_name}',
                 self.handler_stats_timeseries
             ),
-            web.post(
-                '/stats/hist/{ch_name}',
-                self.handler_stats_hist
-            )
         ])
 
         # Add CORS support
@@ -91,22 +87,6 @@ class DataServer(GroundServer):
                 'time': self.stash[ch_name]['time'],
                 'data': self.stash[ch_name]['data'],
                 # 'summary': self.stash[ch_name]['summary']
-            }
-            return web.json_response(data_dump)
-
-        except Exception as err:
-            logger.warning('Cannot form json response due to {}'.format(
-                err.__class__.__name__
-            ))
-            raise web.HTTPNotFound
-
-    async def handler_stats_hist(self, request):
-        # ch_name = request.match_info['ch_name']
-
-        try:
-            data_dump = {
-                'hist': [1, 2, 3, 4, 5],
-                'freq': [1, 2, 3, 4, 5]
             }
             return web.json_response(data_dump)
 
@@ -199,3 +179,65 @@ class DataServer(GroundServer):
             'time': DataStream(max_length=item_length),
             'data': DataStats(max_length=item_length)
         }
+
+
+class CtrlServer(GroundServer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    ###############
+    # HTTP routes #
+    ###############
+
+    def register_routes(self):
+        self.app.add_routes([
+            web.post(
+                '/relay/{dev_name}/{ch_name}/{state}',
+                self.handler_relay_ctrl
+            ),
+            web.post(
+                '/psu/{dev_ip_addr}/{state}',
+                self.handler_psu_ctrl
+            ),
+        ])
+
+        # Add CORS support
+        self.cors = aiohttp_cors.setup(self.app, defaults={
+            '*': aiohttp_cors.ResourceOptions(
+                allow_credentials=True,
+                expose_headers='*',
+                allow_headers='*',
+                max_age=21600
+            )
+        })
+
+        for route in list(self.app.router.routes()):
+            self.cors.add(route)
+
+    async def handler_relay_ctrl(self, request):
+        dev_name = bytes(request.match_info['dev_name'], 'utf-8')
+        ch_name = int(request.match_info['ch_name'])
+        state = request.match_info['state']
+
+        try:
+            pass
+
+        except Exception as err:
+            logger.warning('Cannot form json response due to {}'.format(
+                err.__class__.__name__
+            ))
+            raise web.HTTPNotFound
+
+    async def handler_psu_ctrl(self, request):
+        return web.Response(text='PSU control unimplemnted!')
+
+    ###############################
+    # Helpers for device controls #
+    ###############################
+
+    #######################################
+    # Implement required abstract methods #
+    #######################################
+
+    def dispatch(self):
+        pass

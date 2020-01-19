@@ -1,0 +1,11 @@
+log:
+    filename: measurements/CtrlServer.log
+    backupCount: 1000
+    maxSize: 100 MB
+    when: D
+    rotateInterval: 1
+    useTimeRotated: False
+
+server:
+    host: localhost
+    port: 45679
