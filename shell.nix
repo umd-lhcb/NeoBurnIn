@@ -7,11 +7,9 @@ in
 pkgs.mkShell {
   name = "pip-env";
   buildInputs = with pythonPackages; [
-    # Non-Python libraries
-    pkgs.libusb
-
     # Python requirements (enough to get a virtualenv going).
     virtualenvwrapper
+    hidapi
   ];
 
   shellHook = ''
