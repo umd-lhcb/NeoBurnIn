@@ -12,6 +12,3 @@ sensors:
     - RandUniform.RandUniformDataSource:
         chPrefix: RAND_UNIFORM
         numOfChs: 2
-    - Therm.ThermDataSource:
-        sensorPath: /dev/null
-        displayName: TEMP_1
