@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 12:41 AM -0500
+# Last Change: Sun Jan 19, 2020 at 03:24 AM -0500
 
 from argparse import ArgumentParser
 from queue import Queue
@@ -16,7 +16,7 @@ from NeoBurnIn.base import parse_config
 
 def parse_input():
     parser = ArgumentParser(
-        description='A http server that stores collected data and streams them via a json interface.'
+        description='A http server that controls various HW interfaces.'
     )
 
     parser.add_argument(
