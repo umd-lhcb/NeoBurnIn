@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 12:40 AM -0500
+# Last Change: Sun Jan 19, 2020 at 01:42 AM -0500
 
 import logging
 import datetime as dt
@@ -8,6 +8,8 @@ import aiohttp_cors
 
 from aiohttp import web
 from collections import defaultdict
+
+from rpi.burnin.USBRelay import set_relay_state, ON, OFF
 
 from NeoBurnIn.base import BaseServer
 from NeoBurnIn.base import DataStream, DataStats
@@ -217,16 +219,22 @@ class CtrlServer(GroundServer):
     async def handler_relay_ctrl(self, request):
         dev_name = bytes(request.match_info['dev_name'], 'utf-8')
         ch_name = int(request.match_info['ch_name'])
-        state = request.match_info['state']
+        raw_state = request.match_info['state']
+        state = self.translate_relay_state(raw_state)
 
-        try:
-            pass
+        if state:
+            try:
+                set_relay_state(dev_name, ch_name, state)
 
-        except Exception as err:
-            logger.warning('Cannot form json response due to {}'.format(
-                err.__class__.__name__
-            ))
-            raise web.HTTPNotFound
+            except Exception as err:
+                warning = 'Relay control error: {}'.format(
+                    err.__class__.__name__
+                )
+                logger.warning(warning)
+                return web.Response(text=warning)
+
+        else:
+            return web.Response(text='Invalid state: {}'.format(raw_state))
 
     async def handler_psu_ctrl(self, request):
         return web.Response(text='PSU control unimplemnted!')
@@ -234,6 +242,15 @@ class CtrlServer(GroundServer):
     ###############################
     # Helpers for device controls #
     ###############################
+
+    @staticmethod
+    def translate_relay_state(state):
+        if state.lower() == 'off':
+            return OFF
+        elif state.lower() == 'on':
+            return ON
+        else:
+            return None
 
     #######################################
     # Implement required abstract methods #
