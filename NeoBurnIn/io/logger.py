@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 20, 2018 at 10:07 PM -0400
+# Last Change: Sun Jan 19, 2020 at 12:46 AM -0500
 # Too bad. Impurities everywhere.
 
 import logging
@@ -28,7 +28,7 @@ def configure_client_logger(filename, maxSize, backupCount,
 class LoggingThread(object):
     def __init__(self, queue,
                  filename, backupCount,
-                 fromaddr, toaddrs, credentials, interval,
+                 fromaddr=None, toaddrs=None, credentials=None, interval=None,
                  maxSize='100 MB',
                  when='D', rotateInterval=1,
                  useTimeRotated=False,
@@ -43,14 +43,23 @@ class LoggingThread(object):
         else:
             file_handler = log_handler_file(filename, maxSize, backupCount)
 
-        email_handler = log_handler_email(fromaddr, toaddrs, credentials,
-                                          interval)
+        if fromaddr:
+            email_handler = log_handler_email(fromaddr, toaddrs, credentials,
+                                              interval)
+        else:
+            email_handler = None
+
         # Record detailed messages
         file_handler.setFormatter(log_formatter_detailed())
 
-        self.listener = logging.handlers.QueueListener(
-            queue, console_handler, file_handler, email_handler,
-            respect_handler_level=True)
+        if email_handler:
+            self.listener = logging.handlers.QueueListener(
+                queue, console_handler, file_handler, email_handler,
+                respect_handler_level=True)
+        else:
+            self.listener = logging.handlers.QueueListener(
+                queue, console_handler, file_handler,
+                respect_handler_level=True)
 
         # Configure the root logger by attaching queue handler only
         queue_handler = logging.handlers.QueueHandler(queue)
