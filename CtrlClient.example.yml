@@ -1,0 +1,32 @@
+log:
+    filename: measurements/DataClient.log
+    maxSize: 100 MB
+    backupCount: 10
+
+client:
+    host: localhost
+    port: 45678
+    maxConcurrency: 4
+
+sensors:
+    - RandUniform.RandUniformDataSource:
+        chPrefix: RAND_UNIFORM
+        numOfChs: 2
+
+controller:
+    host: localhost
+    port: 45679
+
+ctrlCmds:
+    - Test.TestSink:
+        name: tester1
+        entry: test
+
+ctrlRules:
+    - match:
+        name: "RAND_UNIFORM\d+"
+        value_gt: 5
+      action:
+          sink: tester1
+          ch: 1
+          state: off

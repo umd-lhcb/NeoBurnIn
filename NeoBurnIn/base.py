@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jan 17, 2020 at 06:58 AM -0500
+# Last Change: Sun Jan 19, 2020 at 03:56 PM -0500
 
 import abc
 import sys
@@ -188,6 +188,20 @@ class BaseDataSource(metaclass=abc.ABCMeta):
     def cleanup(self):
         '''
         Join spawned thread.
+        '''
+
+
+class BaseDataSink(metaclass=abc.ABCMeta):
+    @abc.abstractclassmethod
+    def on(self, ch):
+        '''
+        Set ch to on.
+        '''
+
+    @abc.abstractclassmethod
+    def off(self, ch):
+        '''
+        Set ch to off.
         '''
 
 

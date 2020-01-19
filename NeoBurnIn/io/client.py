@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Aug 15, 2018 at 10:58 AM -0400
+# Last Change: Sun Jan 19, 2020 at 03:19 PM -0500
 
 import logging
 import asyncio
@@ -128,3 +128,7 @@ class DataClient(ThreadTerminator, BaseClient):
                 'Transmission for the following msg failed, with the following exception {}: {}'.format(
                     err.__class__.__name__, data.decode('utf8')
                 ))
+
+
+class CtrlClient(DataClient):
+    pass
