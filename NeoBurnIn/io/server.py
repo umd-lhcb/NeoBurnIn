@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 01:42 AM -0500
+# Last Change: Sun Jan 19, 2020 at 02:00 AM -0500
 
 import logging
 import datetime as dt
@@ -225,6 +225,7 @@ class CtrlServer(GroundServer):
         if state:
             try:
                 set_relay_state(dev_name, ch_name, state)
+                return web.Response(text='Success.')
 
             except Exception as err:
                 warning = 'Relay control error: {}'.format(
