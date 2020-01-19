@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jan 17, 2020 at 07:13 AM -0500
+# Last Change: Sat Jan 18, 2020 at 11:41 PM -0500
 
 import logging
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class RandUniformDataSource(Thread, BaseDataSource):
-    def __init__(self, queue, stop_event, *args,
+    def __init__(self, stop_event, queue, *args,
                  interval=1, chPrefix='CHANNEL', numOfChs=1, **kwargs):
         self.queue = queue
         self.stop_event = stop_event

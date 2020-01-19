@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sat Jan 18, 2020 at 04:34 PM -0500
+# Last Change: Sat Jan 18, 2020 at 11:41 PM -0500
 
 import logging
 
@@ -28,5 +28,5 @@ class ThermDataSource(ThermSensor, BaseDataSource):
     def get(self):
         therm = str(super().get())
         return time_now_formatted() + self.separator + \
-            self.display_name + self.separator + \
+            self.displayName + self.separator + \
             therm + self.line_end
