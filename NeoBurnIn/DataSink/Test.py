@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 04:00 PM -0500
+# Last Change: Sun Jan 19, 2020 at 04:13 PM -0500
 
 import logging
 
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class TestSink(BaseDataSink):
-    def __init__(self, host, port, entry=None):
+    def __init__(self, host, port, entry='test'):
         self.host = host
         self.port = port
         self.entry = entry

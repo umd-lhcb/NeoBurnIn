@@ -13,14 +13,11 @@ sensors:
         chPrefix: RAND_UNIFORM
         numOfChs: 2
 
-controller:
-    host: localhost
-    port: 45679
-
-ctrlCmds:
-    - Test.TestSink:
-        name: tester1
-        entry: test
+controllers:
+    tester1:
+        Test.TestSink:
+            host: localhost
+            port: 45679
 
 ctrlRules:
     - match:
