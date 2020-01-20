@@ -10,8 +10,9 @@ client:
 
 sensors:
     - RandUniform.RandUniformDataSource:
-        chPrefix: RAND_UNIFORM
-        numOfChs: 2
+        chName: TEST_CASE1
+    - RandUniform.RandUniformDataSource:
+        chName: TEST_CASE2
 
 controllers:
     tester1:
@@ -21,7 +22,7 @@ controllers:
 
 ctrlRules:
     - match:
-        name: "RAND_UNIFORM\d+"
+        name: "TEST_CASE\d+"
         value_gt: 5
       action:
           sink: tester1
