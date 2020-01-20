@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 20, 2020 at 02:48 AM -0500
+# Last Change: Mon Jan 20, 2020 at 03:01 AM -0500
 
 import re
 
@@ -32,8 +32,11 @@ def combinator_and(functors):
     return combined
 
 
+# NOTE: The peculiar form of the lambda function arguments is needed to bind
+# variables early, namely **during** the list comprehension, not **after**!
 def construct_functors(match):
-    return [lambda x: globals()[f](x, match[f]) for f in match.keys()]
+    return [lambda x, f=f, arg=arg: globals()[f](x, arg)
+            for f, arg in match.items()]
 
 
 def parse_directive(rules):
