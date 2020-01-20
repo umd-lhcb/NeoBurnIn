@@ -27,4 +27,4 @@ class ThermDataSource(ThermSensor, BaseDataSource):
 
     def get(self):
         therm = super().get()
-        return DataPassthru(time_now_formatted(), self.display_name, therm)
+        return DataPassthru(time_now_formatted(), self.displayName, therm)
