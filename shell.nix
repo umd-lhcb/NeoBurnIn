@@ -17,7 +17,7 @@ pkgs.mkShell {
     janus
     pyyaml
 
-    RPI_GPIO
+    RPi_GPIO
     rainbow_logging_handler
   ];
 
