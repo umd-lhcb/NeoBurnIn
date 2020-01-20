@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 20, 2020 at 03:23 PM -0500
+# Last Change: Mon Jan 20, 2020 at 03:31 PM -0500
 
 import logging
 import asyncio
 import aiohttp
 
-from NeoBurnIn.base import ThreadTerminator, BaseClient
+from NeoBurnIn.base import ThreadTerminator, BaseClient, DataPassthru
 
 logger = logging.getLogger(__name__)
 
@@ -152,14 +152,15 @@ class CtrlClient(DataClient):
         try:
             data = await self.queue.get()
 
-            for match, action in self.ctrlRules.items():
-                if match(data):
-                    url = action(self.controllers)
-                    await super().send(bytearray('op', 'utf8'), url, False)
+            if isinstance(data, DataPassthru):
+                for match, action in self.ctrlRules.items():
+                    if match(data):
+                        url = action(self.controllers)
+                        await super().send(bytearray('op', 'utf8'), url, False)
 
-            # Always send non-alarm data
-            if data.value:
-                await super().send(self.assemble_msg(data))
+                # Always send non-alarm data
+                if data.value:
+                    await super().send(self.assemble_msg(data))
 
         except asyncio.CancelledError:
             logger.debug('Sender cancellation has been requested.')
