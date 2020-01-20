@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 04:13 PM -0500
+# Last Change: Mon Jan 20, 2020 at 04:59 AM -0500
 
 import logging
 
@@ -16,11 +16,11 @@ class TestSink(BaseDataSink):
         self.entry = entry
 
     def on(self, ch):
-        return 'http://{}/{}/{}/{}/{}'.format(
+        return 'http://{}:{}/{}/{}/{}'.format(
             self.host, self.port, self.entry, ch, 'on'
         )
 
     def off(self, ch):
-        return 'http://{}/{}/{}/{}/{}'.format(
+        return 'http://{}:{}/{}/{}/{}'.format(
             self.host, self.port, self.entry, ch, 'off'
         )
