@@ -1,0 +1,43 @@
+log:
+    filename: measurements/test_temp_ctrl_client.log
+    maxSize: 100 MB
+    backupCount: 10
+
+client:
+    host: 127.0.0.1
+    port: 45678
+    maxConcurrency: 4
+
+sensors:
+    - Therm.ThermDataSource:
+        sensorPath: /sys/bus/w1/devices/28-0000098d94eb/w1_slave
+        displayName: SHORT_WIRE
+        interval: 5
+    - Therm.ThermDataSource:
+        sensorPath: /sys/bus/w1/devices/28-0000098d8197/w1_slave
+        displayName: LONG_WIRE
+        interval: 5
+
+controllers:
+    relay1:
+        Relay.RelaySink:
+            host: localhost
+            port: 45679
+            automaticDiscovery: true
+            relayIdx: 0
+
+ctrlRules:
+    - match:
+        name: "SHORT_WIRE"
+        valueGt: 30
+      action:
+          sink: relay1
+          state: "on"
+          ch: 1
+    - match:
+        name: "SHORT_WIRE"
+        valueLt: 29
+      action:
+          sink: relay1
+          state: "off"
+          ch: 1
