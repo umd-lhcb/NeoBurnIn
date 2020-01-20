@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 20, 2020 at 05:41 AM -0500
+# Last Change: Mon Jan 20, 2020 at 05:47 AM -0500
 
 import logging
 import asyncio
@@ -85,14 +85,15 @@ class DataClient(ThreadTerminator, BaseClient):
                     err.__class__.__name__
                 ))
 
-    async def send(self, data=None, url=None):
+    async def send(self, data=None, url=None, task_done=True):
         try:
             data = self.assemble_msg(await self.queue.get()) if not data \
                 else data
             logger.debug('Got a new message, start transmission...')
 
             await self.post(data, url)
-            self.queue.task_done()
+            if task_done:
+                self.queue.task_done()
 
             # NOTE: here we have to decouple semaphore acquire and release
             self.sem.release()
@@ -148,13 +149,23 @@ class CtrlClient(DataClient):
         super().__init__(*args, **kwargs)
 
     async def send(self):
-        data = await self.queue.get()
+        try:
+            data = await self.queue.get()
 
-        for match, action in self.ctrlRules.items():
-            if match(data):
-                url = action(self.controllers)
-                await super().send(bytearray('op', 'utf8'), url)
+            for match, action in self.ctrlRules.items():
+                if match(data):
+                    url = action(self.controllers)
+                    await super().send(bytearray('op', 'utf8'), url, False)
 
-        # Always send non-alarm data
-        if data.value:
-            await super().send(self.assemble_msg(data))
+            # Always send non-alarm data
+            if data.value:
+                await super().send(self.assemble_msg(data))
+
+        except asyncio.CancelledError:
+            logger.debug('Sender cancellation has been requested.')
+
+        except Exception as err:
+            logger.warning(
+                'Sender has been interrupted with the following exception: {}'.format(
+                    err.__class__.__name__
+                ))
