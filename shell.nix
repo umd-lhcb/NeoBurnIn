@@ -9,11 +9,14 @@ pkgs.mkShell {
   buildInputs = with pythonPackages; [
     # Python requirements (enough to get a virtualenv going).
     virtualenvwrapper
+
     hidapi
+
     aiohttp
     aiohttp-cors
     janus
-    PyYAML
+    pyyaml
+
     RPI_GPIO
     rainbow_logging_handler
   ];
