@@ -10,5 +10,6 @@ client:
 
 sensors:
     - RandUniform.RandUniformDataSource:
-        chPrefix: RAND_UNIFORM
-        numOfChs: 2
+        chName: RAND_UNIFORM_TEST1
+    - RandUniform.RandUniformDataSource:
+        chName: RAND_UNIFORM_TEST2
