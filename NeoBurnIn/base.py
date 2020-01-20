@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 03:56 PM -0500
+# Last Change: Sun Jan 19, 2020 at 07:51 PM -0500
 
 import abc
 import sys
 import yaml
 
 from datetime import datetime
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from statistics import mean, stdev
 from pathlib import Path
 
@@ -163,14 +163,15 @@ class DataStats(DataStream):
         self.reference_exists = True
 
 
+DataPassthru = namedtuple('DataPassthru', ('date name value'),
+                          defaults=(None,)*3)
+
+
 ####################
 # Abstract classes #
 ####################
 
 class BaseDataSource(metaclass=abc.ABCMeta):
-    separator = '|'
-    line_end = '\n'
-
     @abc.abstractclassmethod
     def run(self, interval):
         '''

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 03:19 PM -0500
+# Last Change: Sun Jan 19, 2020 at 07:54 PM -0500
 
 import logging
 import asyncio
@@ -85,12 +85,13 @@ class DataClient(ThreadTerminator, BaseClient):
                     err.__class__.__name__
                 ))
 
-    async def send(self):
+    async def send(self, data=None, url=None):
         try:
-            data = bytearray(await self.queue.get(), 'utf8')
+            data = self.assemble_msg(await self.queue.get()) if not data \
+                else data
             logger.debug('Got a new message, start transmission...')
 
-            await self.post(data)
+            await self.post(data, url)
             self.queue.task_done()
 
             # NOTE: here we have to decouple semaphore acquire and release
@@ -105,10 +106,11 @@ class DataClient(ThreadTerminator, BaseClient):
                     err.__class__.__name__
                 ))
 
-    async def post(self, data):
+    async def post(self, data, url=None):
+        url = self.url if not url else url
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.post(self.url, data=data) as resp:
+                async with session.post(url, data=data) as resp:
                     if resp.status != 200:
                         logger.warning(
                             'Transmission for the following msg failed, with a HTTP error code {}: {}'.format(
@@ -129,6 +131,22 @@ class DataClient(ThreadTerminator, BaseClient):
                     err.__class__.__name__, data.decode('utf8')
                 ))
 
+    @staticmethod
+    def assemble_msg(raw_data, sep='|', ln='\n', encoding='utf8'):
+        data = sep.join(map(str, raw_data)) + ln
+
+        if encoding:
+            return bytearray(data, encoding)
+        else:
+            return data
+
 
 class CtrlClient(DataClient):
-    pass
+    def __init__(self, *args, ctrlRules=list(), **kwargs):
+        self.ctrlRules = ctrlRules
+        super().__init__(*args, **kwargs)
+
+    async def send(self):
+        data = await self.queue.get()
+        # Categorize data into normal thermistor readouts and alarms
+        super.send(data)

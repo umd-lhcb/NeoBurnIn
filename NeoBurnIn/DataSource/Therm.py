@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 #
-# Last Change: Sat Jan 18, 2020 at 11:41 PM -0500
+# Last Change: Sun Jan 19, 2020 at 07:58 PM -0500
 
 import logging
 
 from pathlib import Path
 from rpi.burnin.ThermSensor import ThermSensor
 
-from NeoBurnIn.base import BaseDataSource
+from NeoBurnIn.base import BaseDataSource, DataPassthru
 from NeoBurnIn.base import time_now_formatted
 
 logger = logging.getLogger(__name__)
@@ -27,6 +27,4 @@ class ThermDataSource(ThermSensor, BaseDataSource):
 
     def get(self):
         therm = str(super().get())
-        return time_now_formatted() + self.separator + \
-            self.displayName + self.separator + \
-            therm + self.line_end
+        return DataPassthru(time_now_formatted(), self.display_name, therm)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 02:33 AM -0500
+# Last Change: Sun Jan 19, 2020 at 07:27 PM -0500
 
 import logging
 import datetime as dt
@@ -201,6 +201,10 @@ class CtrlServer(GroundServer):
                 '/psu/{dev_ip_addr}/{state}',
                 self.handler_psu_ctrl
             ),
+            web.post(
+                '/test',
+                self.handler_test
+            ),
         ])
 
         # Add CORS support
@@ -226,7 +230,7 @@ class CtrlServer(GroundServer):
             try:
                 set_relay_state(dev_name, ch_name, state)
                 logger.info('Turning on USB relay channel {}'.format(ch_name))
-                return web.Response(text='Success.')
+                return web.Response(text='Success')
 
             except Exception as err:
                 warning = 'Relay control error: {}'.format(
@@ -240,6 +244,10 @@ class CtrlServer(GroundServer):
 
     async def handler_psu_ctrl(self, request):
         return web.Response(text='PSU control unimplemnted!')
+
+    async def handler_test(self, request):
+        print(request.raw_headers)
+        return web.Response(text='Success')
 
     ###############################
     # Helpers for device controls #
