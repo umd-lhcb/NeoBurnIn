@@ -23,7 +23,14 @@ controllers:
 ctrlRules:
     - match:
         name: "TEST_CASE\\d+"
-        valueGt: 5
+        valueGt: 7
+      action:
+          sink: tester1
+          state: "on"  # We need to quote this otherwise it will be parsed as False
+          ch: 1
+    - match:
+        name: "TEST_CASE\\d+"
+        valueLt: 3
       action:
           sink: tester1
           state: "off"  # We need to quote this otherwise it will be parsed as False
