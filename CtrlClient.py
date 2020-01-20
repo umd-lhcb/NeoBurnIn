@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 04:16 PM -0500
+# Last Change: Mon Jan 20, 2020 at 04:46 AM -0500
 
 import janus
 import importlib
@@ -14,6 +14,7 @@ sys.path.insert(0, '..')
 from NeoBurnIn.io.client import CtrlClient
 from NeoBurnIn.io.logger import configure_client_logger
 from NeoBurnIn.base import parse_config
+from NeoBurnIn.functional import parse_directive
 
 
 ###################
@@ -78,8 +79,6 @@ class ControllerEmitter(object):
                     'NeoBurnIn.DataSink.' + mod), cls)
                 self.emitted_sinks[label] = controller(**spec)
 
-        return self.emitted_sinks
-
 
 #########
 # Setup #
@@ -93,8 +92,13 @@ configure_client_logger(**options['log'])
 sensors = SensorEmitter(options['sensors'])
 sensors.init_sensors()
 
+controllers = ControllerEmitter(options['controllers'])
+controllers.init_controllers()
+ctrl_rules = parse_directive(options['ctrlRules'])
+
 client = CtrlClient(
     sensors.queue.async_q, sensors.stop_event, sensors.emitted_sensors,
+    controllers=controllers.emitted_sinks, ctrlRules=ctrl_rules,
     **options['client']
 )
 
