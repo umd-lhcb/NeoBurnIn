@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 20, 2020 at 05:49 AM -0500
+# Last Change: Mon Jan 20, 2020 at 03:23 PM -0500
 
 import logging
 import asyncio
@@ -163,3 +163,9 @@ class CtrlClient(DataClient):
 
         except asyncio.CancelledError:
             logger.debug('Sender cancellation has been requested.')
+
+        except Exception as err:
+            logger.warning(
+                'Transmission for the following msg failed, with the following exception {}: {}'.format(
+                    err.__class__.__name__, data.decode('utf8')
+                ))
