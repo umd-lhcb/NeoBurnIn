@@ -1,5 +1,5 @@
 log:
-    filename: measurements/DataClient.log
+    filename: measurements/CtrlClient.log
     maxSize: 100 MB
     backupCount: 10
 
@@ -26,5 +26,5 @@ ctrlRules:
         valueGt: 5
       action:
           sink: tester1
-          state: off
+          state: "off"  # We need to quote this otherwise it will be parsed as False
           ch: 1
