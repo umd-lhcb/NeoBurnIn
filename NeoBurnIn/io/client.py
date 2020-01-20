@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 07:54 PM -0500
+# Last Change: Mon Jan 20, 2020 at 05:41 AM -0500
 
 import logging
 import asyncio
@@ -142,11 +142,19 @@ class DataClient(ThreadTerminator, BaseClient):
 
 
 class CtrlClient(DataClient):
-    def __init__(self, *args, ctrlRules=list(), **kwargs):
+    def __init__(self, *args, controllers=None, ctrlRules=None, **kwargs):
+        self.controllers = controllers
         self.ctrlRules = ctrlRules
         super().__init__(*args, **kwargs)
 
     async def send(self):
         data = await self.queue.get()
-        # Categorize data into normal thermistor readouts and alarms
-        super.send(data)
+
+        for match, action in self.ctrlRules.items():
+            if match(data):
+                url = action(self.controllers)
+                await super().send(bytearray('op', 'utf8'), url)
+
+        # Always send non-alarm data
+        if data.value:
+            await super().send(self.assemble_msg(data))

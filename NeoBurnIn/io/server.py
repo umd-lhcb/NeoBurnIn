@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 07:27 PM -0500
+# Last Change: Mon Jan 20, 2020 at 05:11 AM -0500
 
 import logging
 import datetime as dt
@@ -202,23 +202,10 @@ class CtrlServer(GroundServer):
                 self.handler_psu_ctrl
             ),
             web.post(
-                '/test',
+                '/test/{ch_name}/{state}',
                 self.handler_test
             ),
         ])
-
-        # Add CORS support
-        self.cors = aiohttp_cors.setup(self.app, defaults={
-            '*': aiohttp_cors.ResourceOptions(
-                allow_credentials=True,
-                expose_headers='*',
-                allow_headers='*',
-                max_age=21600
-            )
-        })
-
-        for route in list(self.app.router.routes()):
-            self.cors.add(route)
 
     async def handler_relay_ctrl(self, request):
         dev_name = bytes(request.match_info['dev_name'], 'utf-8')
@@ -246,7 +233,12 @@ class CtrlServer(GroundServer):
         return web.Response(text='PSU control unimplemnted!')
 
     async def handler_test(self, request):
-        print(request.raw_headers)
+        ch_name = request.match_info['ch_name']
+        state = request.match_info['state']
+
+        logger.info('Test command with channel: {} and state: {}'.format(
+            ch_name, state
+        ))
         return web.Response(text='Success')
 
     ###############################
