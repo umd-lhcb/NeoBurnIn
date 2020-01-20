@@ -10,6 +10,12 @@ pkgs.mkShell {
     # Python requirements (enough to get a virtualenv going).
     virtualenvwrapper
     hidapi
+    aiohttp
+    aiohttp-cors
+    janus
+    PyYAML
+    RPI_GPIO
+    rainbow_logging_handler
   ];
 
   shellHook = ''
