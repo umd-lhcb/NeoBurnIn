@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 07:58 PM -0500
+# Last Change: Mon Jan 20, 2020 at 04:50 AM -0500
 
 import logging
 
@@ -26,5 +26,5 @@ class ThermDataSource(ThermSensor, BaseDataSource):
                 self.queue.put(therm)
 
     def get(self):
-        therm = str(super().get())
+        therm = super().get()
         return DataPassthru(time_now_formatted(), self.display_name, therm)

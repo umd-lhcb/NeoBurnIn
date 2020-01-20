@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 07:57 PM -0500
+# Last Change: Mon Jan 20, 2020 at 04:50 AM -0500
 
 import logging
 
@@ -35,4 +35,4 @@ class RandUniformDataSource(Thread, BaseDataSource):
 
     def get(self):
         return DataPassthru(time_now_formatted(), self.chName,
-                            str(uniform(1, 10)))
+                            uniform(1, 10))
