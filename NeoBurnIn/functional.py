@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 20, 2020 at 03:01 AM -0500
+# Last Change: Mon Jan 20, 2020 at 03:04 AM -0500
 
 import re
 
@@ -47,8 +47,8 @@ def parse_directive(rules):
         action = rule['action']
 
         combined = combinator_and(functors)
-        executor = lambda sink: \
-            sink[action['sink']].getattr(action['state'])(action['ch'])
+        executor = lambda sink, state=action['state'], ch=action['ch']: \
+            sink[action['sink']].getattr(state)(ch)
 
         parsed[combined] = executor
 
