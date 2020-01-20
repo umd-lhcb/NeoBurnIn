@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 20, 2020 at 01:55 AM -0500
+# Last Change: Mon Jan 20, 2020 at 02:36 AM -0500
 
 import pytest
 
@@ -40,7 +40,6 @@ def test_name_not_match_terminal(data):
 # For functor construction #
 ############################
 
-@pytest.fixture
 def data_alt():
     return DataPassthru('2020-01-20', 'TEST_CASE1', 6)
 
@@ -68,14 +67,12 @@ def test_directive2(data_alt):
 
     assert combined_functor(data_alt) is False
 
+from NeoBurnIn.functional import *
 
-def test_directive3(data_alt):
-    directive = [
-        {
-            'match': {'name': "TESAT_CASE\\d+", "valueGt": 5},
-            'action': {'sink': 'tester1', 'state': 'off', 'ch': 1}
-        }]
-    parsed = parse_directive(directive)
-    combined_functor = list(parsed.keys())[0]
-
-    assert combined_functor(data_alt) is False
+directive = [
+    {
+        'match': {'name': "TEST_CASE\\d+", "valueGt": 5},
+        'action': {'sink': 'tester1', 'state': 'off', 'ch': 1}
+    }]
+parsed = parse_directive(directive)
+combined_functor = list(parsed.keys())[0]

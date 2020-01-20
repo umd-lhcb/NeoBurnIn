@@ -22,9 +22,9 @@ controllers:
 
 ctrlRules:
     - match:
-        name: "TEST_CASE\d+"
-        value_gt: 5
+        name: "TEST_CASE\\d+"
+        valueGt: 5
       action:
           sink: tester1
-          ch: 1
           state: off
+          ch: 1
