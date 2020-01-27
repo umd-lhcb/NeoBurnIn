@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 20, 2020 at 03:40 PM -0500
+# Last Change: Mon Jan 27, 2020 at 11:44 AM +0800
 
 import logging
 import asyncio
@@ -129,7 +129,7 @@ class DataClient(ThreadTerminator, BaseClient):
         except Exception as err:
             logger.warning(
                 'Transmission for the following msg failed, with the following exception {}: {}'.format(
-                    err.__class__.__name__, data.decode('utf8')
+                    err.__class__.__name__, data
                 ))
 
     @staticmethod
@@ -169,5 +169,5 @@ class CtrlClient(DataClient):
         except Exception as err:
             logger.warning(
                 'Transmission for the following msg failed, with the following exception {}: {}'.format(
-                    err.__class__.__name__, data.decode('utf8')
+                    err.__class__.__name__, data
                 ))
