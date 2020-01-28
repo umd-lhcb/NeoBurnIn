@@ -25,7 +25,12 @@ pkgs.mkShell {
     # Allow the use of wheels.
     SOURCE_DATE_EPOCH=$(date +%s)
 
-    VENV=./.virtualenv
+    if test -d $HOME/build/python-venv; then
+      VENV=$HOME/build/python-venv/NeoBurnIn
+    else
+      VENV=./.virtualenv
+    fi
+
     if test ! -d $VENV; then
       virtualenv $VENV
     fi
