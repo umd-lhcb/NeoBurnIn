@@ -216,7 +216,8 @@ class CtrlServer(GroundServer):
         if state:
             try:
                 set_relay_state(dev_name, ch_name, state)
-                logger.info('Turning on USB relay channel {}'.format(ch_name))
+                logger.info('Turning {} USB relay channel {}'.format(
+                    raw_state.lower(), ch_name))
                 return web.Response(text='Success')
 
             except Exception as err:
