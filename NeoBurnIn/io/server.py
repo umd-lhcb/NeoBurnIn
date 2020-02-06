@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 20, 2020 at 05:11 AM -0500
+# Last Change: Thu Feb 06, 2020 at 06:34 PM +0800
 
 import logging
 import datetime as dt
@@ -8,6 +8,7 @@ import aiohttp_cors
 
 from aiohttp import web
 from collections import defaultdict
+from datetime import datetime
 
 from rpi.burnin.USBRelay import set_relay_state, ON, OFF
 
@@ -184,7 +185,12 @@ class DataServer(GroundServer):
 
 
 class CtrlServer(GroundServer):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args,
+                 minTimeOut=60, **kwargs):
+        self.minTimeOut = minTimeOut
+        self.relay_timer = None
+        self.test_timer = None
+
         super().__init__(*args, **kwargs)
 
     ###############
@@ -213,7 +219,16 @@ class CtrlServer(GroundServer):
         raw_state = request.match_info['state']
         state = self.translate_relay_state(raw_state)
 
-        if state:
+        allowed_to_control = self.execute_if_not_too_recent(
+            'relay_timer', self.minTimeOut)
+
+        if not allowed_to_control:
+            logger.warning('Operation denied for changing relay state to {}'.format(
+                raw_state
+            ))
+            return web.Response(text='Operation denied: Previous operation too recent.')
+
+        elif state:
             try:
                 set_relay_state(dev_name, ch_name, state)
                 logger.info('Turning {} USB relay channel {}'.format(
@@ -237,14 +252,38 @@ class CtrlServer(GroundServer):
         ch_name = request.match_info['ch_name']
         state = request.match_info['state']
 
-        logger.info('Test command with channel: {} and state: {}'.format(
-            ch_name, state
-        ))
-        return web.Response(text='Success')
+        allowed_to_control = self.execute_if_not_too_recent(
+            'test_timer', self.minTimeOut
+        )
+
+        if not allowed_to_control:
+            logger.warning('Test command denied: Too frequent.')
+            return web.Response(text='Operation denied: Previous operation too recent.')
+
+        else:
+            logger.info('Test command with channel: {} and state: {}'.format(
+                ch_name, state
+            ))
+            return web.Response(text='Success')
 
     ###############################
     # Helpers for device controls #
     ###############################
+
+    def execute_if_not_too_recent(self, timer_name, timer_period):
+        cur_time = datetime.now()
+
+        prev_time = getattr(self, timer_name)
+        if prev_time:
+            if (cur_time-prev_time).total_seconds() >= timer_period:
+                setattr(self, timer_name, cur_time)
+                return True
+            else:
+                return False
+
+        else:
+            setattr(self, timer_name, cur_time)
+            return True
 
     @staticmethod
     def translate_relay_state(state):
