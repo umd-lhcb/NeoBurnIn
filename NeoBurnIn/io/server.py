@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Feb 06, 2020 at 06:34 PM +0800
+# Last Change: Thu Feb 06, 2020 at 06:46 PM +0800
 
 import logging
 import datetime as dt
@@ -230,10 +230,19 @@ class CtrlServer(GroundServer):
 
         elif state:
             try:
-                set_relay_state(dev_name, ch_name, state)
+                ret_code = set_relay_state(dev_name, ch_name, state)
                 logger.info('Turning {} USB relay channel {}'.format(
                     raw_state.lower(), ch_name))
-                return web.Response(text='Success')
+
+                if ret_code != 0:
+                    logger.critical('Relay control failed with error code: {}'.format(
+                        ret_code
+                    ))
+                    return web.Response(text='Failed with error code {}'.format(
+                        ret_code
+                    ))
+                else:
+                    return web.Response(text='Success')
 
             except Exception as err:
                 warning = 'Relay control error: {}'.format(
