@@ -20,6 +20,13 @@ sensors:
             - /sys/bus/w1/devices/28-0000098d94eb/w1_slave
         displayName: COMBINED_WIRE
         interval: 5
+    - Current.CurrentMaratonDataSource:
+        ipAddr: 192.168.1.2
+        interval: 60
+        displayName: MARATON_CURR
+        psuChannels:
+            - 1
+            - 2
 
 controllers:
     relay1:
