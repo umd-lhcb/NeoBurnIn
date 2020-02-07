@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Feb 06, 2020 at 06:46 PM +0800
+# Last Change: Fri Feb 07, 2020 at 01:39 PM +0800
 
 import logging
 import datetime as dt
@@ -118,12 +118,32 @@ class DataServer(GroundServer):
                 # Log the whole entry
                 logger.info('Received: {}'.format(entry))
 
-                # First store the data.
+                # Now check if this data point is OK.
+                if self.stash[ch_name]['data'].reference_exists:
+                    mean = self.stash[ch_name]['data'].reference_mean
+                    envelop = self.stash[ch_name]['data'].reference_stdev * \
+                        self.stdevRange
+                    if value <= mean-envelop or value >= mean+envelop:
+                        logger.critical('Channel {} measured a value of {}, which is outside of {} stds.'.format(
+                            ch_name, value, self.stdevRange
+                        ))
+
+                # Store the data first.
                 results = self.stash[ch_name]['data'].append(value)
                 if results is not False:
                     self.stash[ch_name]['summary'].append(results[0])
 
-                # Store the time, unconditionally.
+                # Now check if this data point is OK.
+                if self.stash[ch_name]['data'].reference_exists:
+                    mean = self.stash[ch_name]['data'].reference_mean
+                    envelop = self.stash[ch_name]['data'].reference_stdev * \
+                        self.stdevRange
+                    if value <= mean-envelop or value >= mean+envelop:
+                        logger.critical('Channel {} measured a value of {}, which is outside of {} stds.'.format(
+                            ch_name, value, self.stdevRange
+                        ))
+
+                # Store the time unconditionally.
                 self.stash[ch_name]['time'].append(
                     self.convert_to_bokeh_time(date))
 
@@ -172,7 +192,6 @@ class DataServer(GroundServer):
         specified empty leaves.
         '''
         stash = defaultdict(self.default_item)
-        stash['overall'] = DataStream(max_length=overall_stats_length)
         return stash
 
     @staticmethod
@@ -180,7 +199,8 @@ class DataServer(GroundServer):
         return {
             'summary': DataStream(max_length=item_length),
             'time': DataStream(max_length=item_length),
-            'data': DataStats(max_length=item_length)
+            'data': DataStats(max_length=item_length,
+                              defer_until_full_renewal=False)
         }
 
 
