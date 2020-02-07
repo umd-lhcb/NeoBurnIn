@@ -15,4 +15,4 @@ log:
 server:
     host: localhost
     port: 45678
-    stdevRange: 3
+    stdevRange: 1
