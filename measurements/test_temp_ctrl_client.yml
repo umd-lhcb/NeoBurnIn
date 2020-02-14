@@ -27,6 +27,9 @@ sensors:
         psuChannels:
             - 1
             - 2
+    #- Alarm.FireAlarmDataSource:
+        #ch: 8
+        #displayName: FIRE
 
 controllers:
     relay1:
