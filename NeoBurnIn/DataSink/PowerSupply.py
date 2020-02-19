@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 19, 2020 at 10:58 PM +0800
+# Last Change: Wed Feb 19, 2020 at 11:54 PM +0800
 
 import logging
 
@@ -13,15 +13,15 @@ class PowerSupplySink(BaseDataSink):
     def __init__(self, host, port, psu_ip, entry='psu'):
         self.host = host
         self.port = port
-        self.psu_ip = psu_ip
+        self.psuIp = psuIp
         self.entry = entry
 
     def on(self, ch):
         return 'http://{}:{}/{}/{}/{}/{}'.format(
-            self.host, self.port, self.entry, self.psu_ip, ch, 'on'
+            self.host, self.port, self.entry, self.psuIp, ch, 'on'
         )
 
     def off(self, ch):
         return 'http://{}:{}/{}/{}/{}/{}'.format(
-            self.host, self.port, self.entry, self.psu_ip, ch, 'off'
+            self.host, self.port, self.entry, self.psuIp, ch, 'off'
         )
