@@ -30,6 +30,9 @@ sensors:
     #- Alarm.FireAlarmDataSource:
         #ch: 8
         #displayName: FIRE
+    #- Alarm.WaterAlarmDataSource:
+        #ch: 9
+        #displayName: WATER
 
 controllers:
     relay1:
@@ -38,6 +41,11 @@ controllers:
             port: 45679
             automaticDiscovery: true
             relayIdx: 0
+    relay2:
+        PowerSupply.PowerSupplySink:
+            host: localhost
+            port: 45679
+            psu_ip: 192.168.1.2
 
 ctrlRules:
     - match:

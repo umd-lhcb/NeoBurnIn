@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Feb 07, 2020 at 01:39 PM +0800
+# Last Change: Wed Feb 19, 2020 at 11:13 PM +0800
 
 import logging
 import datetime as dt
@@ -11,6 +11,7 @@ from collections import defaultdict
 from datetime import datetime
 
 from rpi.burnin.USBRelay import set_relay_state, ON, OFF
+from labSNMP.wrapper.Wiener_async import WienerControl
 
 from NeoBurnIn.base import BaseServer
 from NeoBurnIn.base import DataStream, DataStats
@@ -210,6 +211,7 @@ class CtrlServer(GroundServer):
         self.minTimeOut = minTimeOut
         self.relay_timer = None
         self.test_timer = None
+        self.psu_timer = None
 
         super().__init__(*args, **kwargs)
 
@@ -224,7 +226,7 @@ class CtrlServer(GroundServer):
                 self.handler_relay_ctrl
             ),
             web.post(
-                '/psu/{dev_ip_addr}/{state}',
+                '/psu/{dev_ip_addr}/{ch_name}/{state}',
                 self.handler_psu_ctrl
             ),
             web.post(
@@ -275,7 +277,31 @@ class CtrlServer(GroundServer):
             return web.Response(text='Invalid state: {}'.format(raw_state))
 
     async def handler_psu_ctrl(self, request):
-        return web.Response(text='PSU control unimplemnted!')
+        dev_ip_addr = request.match_info['dev_ip_addr']
+        ch_name = request.match_info['ch_name']
+        state = request.match_info['state']
+
+        allowed_to_control = self.execute_if_not_too_recent(
+            'psu_timer', self.minTimeOut)
+
+        psu = WienerControl(dev_ip_addr)
+
+        if not allowed_to_control:
+            logger.warning('Operation denied for changing PSU channel {} to state {}'.format(
+                ch_name, state
+            ))
+            return web.Response(text='Operation denied: Previous operation too recent.')
+
+        elif state == 'on':
+            await psu.PowerOnCh(ch_name)
+
+        elif state == 'off':
+            await psu.PowerOffCh(ch_name)
+
+        else:
+            return web.Response(text='Unknown state: {}'.format(state))
+
+        return web.Response(text='Success')
 
     async def handler_test(self, request):
         ch_name = request.match_info['ch_name']
