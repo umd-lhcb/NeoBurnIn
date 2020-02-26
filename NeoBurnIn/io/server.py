@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 19, 2020 at 11:13 PM +0800
+# Last Change: Thu Feb 27, 2020 at 03:07 AM +0800
 
 import logging
 import datetime as dt
@@ -11,6 +11,7 @@ from collections import defaultdict
 from datetime import datetime
 
 from rpi.burnin.USBRelay import set_relay_state, ON, OFF
+from rpi.burnin.USBRelay import get_all_device_paths
 from labSNMP.wrapper.Wiener_async import WienerControl
 
 from NeoBurnIn.base import BaseServer
@@ -226,6 +227,10 @@ class CtrlServer(GroundServer):
                 self.handler_relay_ctrl
             ),
             web.post(
+                '/relay/list',
+                self.handler_relay_list
+            ),
+            web.post(
                 '/psu/{dev_ip_addr}/{ch_name}/{state}',
                 self.handler_psu_ctrl
             ),
@@ -275,6 +280,10 @@ class CtrlServer(GroundServer):
 
         else:
             return web.Response(text='Invalid state: {}'.format(raw_state))
+
+    async def handler_relay_list(self, request):
+        devs = '\n'.join(get_all_device_paths())
+        return web.Response(text=devs)
 
     async def handler_psu_ctrl(self, request):
         dev_ip_addr = request.match_info['dev_ip_addr']
