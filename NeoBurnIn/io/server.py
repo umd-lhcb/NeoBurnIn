@@ -305,9 +305,11 @@ class CtrlServer(GroundServer):
 
         elif state == 'on':
             await psu.PowerOnCh(ch_name)
+            logger.info('Turning {} PSU channel {}'.format(state, ch_name))
 
         elif state == 'off':
             await psu.PowerOffCh(ch_name)
+            logger.info('Turning {} PSU channel {}'.format(state, ch_name))
 
         else:
             return web.Response(text='Unknown state: {}'.format(state))
