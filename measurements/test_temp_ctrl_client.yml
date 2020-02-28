@@ -31,7 +31,7 @@ sensors:
         #ch: 8
         #displayName: FIRE
     #- Alarm.WaterAlarmDataSource:
-        #ch: 9
+        #ch: 11
         #displayName: WATER
 
 controllers:
