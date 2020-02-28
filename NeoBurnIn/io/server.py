@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Feb 28, 2020 at 02:19 PM +0800
+# Last Change: Fri Feb 28, 2020 at 02:30 PM +0800
 
 import logging
 import datetime as dt
@@ -284,7 +284,7 @@ class CtrlServer(GroundServer):
             return web.Response(text='Invalid state: {}'.format(raw_state))
 
     async def handler_relay_list(self, request):
-        devs = '\n'.join(get_all_device_paths())
+        devs = '\n'.join(get_all_device_paths().decode('utf-8'))
         return web.Response(text=devs)
 
     async def handler_psu_ctrl(self, request):
