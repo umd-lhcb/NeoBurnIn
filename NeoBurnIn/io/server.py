@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Feb 27, 2020 at 03:07 AM +0800
+# Last Change: Fri Feb 28, 2020 at 02:19 PM +0800
 
 import logging
 import datetime as dt
@@ -261,7 +261,9 @@ class CtrlServer(GroundServer):
                 logger.info('Turning {} USB relay channel {}'.format(
                     raw_state.lower(), ch_name))
 
-                if ret_code != 0:
+                # NOTE: The magic number 9 indicates when the relay control
+                # operation was successful.
+                if ret_code != 9:
                     logger.critical('Relay control failed with error code: {}'.format(
                         ret_code
                     ))
