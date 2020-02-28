@@ -49,14 +49,14 @@ controllers:
 
 ctrlRules:
     - match:
-        name: "SHORT_WIRE"
+        name: "COMBINED_WIRE"
         valueGt: 30
       action:
           sink: relay1
           state: "on"
           ch: 1
     - match:
-        name: "SHORT_WIRE"
+        name: "COMBINED_WIRE"
         valueLt: 29
       action:
           sink: relay1
