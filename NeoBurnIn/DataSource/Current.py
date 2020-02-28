@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Feb 07, 2020 at 10:40 PM +0800
+# Last Change: Fri Feb 28, 2020 at 02:23 PM +0800
 
 import logging
 
@@ -38,7 +38,7 @@ class CurrentMaratonDataSource(Thread, BaseDataSource, ):
             curr = self.psu.ChCurrent(ch)
             result.append(
                 DataPassthru(time_now_formatted(), self.displayName+str(ch),
-                             curr))
+                             curr[2]))
         return result
 
     def cleanup(self):
