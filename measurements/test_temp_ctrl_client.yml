@@ -21,7 +21,7 @@ sensors:
         displayName: COMBINED_WIRE
         interval: 5
     - Current.CurrentMaratonDataSource:
-        ipAddr: 192.168.1.2
+        ipAddr: 192.168.1.31
         interval: 60
         displayName: MARATON_CURR
         psuChannels:
@@ -45,7 +45,7 @@ controllers:
         PowerSupply.PowerSupplySink:
             host: localhost
             port: 45679
-            psuIp: 192.168.1.2
+            psuIp: 192.168.1.31
 
 ctrlRules:
     - match:
