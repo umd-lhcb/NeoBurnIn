@@ -12,7 +12,7 @@ from datetime import datetime
 
 from rpi.burnin.USBRelay import set_relay_state, ON, OFF
 from rpi.burnin.USBRelay import get_all_device_paths
-from labSNMP.wrapper.Wiener_async import WienerControl
+from labSNMP.wrapper.Wiener import WienerControl
 
 from NeoBurnIn.base import BaseServer
 from NeoBurnIn.base import DataStream, DataStats
@@ -304,11 +304,11 @@ class CtrlServer(GroundServer):
             return web.Response(text='Operation denied: Previous operation too recent.')
 
         elif state == 'on':
-            await psu.PowerOnCh(ch_name)
+            psu.PowerOnCh(ch_name)
             logger.info('Turning {} PSU channel {}'.format(state, ch_name))
 
         elif state == 'off':
-            await psu.PowerOffCh(ch_name)
+            psu.PowerOffCh(ch_name)
             logger.info('Turning {} PSU channel {}'.format(state, ch_name))
 
         else:
