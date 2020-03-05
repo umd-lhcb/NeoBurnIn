@@ -43,7 +43,7 @@ controllers:
             relayIdx: 0
     relay2:
         PowerSupply.PowerSupplySink:
-            host: localhost
+            host: 0.0.0.0
             port: 45679
             psuIp: 192.168.1.31
 
