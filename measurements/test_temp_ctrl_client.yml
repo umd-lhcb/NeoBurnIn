@@ -18,6 +18,8 @@ sensors:
         sensorPath:
             - /sys/bus/w1/devices/28-0000098d8197/w1_slave
             - /sys/bus/w1/devices/28-0000098d94eb/w1_slave
+            - /sys/bus/w1/devices/28-0000098d0cbe/w1_slave
+            - /sys/bus/w1/devices/28-0000098fd7e3/w1_slave
         displayName: COMBINED_WIRE
         interval: 5
     - Current.CurrentMaratonDataSource:
