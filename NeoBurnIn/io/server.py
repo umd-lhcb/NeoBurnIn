@@ -210,9 +210,9 @@ class CtrlServer(GroundServer):
     def __init__(self, *args,
                  minTimeOut=60, **kwargs):
         self.minTimeOut = minTimeOut
-        self.relay_timer = None
+        self.relay_timer = relay_timer
         self.test_timer = None
-        self.psu_timer = None
+        self.psu_timer = psu_timer
 
         super().__init__(*args, **kwargs)
 
@@ -247,7 +247,7 @@ class CtrlServer(GroundServer):
         state = self.translate_relay_state(raw_state)
 
         allowed_to_control = self.execute_if_not_too_recent(
-            'relay_timer', self.minTimeOut)
+            'relay_timer', self.relay_timer)
 
         if not allowed_to_control:
             logger.warning('Operation denied for changing relay state to {}'.format(
@@ -293,7 +293,7 @@ class CtrlServer(GroundServer):
         state = request.match_info['state']
 
         allowed_to_control = self.execute_if_not_too_recent(
-            'psu_timer', self.minTimeOut)
+            'psu_timer', self.psu_timer)
 
         psu = WienerControl(dev_ip_addr)
 
