@@ -39,12 +39,12 @@ sensors:
             - 10
             - 11
             - 12
-    #- Alarm.FireAlarmDataSource:
-        #ch: 8
-        #displayName: FIRE
-    #- Alarm.WaterAlarmDataSource:
-        #ch: 11
-        #displayName: WATER
+    - Alarm.FireAlarmDataSource:
+        ch: 8
+        displayName: FIRE
+    - Alarm.WaterAlarmDataSource:
+        ch: 11
+        displayName: WATER
 
 controllers:
     relay1:
