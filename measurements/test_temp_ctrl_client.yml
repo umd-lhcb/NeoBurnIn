@@ -44,13 +44,13 @@ sensors:
 controllers:
     relay1:
         Relay.RelaySink:
-            host: localhost
+            host: localhost  # 0.0.0.0 is a symbolic IP and should NOT be used here.
             port: 45679
             automaticDiscovery: true
             relayIdx: 0
     relay2:
         PowerSupply.PowerSupplySink:
-            host: 0.0.0.0
+            host: localhost
             port: 45679
             psuIp: 192.168.1.31
 
@@ -69,6 +69,13 @@ ctrlRules:
           sink: relay1
           state: "off"
           ch: 1
+    - match:
+        name: "COMBINED_WIRE"
+        valueLt: 75  # Set the temp when the MARATON should be turned OFF
+      action:
+          sink: relay2
+          state: "off"
+          ch: all
     - match:
         name: "FIRE"
       action:
