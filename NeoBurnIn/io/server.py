@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Feb 28, 2020 at 02:33 PM +0800
+# Last Change: Thu Mar 19, 2020 at 02:09 AM +0800
 
 import logging
 import datetime as dt
@@ -208,8 +208,10 @@ class DataServer(GroundServer):
 
 class CtrlServer(GroundServer):
     def __init__(self, *args,
-                 minTimeOut=60, **kwargs):
+                 minTimeOut=60, psuChannels=list(range(1, 13)), **kwargs):
         self.minTimeOut = minTimeOut
+        self.psuChannels = [str(i) for i in psuChannels]
+
         self.relay_timer = None
         self.test_timer = None
         self.psu_timer = None
@@ -304,11 +306,20 @@ class CtrlServer(GroundServer):
             return web.Response(text='Operation denied: Previous operation too recent.')
 
         elif state == 'on':
-            psu.PowerOnCh(ch_name)
+            if ch_name == 'all':
+                for c in self.psuChannels:
+                    psu.PowerOnCh(c)
+            else:
+                psu.PowerOnCh(ch_name)
+
             logger.info('Turning {} PSU channel {}'.format(state, ch_name))
 
         elif state == 'off':
-            psu.PowerOffCh(ch_name)
+            if ch_name == 'all':
+                for c in self.psuChannels:
+                    psu.PowerOffCh(ch_name)
+            else:
+                psu.PowerOffCh(ch_name)
             logger.info('Turning {} PSU channel {}'.format(state, ch_name))
 
         else:
