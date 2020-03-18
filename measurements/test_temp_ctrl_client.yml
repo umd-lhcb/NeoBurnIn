@@ -11,11 +11,6 @@ client:
 sensors:
     - Therm.ThermDataSource:
         sensorPath:
-            - /sys/bus/w1/devices/28-0000098d94eb/w1_slave
-        displayName: SHORT_WIRE
-        interval: 5
-    - Therm.ThermDataSource:
-        sensorPath:
             - /sys/bus/w1/devices/28-0000098d8197/w1_slave
             - /sys/bus/w1/devices/28-0000098d94eb/w1_slave
             - /sys/bus/w1/devices/28-0000098d0cbe/w1_slave
@@ -62,15 +57,27 @@ controllers:
 ctrlRules:
     - match:
         name: "COMBINED_WIRE"
-        valueGt: 30
+        valueGt: 55  # Set the temp when the valve should be turned ON
       action:
           sink: relay1
           state: "on"
           ch: 1
     - match:
         name: "COMBINED_WIRE"
-        valueLt: 29
+        valueLt: 35  # Set the temp when the valve should be turned OFF
       action:
           sink: relay1
           state: "off"
           ch: 1
+    - match:
+        name: "FIRE"
+      action:
+          sink: relay2
+          state: "off"
+          ch: all
+    - match:
+        name: "WATER"
+      action:
+          sink: relay2
+          state: "off"
+          ch: all
