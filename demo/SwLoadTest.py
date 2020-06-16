@@ -1,6 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #
 # Author: Ben Flaggs
+# Last Change: Wed Jun 17, 2020 at 03:43 AM +0800
 
 import RPi.GPIO as GPIO
 import sys
@@ -15,7 +16,6 @@ ch2 = int(sys.argv[2])
 
 GPIO.setup(ch1, GPIO.OUT)
 GPIO.setup(ch2, GPIO.OUT)
-
 
 try:
     while True:
