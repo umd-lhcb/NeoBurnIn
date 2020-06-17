@@ -5,15 +5,15 @@ let
 in
 
 pkgs.mkShell {
-  name = "pip-env";
+  name = "NeoBurnIn";
   buildInputs = with pythonPackages; [
     aiohttp
     aiohttp-cors
     janus
     pyyaml
-    pysnmp
+    rainbow_logging_handler
 
     rpi_burnin
-    rainbow_logging_handler
+    labSNMP
   ];
 }
