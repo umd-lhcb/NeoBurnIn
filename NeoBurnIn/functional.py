@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 20, 2020 at 04:54 AM -0500
+# Last Change: Thu Jun 18, 2020 at 02:38 AM +0800
 
 import re
 
@@ -14,11 +14,17 @@ def name(data, reg_pattern):
 
 
 def valueGt(data, thresh):
-    return data.value > thresh
+    try:
+        return data.value > thresh
+    except Exception:
+        return False
 
 
 def valueLt(data, thresh):
-    return data.value < thresh
+    try:
+        return data.value < thresh
+    except Exception:
+        return False
 
 
 ##########################
