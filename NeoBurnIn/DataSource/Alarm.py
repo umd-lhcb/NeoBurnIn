@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Feb 14, 2020 at 09:45 PM +0800
+# Last Change: Wed Jun 17, 2020 at 07:07 PM +0800
 
 import logging
 
@@ -21,8 +21,7 @@ class FireAlarmDataSource(FireAlarm, BaseDataSource):
         super().__init__(stop_event, *args, **kwargs)
 
     def alarm(self):
-        self.queue.put(DataPassthru(time_now_formatted(), self.displayName,
-                                    'FIRE'))
+        self.queue.put(DataPassthru(time_now_formatted(), self.displayName))
 
     def get(self):
         pass
@@ -36,8 +35,7 @@ class WaterAlarmDataSource(WaterAlarm, BaseDataSource):
         super().__init__(stop_event, *args, **kwargs)
 
     def alarm(self):
-        self.queue.put(DataPassthru(time_now_formatted(), self.displayName,
-                                    'WATER'))
+        self.queue.put(DataPassthru(time_now_formatted(), self.displayName))
 
     def get(self):
         pass
