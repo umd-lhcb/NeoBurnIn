@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Mar 19, 2020 at 02:09 AM +0800
+# Last Change: Thu Jun 18, 2020 at 03:43 AM +0800
 
 import logging
 import datetime as dt
@@ -317,7 +317,7 @@ class CtrlServer(GroundServer):
         elif state == 'off':
             if ch_name == 'all':
                 for c in self.psuChannels:
-                    psu.PowerOffCh(ch_name)
+                    psu.PowerOffCh(c)
             else:
                 psu.PowerOffCh(ch_name)
             logger.info('Turning {} PSU channel {}'.format(state, ch_name))
