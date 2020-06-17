@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Feb 19, 2020 at 10:55 PM +0800
+# Last Change: Thu Jun 18, 2020 at 03:15 AM +0800
 
 import logging
 import asyncio
@@ -162,6 +162,9 @@ class CtrlClient(DataClient):
                 # Always send non-alarm data
                 if data.value:
                     await super().send(self.assemble_msg(data))
+
+                else:
+                    logger.warning('{} alarm triggered!'.format(data.name))
 
         except asyncio.CancelledError:
             logger.debug('Sender cancellation has been requested.')
