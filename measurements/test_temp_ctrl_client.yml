@@ -1,5 +1,5 @@
 log:
-    filename: measurements/test_temp_ctrl_client.log
+    filename: logs/test_temp_ctrl_client.log
     maxSize: 100 MB
     backupCount: 10
 

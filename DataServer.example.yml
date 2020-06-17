@@ -1,5 +1,5 @@
 log:
-    filename: measurements/DataServer.log
+    filename: logs/DataServer.log
     backupCount: 1000
     #fromaddr: null@example.com
     #toaddrs:

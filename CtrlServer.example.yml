@@ -1,5 +1,5 @@
 log:
-    filename: measurements/CtrlServer.log
+    filename: logs/CtrlServer.log
     backupCount: 1000
     maxSize: 100 MB
     when: D
