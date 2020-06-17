@@ -1,4 +1,4 @@
-{ stdenv, buildPythonPackage, fetchgit, RPi_GPIO, hidapi }:
+{ stdenv, buildPythonPackage, fetchgit, RPi_GPIO, fake_rpi, hidapi }:
 
 buildPythonPackage rec {
   pname = "rpi.burnin";
@@ -11,9 +11,11 @@ buildPythonPackage rec {
   };
 
   propagatedBuildInputs = [
-    RPi_GPIO
     hidapi
-  ];
+  ]
+  ++ stdenv.lib.optionals (stdenv.isDarwin) [ fake_rpi ]
+  ++ stdenv.lib.optionals (!stdenv.isDarwin) [ RPi_GPIO ]
+  ;
 
   # No check avaliable
   doCheck = false;

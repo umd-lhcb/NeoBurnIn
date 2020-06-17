@@ -7,15 +7,13 @@ in
 pkgs.mkShell {
   name = "pip-env";
   buildInputs = with pythonPackages; [
-    hidapi
-
     aiohttp
     aiohttp-cors
     janus
     pyyaml
     pysnmp
 
-    RPi_GPIO
+    rpi_burnin
     rainbow_logging_handler
   ];
 }
