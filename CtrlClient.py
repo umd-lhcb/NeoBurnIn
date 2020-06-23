@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jan 20, 2020 at 04:46 AM -0500
+# Last Change: Wed Jun 24, 2020 at 01:40 AM +0800
 
 import janus
 import importlib
 
-from threading import Event
+from threading import Event, Queue
 from argparse import ArgumentParser
 
 import sys
 sys.path.insert(0, '..')
 
 from NeoBurnIn.io.client import CtrlClient
-from NeoBurnIn.io.logger import configure_client_logger
+from NeoBurnIn.io.logger import LoggingThread
 from NeoBurnIn.base import parse_config
 from NeoBurnIn.functional import parse_directive
 
@@ -87,7 +87,8 @@ class ControllerEmitter(object):
 args = parse_input()
 options = parse_config(args.configFile)
 
-configure_client_logger(**options['log'])
+logging_queue = Queue()
+logging_thread = LoggingThread(logging_queue, **options['log'])
 
 sensors = SensorEmitter(options['sensors'])
 sensors.init_sensors()
@@ -103,5 +104,7 @@ client = CtrlClient(
 )
 
 if __name__ == "__main__":
+    logging_thread.start()
     sensors.start()
     client.run()
+    logging_thread.stop()
