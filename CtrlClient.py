@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Wed Jun 24, 2020 at 01:40 AM +0800
+# Last Change: Wed Jun 24, 2020 at 01:46 AM +0800
 
 import janus
 import importlib
 
-from threading import Event, Queue
+from threading import Event
+from queue import Queue
 from argparse import ArgumentParser
 
 import sys
