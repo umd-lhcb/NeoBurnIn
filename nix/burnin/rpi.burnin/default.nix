@@ -7,7 +7,7 @@ buildPythonPackage rec {
   src = fetchgit {
     url = "https://github.com/umd-lhcb/${pname}";
     rev = version;
-    sha256 = "0dksvff3md9j2rzmg1d8x7hmq21swkj1cy080q74nahz68wqmmh2";
+    sha256 = "128zqxwd2p4ia4na36i91kj666fn37f6jcgqhr08jf20pnrsvnf8";
   };
 
   propagatedBuildInputs = [ hidapi ]
