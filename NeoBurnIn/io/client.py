@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jun 18, 2020 at 03:15 AM +0800
+# Last Change: Tue Jun 23, 2020 at 05:12 PM +0800
 
 import logging
 import asyncio
@@ -164,7 +164,7 @@ class CtrlClient(DataClient):
                     await super().send(self.assemble_msg(data))
 
                 else:
-                    logger.warning('{} alarm triggered!'.format(data.name))
+                    logger.critical('{} alarm triggered!'.format(data.name))
 
         except asyncio.CancelledError:
             logger.debug('Sender cancellation has been requested.')
