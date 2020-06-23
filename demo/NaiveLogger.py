@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Aug 20, 2018 at 10:11 PM -0400
+# Last Change: Tue Jun 23, 2020 at 05:07 PM +0800
 
 import logging
 import queue
@@ -44,11 +44,7 @@ options = parse_config('NaiveLogger.yml')
 logging_file = NamedTemporaryFile()
 logging_queue = queue.Queue()
 
-logging_thread = LoggingThread(
-    logging_queue,
-    logging_file.name, maxSize='100 MB', backupCount=1000,
-    **options['log']
-)
+logging_thread = LoggingThread(logging_queue, **options['log'])
 
 if __name__ == "__main__":
     logging_thread.start()
