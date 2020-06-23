@@ -7,7 +7,7 @@ buildPythonPackage rec {
   src = fetchgit {
     url = "https://github.com/umd-lhcb/${pname}";
     rev = version;
-    sha256 = "12346pp8bn6qavab1zz74sggrq3xnyxy3hr4gqmz18ap1jz938as";
+    sha256 = "0p39q43dxbnx9fqzy7v63xz29gvypya7216l03xmlbd8rmwpwni1";
   };
 
   propagatedBuildInputs = [ pysnmp ];
