@@ -10,6 +10,14 @@ client:
 
 sensors:
     - RandUniform.RandUniformDataSource:
-        chName: RAND_UNIFORM_TEST1
-    - RandUniform.RandUniformDataSource:
-        chName: RAND_UNIFORM_TEST2
+        displayName: THERM_FAKE
+    - RandUniform.RandUniformDataSourceMul:
+        displayName: CURR_FAKE
+        psuChannels:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
