@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Thu Jun 18, 2020 at 03:43 AM +0800
+# Last Change: Thu Jun 25, 2020 at 09:50 PM +0800
 
 import logging
 import datetime as dt
@@ -119,16 +119,6 @@ class DataServer(GroundServer):
             if date is not None:
                 # Log the whole entry
                 logger.info('Received: {}'.format(entry))
-
-                # Now check if this data point is OK.
-                if self.stash[ch_name]['data'].reference_exists:
-                    mean = self.stash[ch_name]['data'].reference_mean
-                    envelop = self.stash[ch_name]['data'].reference_stdev * \
-                        self.stdevRange
-                    if value <= mean-envelop or value >= mean+envelop:
-                        logger.critical('Channel {} measured a value of {}, which is outside of {} stds.'.format(
-                            ch_name, value, self.stdevRange
-                        ))
 
                 # Store the data first.
                 results = self.stash[ch_name]['data'].append(value)
