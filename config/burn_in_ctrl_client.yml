@@ -61,21 +61,21 @@ controllers:
 ctrlRules:
     - match:
         name: "COMBINED_WIRE"
-        valueGt: 55  # Set the temp when the VALVE should be turned ON
+        valueGt: 48  # Set the temp when the VALVE should be turned ON
       action:
           sink: relay1
           state: "on"
           ch: 1
     - match:
         name: "COMBINED_WIRE"
-        valueLt: 35  # Set the temp when the VALVE should be turned OFF
+        valueLt: 30  # Set the temp when the VALVE should be turned OFF
       action:
           sink: relay1
           state: "off"
           ch: 1
     - match:
         name: "COMBINED_WIRE"
-        valueGt: 75  # Set the temp when the MARATON should be turned OFF
+        valueGt: 70  # Set the temp when the MARATON should be turned OFF
       action:
           sink: relay2
           state: "off"

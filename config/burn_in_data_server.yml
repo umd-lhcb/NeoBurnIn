@@ -12,4 +12,4 @@ server:
     port: 45678
     stdevRange: 3
     thermChName: COMBINED_WIRE
-    thermAlarmThresh: 65
+    thermAlarmThresh: 70
