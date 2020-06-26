@@ -2,12 +2,12 @@
 
 buildPythonPackage rec {
   pname = "rpi.burnin";
-  version = "0.3.2";
+  version = "0.3.3";
 
   src = fetchgit {
     url = "https://github.com/umd-lhcb/${pname}";
     rev = version;
-    sha256 = "128zqxwd2p4ia4na36i91kj666fn37f6jcgqhr08jf20pnrsvnf8";
+    sha256 = "0y82hxypxyrfwnjribzrpl3ll75h34n1wi76kgd3irlirifrx1ka";
   };
 
   propagatedBuildInputs = [ hidapi ]
