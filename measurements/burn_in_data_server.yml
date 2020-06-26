@@ -1,0 +1,15 @@
+log:
+    filename: logs/burn_in_data_server.log
+    maxSize: 100 MB
+    backupCount: 10
+    fromaddr: burninatumd@gmail.com
+    toaddrs: lhcb-hw@umd.edu
+    credentials: <ask_yipeng_for_passwd>  # Ask Yipeng on slack for the password of this account
+    interval: 1 HRS
+
+server:
+    host: 0.0.0.0
+    port: 45678
+    stdevRange: 3
+    thermChName: COMBINED_WIRE
+    thermAlarmThresh: 65
