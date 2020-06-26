@@ -3,12 +3,12 @@ log:
     maxSize: 100 MB
     backupCount: 10
     fromaddr: burninatumd@gmail.com
-    toaddrs: syp@umd.edu,yangzs@umd.edu
-    credentials: <ask_yipeng_for_passwd>
+    toaddrs: lhcb-hw@umd.edu
+    credentials: <ask_yipeng_for_passwd>  # Ask Yipeng on slack
     interval: 1 HRS
 
 client:
-    host: 127.0.0.1
+    host: 129.2.92.92
     port: 45678
     maxConcurrency: 4
 
