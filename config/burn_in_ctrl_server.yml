@@ -1,0 +1,9 @@
+log:
+    filename: logs/burn_in_ctrl_server.log
+    backupCount: 1000
+    maxSize: 100 MB
+
+server:
+    host: 0.0.0.0
+    port: 45679
+    minTimeOut: 0
