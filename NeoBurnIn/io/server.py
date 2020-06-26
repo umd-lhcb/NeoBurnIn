@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jun 26, 2020 at 05:26 PM +0800
+# Last Change: Fri Jun 26, 2020 at 10:39 PM +0800
 
 import logging
 import datetime as dt
@@ -185,7 +185,7 @@ class DataServer(GroundServer):
     # Create initial data stash #
     #############################
 
-    def stash_create(self, overall_stats_length=10000):
+    def stash_create(self):
         '''
         Store data. If a root-level key does not exist, create it, along with
         specified empty leaves.
