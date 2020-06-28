@@ -9,6 +9,7 @@ pkgs.mkShell {
   buildInputs = with pythonPackages; [
     aiohttp
     aiohttp-cors
+    aiojobs
     janus
     pyyaml
     rainbow_logging_handler

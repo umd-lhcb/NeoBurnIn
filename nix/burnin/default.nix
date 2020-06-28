@@ -9,6 +9,7 @@ let
       rpi_burnin = super.callPackage ./rpi.burnin {};
       labSNMP = super.callPackage ./labSNMP {};
       rainbow_logging_handler = super.callPackage ./rainbow_logging_handler {};
+      aiojobs = super.callPackage ./aiojobs {};
     };
   };
 in
