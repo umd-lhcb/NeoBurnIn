@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 29, 2020 at 02:46 AM +0800
+# Last Change: Mon Jun 29, 2020 at 02:50 AM +0800
 
 import logging
 import datetime as dt
@@ -43,7 +43,7 @@ class GroundServer(BaseServer):
 
 class DataServer(GroundServer):
     def __init__(self, *args,
-                 stdevRange=3, thermChName='THERM', thermAlarmThresh=60,
+                 stdevRange=3, thermChName=['THERM'], thermAlarmThresh=60,
                  heartBeatInterval=360, checkHeatbeatInterval=60,  # in seconds
                  **kwargs):
         self.stdevRange = stdevRange
@@ -161,9 +161,9 @@ class DataServer(GroundServer):
                 logger.info('Received: {}'.format(entry))
 
                 # First check if this data point is OK.
-                if ch_name == self.thermChName:  # Thermal threshold check
+                if ch_name in self.thermChName:  # Thermal threshold check
                     if value >= self.thermAlarmThresh:
-                        logger.critical('Over temperature! The current reading of {} deg C is greater than threshold {} deg C'.format(value, self.thermAlarmThresh))
+                        logger.critical('Over temperature! Channel {} with a reading of {} deg C is greater than threshold {} deg C'.format(ch_name, value, self.thermAlarmThresh))
 
                 elif self.stash[ch_name]['data'].reference_exists:
                     mean = self.stash[ch_name]['data'].reference_mean
