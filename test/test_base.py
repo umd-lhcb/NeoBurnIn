@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 29, 2020 at 01:48 AM +0800
+# Last Change: Mon Jun 29, 2020 at 02:37 AM +0800
 
 import pytest
 import statistics
@@ -46,9 +46,9 @@ def test_data_stream_json_str_overflow(data_stream):
 
 
 def test_data_stream_return_val_of_append(data_stream):
-    for i in range(5):
+    for i in range(4):
         assert data_stream.append(i) is False
-    for i in range(6, 8):
+    for i in range(5, 8):
         assert data_stream.append(i) is True
 
 
@@ -58,163 +58,113 @@ def test_data_stream_pass_generator_as_an_argument():
     assert data_stream == [i for i in range(1, 6)]
 
 
-##################################
-# For 'DataStats', partial defer #
-##################################
+###############################
+# For 'DataStats', learn once #
+###############################
 
 @pytest.fixture
-def data_stats_partial():
-    return DataStats(max_length=5, defer_until_full_renewal=False)
+def data_stats_once():
+    return DataStats(max_length=5, learn_once=True)
 
 
-def test_data_stats_partial_append_partial_not_full(data_stats_partial):
+def test_data_stats_once_append_not_full(data_stats_once):
+    for i in range(0, 4):
+        assert data_stats_once.append(i) is False
+
+
+def test_data_stats_once_append_not_full_content(data_stats_once):
+    for i in range(0, 4):
+        data_stats_once.append(i) is False
+    data_stats_once.append(4)
+    assert data_stats_once == [0, 1, 2, 3, 4]
+    assert data_stats_once.json_str == '0,1,2,3,4'
+
+
+def test_data_stats_once_learn_first(data_stats_once):
     for i in range(0, 5):
-        assert data_stats_partial.append(i) is False
+        data_stats_once.append(i)
+    assert data_stats_once.list_is_full is True
+    assert data_stats_once.append(5) == (
+        statistics.mean(range(5)), statistics.stdev(range(5)))
 
 
-def test_data_stats_partial_append_partial_not_full_content(data_stats_partial):
-    for i in range(0, 5):
-        data_stats_partial.append(i) is False
-    assert data_stats_partial == [0, 1, 2, 3, 4]
-    assert data_stats_partial.json_str == '0,1,2,3,4'
-
-
-def test_data_stats_partial_compute_first_stats(data_stats_partial):
-    for i in range(0, 5):
-        data_stats_partial.append(i)
-    assert data_stats_partial.append(5) == (
-        statistics.mean([1, 2, 3, 4, 5]),
-        statistics.stdev([1, 2, 3, 4, 5])
-    )
-
-
-def test_data_stats_partial_store_learning_stats(data_stats_partial):
+def test_data_stats_once_store_learning_stats(data_stats_once):
     for i in range(0, 6):
-        data_stats_partial.append(i)
-    assert data_stats_partial.reference_mean == \
-        statistics.mean([1, 2, 3, 4, 5])
-    assert data_stats_partial.reference_stdev == \
-        statistics.stdev([1, 2, 3, 4, 5])
+        data_stats_once.append(i)
+    assert data_stats_once.reference_mean == statistics.mean(range(5))
+    assert data_stats_once.reference_stdev == statistics.stdev(range(5))
 
 
-def test_data_stats_partial_compute_second_stats(data_stats_partial):
+def test_data_stats_once_never_recompute(data_stats_once):
     for i in range(0, 6):
-        data_stats_partial.append(i)
-    assert data_stats_partial.append(6) == (
-        statistics.mean([2, 3, 4, 5, 6]),
-        statistics.stdev([2, 3, 4, 5, 6])
-    )
+        data_stats_once.append(i)
+    assert data_stats_once.append(6) == (
+        statistics.mean(range(5)), statistics.stdev(range(5)))
 
 
-def test_data_stats_partial_preserve_learning_stats(data_stats_partial):
+def test_data_stats_once_preserve_learning_stats(data_stats_once):
     for i in range(0, 14):
-        data_stats_partial.append(i)
-    assert data_stats_partial.reference_mean == \
-        statistics.mean([9, 10, 11, 12, 13])
-    assert data_stats_partial.reference_stdev == \
-        statistics.stdev([9, 10, 11, 12, 13])
+        data_stats_once.append(i)
+    assert data_stats_once.reference_mean == statistics.mean(range(5))
+    assert data_stats_once.reference_stdev == statistics.stdev(range(5))
 
 
-def test_data_stats_partial_compute_third_stats(data_stats_partial):
+def test_data_stats_once_never_recompute_ever(data_stats_once):
     for i in range(0, 7):
-        data_stats_partial.append(i)
-    assert data_stats_partial.append(7) == (
-        statistics.mean([3, 4, 5, 6, 7]),
-        statistics.stdev([3, 4, 5, 6, 7])
-    )
+        data_stats_once.append(i)
+    assert data_stats_once.append(7) == (
+        statistics.mean(range(5)), statistics.stdev(range(5)))
 
 
-###############################
-# For 'DataStats', full defer #
-###############################
+#######################################
+# For 'DataStats', learn continuously #
+#######################################
 
 @pytest.fixture
-def data_stats_full():
-    return DataStats(max_length=5, defer_until_full_renewal=True)
+def data_stats_continuous():
+    return DataStats(max_length=5, learn_once=False)
 
 
-def test_data_stats_full_append_partial_not_full(data_stats_full):
+def test_data_stats_continuous_append_not_full(data_stats_continuous):
+    for i in range(0, 4):
+        assert data_stats_continuous.append(i) is False
+    assert data_stats_continuous == [0, 1, 2, 3]
+    assert data_stats_continuous.json_str == '0,1,2,3'
+
+
+def test_data_stats_continuous_compute_first_stats(data_stats_continuous):
     for i in range(0, 5):
-        assert data_stats_full.append(i) is False
+        data_stats_continuous.append(i)
+    assert data_stats_continuous.append(5) == (
+        statistics.mean(range(1, 6)), statistics.stdev(range(1, 6)))
 
 
-def test_data_stats_full_append_partial_not_full_content(data_stats_full):
-    for i in range(0, 5):
-        data_stats_full.append(i) is False
-    assert data_stats_full == [0, 1, 2, 3, 4]
-    assert data_stats_full.json_str == '0,1,2,3,4'
-
-
-def test_data_stats_full_compute_first_stats(data_stats_full):
-    for i in range(0, 5):
-        data_stats_full.append(i)
-    assert data_stats_full.append(5) == (
-        statistics.mean([1, 2, 3, 4, 5]),
-        statistics.stdev([1, 2, 3, 4, 5])
-    )
-
-
-def test_data_stats_full_store_learning_stats(data_stats_full):
+def test_data_stats_continuous_store_learning_stats(data_stats_continuous):
     for i in range(0, 6):
-        data_stats_full.append(i)
-    assert data_stats_full.reference_mean == \
-        statistics.mean([1, 2, 3, 4, 5])
-    assert data_stats_full.reference_stdev == \
-        statistics.stdev([1, 2, 3, 4, 5])
+        data_stats_continuous.append(i)
+    assert data_stats_continuous.reference_mean == statistics.mean(range(1, 6))
+    assert data_stats_continuous.reference_stdev == \
+        statistics.stdev(range(1, 6))
 
 
-def test_data_stats_full_after_first_full(data_stats_full):
-    for i in range(0, 6):
-        data_stats_full.append(i)
-    for i in range(6, 10):
-        assert data_stats_full.append(i) is False
-
-
-def test_data_stats_full_compute_second_stats(data_stats_full):
+def test_data_stats_continuous_compute_second_stats(data_stats_continuous):
     for i in range(0, 10):
-        data_stats_full.append(i)
-    assert data_stats_full.append(10) == (
-        statistics.mean([6, 7, 8, 9, 10]),
-        statistics.stdev([6, 7, 8, 9, 10]),
-    )
+        data_stats_continuous.append(i)
+    assert data_stats_continuous.append(10) == (
+        statistics.mean(range(6, 11)), statistics.stdev(range(6, 11)))
 
 
-def test_data_stats_full_preserve_learning_stats(data_stats_full):
+def test_data_stats_continuous_update_learning_stats(data_stats_continuous):
     for i in range(0, 24):
-        data_stats_full.append(i)
-    assert data_stats_full.reference_mean == \
-        statistics.mean([1, 2, 3, 4, 5])
-    assert data_stats_full.reference_stdev == \
-        statistics.stdev([1, 2, 3, 4, 5])
+        data_stats_continuous.append(i)
+    assert data_stats_continuous.reference_mean == \
+        statistics.mean(range(19, 24))
+    assert data_stats_continuous.reference_stdev == \
+        statistics.stdev(range(19, 24))
 
 
-def test_data_stats_full_compute_third_stats(data_stats_full):
-    for i in range(0, 15):
-        data_stats_full.append(i)
-    assert data_stats_full.append(15) == (
-        statistics.mean([11, 12, 13, 14, 15]),
-        statistics.stdev([11, 12, 13, 14, 15]),
-    )
-
-
-def test_data_stats_full_after_third_full(data_stats_full):
-    for i in range(0, 16):
-        data_stats_full.append(i)
-    for i in range(16, 20):
-        assert data_stats_full.append(i) is False
-
-
-def test_data_stats_json_str_after_third_full(data_stats_full):
-    for i in range(0, 16):
-        data_stats_full.append(i)
-    data_stats_full.append(17)
-    assert data_stats_full.json_str == '12,13,14,15,17'
-
-
-def test_data_stats_full_compute_fourth_stats(data_stats_full):
+def test_data_stats_continuous_compute_fourth_stats(data_stats_continuous):
     for i in range(0, 20):
-        data_stats_full.append(i)
-    assert data_stats_full.append(20) == (
-        statistics.mean([16, 17, 18, 19, 20]),
-        statistics.stdev([16, 17, 18, 19, 20]),
-    )
+        data_stats_continuous.append(i)
+    assert data_stats_continuous.append(20) == (
+        statistics.mean(range(16, 21)), statistics.stdev(range(16, 21)))

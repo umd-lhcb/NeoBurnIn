@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 29, 2020 at 01:51 AM +0800
+# Last Change: Mon Jun 29, 2020 at 02:25 AM +0800
 
 import abc
 import sys
@@ -87,14 +87,13 @@ class DataStream(list):
 
         # If the total length is strictly greater than designated upper limit,
         # pop the oldest item.
-        if self.list_is_full:
+        if self.list_is_full:  # NOTE this makes 'append' operation faster.
             self.pop(0)
-        elif len(self) > self.max_length:
-            self.pop(0)
+
+        elif len(self) == self.max_length:
             self.list_is_full = True
 
-        # This ensures that the datastream length is at most equal to the
-        # designated upper limit.
+        # Update the JSON string representation at append-time.
         self.json_str = ','.join(str(x) for x in self)
 
         return self.list_is_full
@@ -102,20 +101,21 @@ class DataStream(list):
 
 class DataStats(DataStream):
     '''
-    Store data, up to 'max_length', and generate related statistics on list
-    full.  The first statistics is stored for future reference.
+    Store data, up to 'max_length', and generate mean and std with elements in
+    the list when the list is full.
 
-    If 'defer_until_full_renewal' is set to True, a new statistics will
-    NOT be generated until the list is full again with each single entry
-    renewed.
+    If 'learn_once' is set to True, the mean and std computed when the list is
+    full for the first time will be used as references throughout this object's
+    life cycle.
 
-    Otherwise a new statistics is generated on next 'append()'.
+    Otherwise the references mean and std will be updated with new data point
+    continuously after the list is full.
     '''
-    def __init__(self, *args,
-                 defer_until_full_renewal=True, **kwargs):
-        self.defer_until_full_renewal = defer_until_full_renewal
-        if self.defer_until_full_renewal:
-            self.renewal_counter = 0
+    def __init__(self, *args, learn_once=False, **kwargs):
+        if learn_once:  # NOTE: 'learn_once' is set on initialization once and only once.
+            self.post_append = self.post_append_learn_once
+        else:
+            self.post_append = self.post_append_learn_continuously
 
         self.reference_exists = False
         self.reference_mean = None
@@ -124,45 +124,21 @@ class DataStats(DataStream):
         super().__init__(*args, **kwargs)
 
     def append(self, item):
-        # Compute statistics only if the list is full.
-        if super().append(item):
-            if self.defer_until_full_renewal:
-                return self.post_append_full_defer()  # The reference is computed only once
-            else:
-                return self.post_append_partial_defer()  # The reference is computed continuously
-
+        if super().append(item):  # Compute statistics only if the list is full.
+            return self.post_append()
         else:
             return False
 
-    def post_append_full_defer(self):
-        self.renewal_counter += 1
-
-        # If we've never updated the learning result, do it.
-        if not self.reference_exists:
-            stats = self.compute_mean_and_std()
-            self.store_reference(*stats)
-            return stats
-
-        # If it is full again, compute stats, but don't store them internally.
-        elif self.renewal_counter > self.max_length:
-            self.renewal_counter = 1
-            return self.compute_mean_and_std()
-
+    def post_append_learn_once(self):
+        if not self.reference_exists:  # If we've never updated the learning result, do it.
+            return self.post_append_learn_continuously()
         else:
-            return False
+            return (self.reference_mean, self.reference_stdev)
 
-    def post_append_partial_defer(self):
-        stats = self.compute_mean_and_std()
-        self.store_reference(*stats)
-        return stats
-
-    def compute_mean_and_std(self):
-        return (mean(self), stdev(self))
-
-    def store_reference(self, reference_mean, reference_stdev):
-        self.reference_mean = reference_mean
-        self.reference_stdev = reference_stdev
+    def post_append_learn_continuously(self):
+        self.reference_mean, self.reference_stdev = mean(self), stdev(self)
         self.reference_exists = True
+        return self.reference_mean, self.reference_stdev
 
 
 DataPassthru = namedtuple('DataPassthru', ('date name value'),
