@@ -1,5 +1,6 @@
 aiohttp
 aiohttp-cors
+aiojobs
 pytest
 janus
 rainbow_logging_handler
