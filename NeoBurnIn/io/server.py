@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Jun 26, 2020 at 10:39 PM +0800
+# Last Change: Mon Jun 29, 2020 at 12:25 AM +0800
 
 import logging
 import datetime as dt
 import aiohttp_cors
+import aiojobs
+import asyncio
 
 from aiohttp import web
 from collections import defaultdict
@@ -42,13 +44,51 @@ class GroundServer(BaseServer):
 class DataServer(GroundServer):
     def __init__(self, *args,
                  stdevRange=3, thermChName='THERM', thermAlarmThresh=60,
+                 heartBeatInterval=60,  # This is in second
                  **kwargs):
         self.stdevRange = stdevRange
         self.thermChName = thermChName
         self.thermAlarmThresh = thermAlarmThresh
+        self.heartBeatInterval = heartBeatInterval
+
         self.stash = self.stash_create()
+        self.last_received = datetime.now()
 
         super().__init__(*args, **kwargs)
+
+    ###############
+    # App factory #
+    ###############
+
+    async def app_factory(self):
+        self.scheduler = await aiojobs.create_scheduler()
+        await self.scheduler.spawn(self.check_heartbeat())
+        return self.app
+
+    def run(self):
+        web.run_app(self.app_factory(),
+                    host=self.host, port=self.port, access_log=None)
+
+    ###########################################
+    # Check whether the sender is still alive #
+    ###########################################
+
+    async def check_heartbeat(self):
+        while True:
+            try:
+                now = datetime.now()
+                time_delta = (now-self.last_received).total_seconds()
+                logger.info('Checking if client is alive at {}'.format(
+                    now.strftime(standard_time_format)
+                ))
+
+                if time_delta >= self.heartBeatInterval:
+                    logger.critical('The client has been inactive for {} seconds!'.format(time_delta))
+
+                await asyncio.sleep(self.heartBeatInterval/2)
+
+            except Exception:
+                break
 
     ###############
     # HTTP routes #
@@ -145,6 +185,9 @@ class DataServer(GroundServer):
                 # Store the time unconditionally.
                 self.stash[ch_name]['time'].append(
                     self.convert_to_bokeh_time(date))
+
+                # Update heart beat
+                self.last_received = datetime.now()
 
     @staticmethod
     def split_input(msg, delimiter='\n'):
