@@ -14,3 +14,5 @@ server:
     thermChName:
         - COMBINED_WIRE
     thermAlarmThresh: 50
+    heartBeatInterval: 600  # Send an alarm if the client has been not sending anything for the past 10 min
+    checkHeartBeatInterval: 60  # Check heart beat every min
