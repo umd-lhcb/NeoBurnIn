@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 29, 2020 at 02:10 AM +0800
+# Last Change: Mon Jun 29, 2020 at 02:40 AM +0800
 
 import logging
 import datetime as dt
@@ -132,7 +132,6 @@ class DataServer(GroundServer):
             data_dump = {
                 'time': self.stash[ch_name]['time'],
                 'data': self.stash[ch_name]['data'],
-                # 'summary': self.stash[ch_name]['summary']
             }
             return web.json_response(data_dump)
 
@@ -236,7 +235,6 @@ class DataServer(GroundServer):
     @staticmethod
     def default_item(item_length=1000):
         return {
-            'summary': DataStream(max_length=item_length),
             'time': DataStream(max_length=item_length),
             'data': DataStats(max_length=item_length),
         }
