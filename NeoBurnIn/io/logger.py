@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jan 19, 2020 at 12:46 AM -0500
+# Last Change: Mon Jun 29, 2020 at 03:31 AM +0800
 # Too bad. Impurities everywhere.
 
 import logging
@@ -167,7 +167,7 @@ class AntiFloodSMTPHandler(logging.handlers.SMTPHandler):
 
 
 def log_handler_email(fromaddr, toaddrs, credentials, interval,
-                      subject='[BurnIn]: Summary / An error has occurred',
+                      subject='[BurnIn]: Critical error!',
                       mailhost=('smtp.gmail.com', 587),
                       level=logging.CRITICAL
                       ):
