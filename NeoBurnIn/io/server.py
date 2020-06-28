@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 29, 2020 at 12:32 AM +0800
+# Last Change: Mon Jun 29, 2020 at 12:41 AM +0800
 
 import logging
 import datetime as dt
@@ -44,12 +44,13 @@ class GroundServer(BaseServer):
 class DataServer(GroundServer):
     def __init__(self, *args,
                  stdevRange=3, thermChName='THERM', thermAlarmThresh=60,
-                 heartBeatInterval=60,  # This is in second
+                 heartBeatInterval=360, checkHeatbeatInterval=60,  # in seconds
                  **kwargs):
         self.stdevRange = stdevRange
         self.thermChName = thermChName
         self.thermAlarmThresh = thermAlarmThresh
         self.heartBeatInterval = heartBeatInterval
+        self.checkHeatbeatInterval = checkHeatbeatInterval
 
         self.stash = self.stash_create()
         self.last_received = datetime.now()
@@ -85,7 +86,7 @@ class DataServer(GroundServer):
                 logger.critical('Current time is {}. The client has been inactive for {} seconds!'.format(
                     now.strftime(standard_time_format), time_delta))
 
-            await asyncio.sleep(self.heartBeatInterval/2)
+            await asyncio.sleep(self.checkHeatbeatInterval)
 
     ###############
     # HTTP routes #
