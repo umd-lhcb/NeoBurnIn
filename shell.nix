@@ -2,6 +2,7 @@ let
   pkgs = import <nixpkgs> { overlays = [(import ./nix/burnin)]; };
   python = pkgs.python3;
   pythonPackages = python.pkgs;
+  stdenv = pkgs.stdenv;
 in
 
 pkgs.mkShell {
@@ -16,5 +17,8 @@ pkgs.mkShell {
 
     rpi_burnin
     labSNMP
+  ]
+  ++ stdenv.lib.optionals (stdenv.isx86_64) [
+    pytest
   ];
 }
