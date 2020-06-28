@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 29, 2020 at 12:30 AM +0800
+# Last Change: Mon Jun 29, 2020 at 12:32 AM +0800
 
 import logging
 import datetime as dt
@@ -75,21 +75,17 @@ class DataServer(GroundServer):
 
     async def check_heartbeat(self):
         while True:
-            try:
-                now = datetime.now()
-                time_delta = (now-self.last_received).total_seconds()
-                logger.info('Checking if client is alive at {}'.format(
-                    now.strftime(standard_time_format)
-                ))
+            now = datetime.now()
+            time_delta = (now-self.last_received).total_seconds()
+            logger.info('Checking if client is alive at {}'.format(
+                now.strftime(standard_time_format)
+            ))
 
-                if time_delta >= self.heartBeatInterval:
-                    logger.critical('Current time is {}. The client has been inactive for {} seconds!'.format(
-                        now.strftime(standard_time_format), time_delta))
+            if time_delta >= self.heartBeatInterval:
+                logger.critical('Current time is {}. The client has been inactive for {} seconds!'.format(
+                    now.strftime(standard_time_format), time_delta))
 
-                await asyncio.sleep(self.heartBeatInterval/2)
-
-            except Exception:
-                break
+            await asyncio.sleep(self.heartBeatInterval/2)
 
     ###############
     # HTTP routes #
