@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 29, 2020 at 12:41 AM +0800
+# Last Change: Mon Jun 29, 2020 at 02:00 AM +0800
 
 import logging
 import datetime as dt
@@ -231,8 +231,7 @@ class DataServer(GroundServer):
         Store data. If a root-level key does not exist, create it, along with
         specified empty leaves.
         '''
-        stash = defaultdict(self.default_item)
-        return stash
+        return defaultdict(self.default_item)
 
     @staticmethod
     def default_item(item_length=1000):

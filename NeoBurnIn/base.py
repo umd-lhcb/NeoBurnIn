@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Feb 07, 2020 at 02:13 PM +0800
+# Last Change: Mon Jun 29, 2020 at 01:51 AM +0800
 
 import abc
 import sys
@@ -70,7 +70,7 @@ class ThreadTerminator(object):
 class DataStream(list):
     '''
     Store received data, up to 'max_length'. Data will be appended to a string
-    on append. The string will be used for json output, which will be used for
+    on append. The string will be used for JSON output, which will be used for
     visualization.
     '''
     def __init__(self, *args,
