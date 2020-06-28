@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Aug 10, 2018 at 12:55 AM -0400
+# Last Change: Mon Jun 29, 2020 at 01:52 AM +0800
 
 import pytest
 
@@ -24,7 +24,11 @@ def stash():
 
 
 def test_initial_value(stash):
-    assert stash['overall'] == DataStream(max_length=10000)
+    assert stash['overall'] == {
+        'summary': [],
+        'time': [],
+        'data': []
+    }
 
 
 def test_default_value_to_a_new_key(stash):

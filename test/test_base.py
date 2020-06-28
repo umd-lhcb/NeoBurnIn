@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Fri Aug 10, 2018 at 12:54 AM -0400
+# Last Change: Mon Jun 29, 2020 at 01:48 AM +0800
 
 import pytest
 import statistics
@@ -110,9 +110,9 @@ def test_data_stats_partial_preserve_learning_stats(data_stats_partial):
     for i in range(0, 14):
         data_stats_partial.append(i)
     assert data_stats_partial.reference_mean == \
-        statistics.mean([1, 2, 3, 4, 5])
+        statistics.mean([9, 10, 11, 12, 13])
     assert data_stats_partial.reference_stdev == \
-        statistics.stdev([1, 2, 3, 4, 5])
+        statistics.stdev([9, 10, 11, 12, 13])
 
 
 def test_data_stats_partial_compute_third_stats(data_stats_partial):
