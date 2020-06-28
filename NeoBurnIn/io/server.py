@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 29, 2020 at 02:40 AM +0800
+# Last Change: Mon Jun 29, 2020 at 02:46 AM +0800
 
 import logging
 import datetime as dt
@@ -160,13 +160,8 @@ class DataServer(GroundServer):
                 # Log the whole entry
                 logger.info('Received: {}'.format(entry))
 
-                # Store the data first.
-                results = self.stash[ch_name]['data'].append(value)
-                if results is not False:
-                    self.stash[ch_name]['summary'].append(results[0])
-
-                # Now check if this data point is OK.
-                if ch_name == self.thermChName:
+                # First check if this data point is OK.
+                if ch_name == self.thermChName:  # Thermal threshold check
                     if value >= self.thermAlarmThresh:
                         logger.critical('Over temperature! The current reading of {} deg C is greater than threshold {} deg C'.format(value, self.thermAlarmThresh))
 
@@ -179,7 +174,8 @@ class DataServer(GroundServer):
                             ch_name, value, self.stdevRange
                         ))
 
-                # Store the time unconditionally.
+                # Store the data and time
+                self.stash[ch_name]['data'].append(value)
                 self.stash[ch_name]['time'].append(
                     self.convert_to_bokeh_time(date))
 
@@ -189,10 +185,7 @@ class DataServer(GroundServer):
     @staticmethod
     def split_input(msg, delimiter='\n'):
         splitted = msg.split(delimiter)
-        if splitted[-1] == '':
-            return splitted[:-1]
-        else:
-            return splitted
+        return splitted[:-1] if splitted[-1] == '' else splitted
 
     @staticmethod
     def validate_input(entry, delimiter='|'):
