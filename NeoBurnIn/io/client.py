@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Mon Jun 29, 2020 at 03:19 AM +0800
+# Last Change: Tue Jun 23, 2020 at 05:12 PM +0800
 
 import logging
 import asyncio
@@ -85,14 +85,16 @@ class DataClient(ThreadTerminator, BaseClient):
                     err.__class__.__name__
                 ))
 
-    async def send(self, data=None, url=None):
+    async def send(self, data=None, url=None, task_done=True):
         try:
             data = self.assemble_msg(await self.queue.get()) if not data \
-                else self.assemble_msg(data)
+                else data
             logger.debug('Got a new message, start transmission...')
-            await self.post(data, url)
 
-            self.queue.task_done()
+            await self.post(data, url)
+            if task_done:
+                self.queue.task_done()
+
             # NOTE: here we have to decouple semaphore acquire and release
             self.sem.release()
 
@@ -107,7 +109,6 @@ class DataClient(ThreadTerminator, BaseClient):
 
     async def post(self, data, url=None):
         url = self.url if not url else url
-
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(url, data=data) as resp:
@@ -134,7 +135,11 @@ class DataClient(ThreadTerminator, BaseClient):
     @staticmethod
     def assemble_msg(raw_data, sep='|', ln='\n', encoding='utf8'):
         data = sep.join(map(str, raw_data)) + ln
-        return bytearray(data, encoding) if encoding else data
+
+        if encoding:
+            return bytearray(data, encoding)
+        else:
+            return data
 
 
 class CtrlClient(DataClient):
@@ -156,7 +161,7 @@ class CtrlClient(DataClient):
 
                 # Always send non-alarm data
                 if data.value:
-                    await super().send(data)
+                    await super().send(self.assemble_msg(data))
 
                 else:
                     logger.critical('{} alarm triggered!'.format(data.name))
