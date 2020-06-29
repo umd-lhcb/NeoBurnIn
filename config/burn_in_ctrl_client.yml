@@ -10,7 +10,7 @@ log:
 client:
     host: 129.2.92.92
     port: 45678
-    maxConcurrency: 4
+    maxConcurrency: 100
 
 sensors:
     - Therm.ThermDataSource:
