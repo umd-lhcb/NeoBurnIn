@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Tue Jun 23, 2020 at 05:12 PM +0800
+# Last Change: Tue Jun 30, 2020 at 02:18 AM +0800
 
 import logging
 import asyncio
@@ -158,6 +158,9 @@ class CtrlClient(DataClient):
                         url = action(self.controllers)
                         await super().send(
                             bytearray('Remote control', 'utf8'), url, False)
+                        # NOTE: CtrlServer doesn't care about the content of the
+                        # control message, here we are just using
+                        # 'Remove control' as the message.
 
                 # Always send non-alarm data
                 if data.value:
@@ -165,6 +168,8 @@ class CtrlClient(DataClient):
 
                 else:
                     logger.critical('{} alarm triggered!'.format(data.name))
+
+                self.queue.task_done  # Mark task as done
 
         except asyncio.CancelledError:
             logger.debug('Sender cancellation has been requested.')
