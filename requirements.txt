@@ -2,7 +2,7 @@ aiohttp
 aiohttp-cors
 aiojobs
 pytest
-janus
+janus==0.4.0
 rainbow_logging_handler
 pyyaml
 git+https://github.com/umd-lhcb/rpi.burnin
