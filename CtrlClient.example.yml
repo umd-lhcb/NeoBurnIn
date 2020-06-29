@@ -10,9 +10,9 @@ client:
 
 sensors:
     - RandUniform.RandUniformDataSource:
-        chName: TEST_CASE1
+        displayName: TEST_CASE1
     - RandUniform.RandUniformDataSource:
-        chName: TEST_CASE2
+        displayName: TEST_CASE2
 
 controllers:
     tester1:
