@@ -3,9 +3,9 @@ log:
     maxSize: 100 MB
     backupCount: 10
     fromaddr: burninatumd@gmail.com
-    toaddrs: yangzs@umd.edu, syp@umd.edu
+    toaddrs: syp@umd.edu,yangzs@umd.edu
     credentials: <ask_yipeng_for_passwd>  # Ask Yipeng on slack for the password of this account
-    interval: 1 HRS
+    interval: 6 HRS
 
 server:
     host: 0.0.0.0
