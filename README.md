@@ -2,6 +2,23 @@
 Server and client implemented for the UT boards burn in process.
 
 
+## Installation on Raspbian
+
+0. Make sure Python 3.6+ is available in Raspbian.
+
+1. Install `hidapi`:
+    ```
+    sudo apt update
+    sudo apt install libhidapi-hidraw0 libhidapi-libusb0
+    ```
+
+2. Clone this project
+3. Install the dependencies with:
+    ```
+    pip3 install --user -r ./requirements.txt
+    ```
+
+
 ## Usage
 All for scripts (`{Ctrl,Data}{Client,Server}.py`) have identical command line
 interface:
