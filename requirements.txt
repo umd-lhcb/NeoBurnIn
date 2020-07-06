@@ -5,5 +5,5 @@ pytest
 janus==0.4.0
 rainbow_logging_handler
 pyyaml
-git+https://github.com/umd-lhcb/rpi.burnin
-git+https://github.com/umd-lhcb/labSNMP
+git+https://github.com/umd-lhcb/rpi.burnin@0.3.4
+git+https://github.com/umd-lhcb/labSNMP@0.2.1
