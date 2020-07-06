@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 06, 2020 at 04:52 PM +0800
+# Last Change: Mon Jul 06, 2020 at 05:31 PM +0800
 
 import janus
 import importlib
@@ -53,13 +53,26 @@ class SensorEmitter(object):
         self.sensors_list = sensors_list
 
     def init_sensors(self):
+        gpio_is_inited = False
+
         for sensor_spec in self.sensors_list:
             for name, spec in sensor_spec.items():
                 mod, cls = name.rsplit('.')
                 sensor = getattr(importlib.import_module(
                     'NeoBurnIn.DataSource.' + mod), cls)
-                self.emitted_sensors.append(sensor(
-                    self.stop_event, self.queue.sync_q, **spec))
+                if 'WaterAlarm' in cls or 'FireAlarm' in cls:
+                    if gpio_is_inited:
+                        self.emitted_sensors.append(sensor(
+                            self.stop_event, self.queue.sync_q,
+                            gpio_init_cleanup=False, **spec))
+                    else:
+                        gpio_is_inited = True
+                        self.emitted_sensors.append(sensor(
+                            self.stop_event, self.queue.sync_q, **spec))
+
+                else:
+                    self.emitted_sensors.append(sensor(
+                        self.stop_event, self.queue.sync_q, **spec))
 
     def start(self):
         for sensor in self.emitted_sensors:
