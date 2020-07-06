@@ -9,7 +9,9 @@ Server and client implemented for the UT boards burn in process.
 2. Configure the kernel parameters so that 1-wire protocol devices are
     recognized. Follow the instruction [here](https://github.com/umd-lhcb/rpi.burnin#setup).
 
-3. Install the Udev rule for USB relay following the instruction [here](https://github.com/umd-lhcb/rpi.burnin#setup-1)
+3. Install the Udev rule for USB relay following the instruction [here](https://github.com/umd-lhcb/rpi.burnin#setup-1).
+    Note that the Udev rules are available in the `rpi.burnin` repository, NOT
+    here.
 
 4. Install `hidapi`:
     ```
