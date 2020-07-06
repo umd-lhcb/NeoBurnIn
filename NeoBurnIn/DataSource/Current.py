@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Last Change: Fri Feb 28, 2020 at 02:23 PM +0800
 

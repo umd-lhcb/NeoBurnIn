@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Author: Ben Flaggs
 # Last Change: Wed Jun 17, 2020 at 03:43 AM +0800
