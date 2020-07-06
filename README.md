@@ -4,7 +4,7 @@ Server and client implemented for the UT boards burn in process.
 
 ## Installation on Raspbian
 
-0. Make sure Python 3.6+ is available in Raspbian.
+0. Make sure Python 3.6+ is installed in Raspbian.
 
 1. Install `hidapi`:
     ```
