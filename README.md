@@ -5,16 +5,21 @@ Server and client implemented for the UT boards burn in process.
 ## Installation on Raspbian
 
 1. Make sure Python 3.6+ is installed in Raspbian.
-2. Install the Udev rule for USB relay following the instruction [here](https://github.com/umd-lhcb/rpi.burnin#setup-1)
 
-3. Install `hidapi`:
+2. Configure the kernel parameters so that 1-wire protocol devices are
+    recognized. Follow the instruction [here](https://github.com/umd-lhcb/rpi.burnin#setup).
+
+3. Install the Udev rule for USB relay following the instruction [here](https://github.com/umd-lhcb/rpi.burnin#setup-1)
+
+4. Install `hidapi`:
     ```
     sudo apt update
     sudo apt install libhidapi-hidraw0 libhidapi-libusb0
     ```
 
-4. Clone this project
-5. Install the dependencies with:
+5. Clone this project
+
+6. Install the dependencies with:
     ```
     pip3 install --user -r ./requirements.txt
     ```
