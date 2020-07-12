@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jul 12, 2020 at 11:33 PM +0800
+# Last Change: Sun Jul 12, 2020 at 11:45 PM +0800
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 from argparse import ArgumentParser
 from datetime import datetime
@@ -67,7 +68,14 @@ def plot_time_series(output, time, value, xlabel, ylabel, aspect):
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
 
+    # Tune the datatime axis
+    ax.tick_params(axis='x', rotation=45, labelsize=8)
+    ax.xaxis.set_major_locator(mdates.HourLocator(interval=6))
+    ax.xaxis.set_minor_locator(mdates.HourLocator(interval=1))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d H%H'))
+
     ax.plot(time, value)
+
     fig.savefig(output, dpi=300, transparent=False, bbox_inches='tight')
 
 
