@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jul 12, 2020 at 11:16 PM +0800
+# Last Change: Sun Jul 12, 2020 at 11:33 PM +0800
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -39,6 +39,13 @@ specify x label.
 specify y label.
     ''')
 
+    parser.add_argument('-a', '--aspect',
+                        type=float,
+                        default=0.02,
+                        help='''
+specify aspect ratio.
+    ''')
+
     parser.add_argument('-o', '--output-dir',
                         default=None,
                         help='''
@@ -52,16 +59,16 @@ specify the output directory.
 # Helpers #
 ###########
 
-def plot_time_series(output, time, value, xlabel, ylabel):
+def plot_time_series(output, time, value, xlabel, ylabel, aspect):
     fig = plt.figure()
-    ax = fig.add_subplot()
+    ax = fig.add_subplot(1, 1, 1)
 
+    ax.set_aspect(aspect)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
 
     ax.plot(time, value)
-    plt.tight_layout()
-    fig.savefig(output)
+    fig.savefig(output, dpi=300, transparent=False, bbox_inches='tight')
 
 
 # NOTE: This works for 2D CSV files only.
@@ -87,4 +94,4 @@ if __name__ == '__main__':
 
     time, value = read_data(args.csv_file)
     plot_time_series(gen_output_plot_name(args.csv_file), time, value,
-                     args.xlabel, args.ylabel)
+                     args.xlabel, args.ylabel, args.aspect)
