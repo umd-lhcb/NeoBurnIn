@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jul 12, 2020 at 10:51 PM +0800
+# Last Change: Sun Jul 12, 2020 at 11:16 PM +0800
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -64,18 +64,22 @@ def plot_time_series(output, time, value, xlabel, ylabel):
     fig.savefig(output)
 
 
+# NOTE: This works for 2D CSV files only.
 def read_data(csv_file):
-    return np.genfromtxt(
-        csv_file, delimiter=',', dtype=None, skip_header=1, unpack=True,
-        converters={
-            0: lambda x: datetime.strptime(
-                x.decode('utf-8'), standard_time_format)
-        })
+    raw_time, raw_value = np.genfromtxt(
+        csv_file, delimiter=',', dtype=str, skip_header=1, unpack=True,
+        encoding='utf-8')
+
+    time = np.array([datetime.strptime(i, standard_time_format)
+                     for i in raw_time])
+    value = raw_value.astype(np.float)
+
+    return time, value
 
 
 def gen_output_plot_name(csv_file, ext='.png'):
     csv_file = Path(csv_file)
-    return csv_file.parent / csv_file.stem+ext
+    return csv_file.parent / (str(csv_file.stem)+ext)
 
 
 if __name__ == '__main__':
