@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Last Change: Sun Jul 12, 2020 at 10:05 PM +0800
+# Last Change: Sun Jul 12, 2020 at 10:10 PM +0800
 
 from argparse import ArgumentParser, Action
 from datetime import datetime
@@ -21,7 +21,7 @@ from NeoBurnIn.base import standard_time_format
 # Parse arguments #
 ###################
 
-TIME_FMT = '%Y-%m-%d:%H'
+TIME_FMT = '%Y-%m-%d_%H'
 
 
 class TimeFmtToDatetimeObj(Action):
@@ -52,7 +52,7 @@ specify the output directory.
                         required=True,
                         help='''
 specify the begin date time when the data will be extracted.
-The date format should be of the following format: YYYY-MM-DD:HH.
+The date format should be of the following format: YYYY-MM-DD_HH.
     ''')
 
     parser.add_argument('-e', '--end',
@@ -60,7 +60,7 @@ The date format should be of the following format: YYYY-MM-DD:HH.
                         required=True,
                         help='''
 specify the end date time when the data will be extracted.
-The date format should be of the following format: YYYY-MM-DD:HH.
+The date format should be of the following format: YYYY-MM-DD_HH.
     ''')
 
     return parser.parse_args()
