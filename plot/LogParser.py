@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 #
-# Last Change: Sat Jul 11, 2020 at 11:44 PM +0800
+# Last Change: Sun Jul 12, 2020 at 09:36 PM +0800
 
 from argparse import ArgumentParser, Action
 from datetime import datetime
 from sys import exit
+from re import search
+from collections import defaultdict as ddict
 
 
 ###################
@@ -36,10 +38,19 @@ specify the path to burn-in log file.
 specify the output directory.
     ''')
 
-    parser.add_argument('date_fmt',
+    parser.add_argument('-b', '--begin',
                         action=TimeFmtToDatetimeObj,
+                        required=True,
                         help='''
 specify the begin date time when the data will be extracted.
+The date format should be of the following format: YYYY-MM-DD:HH.
+    ''')
+
+    parser.add_argument('-e', '--end',
+                        action=TimeFmtToDatetimeObj,
+                        required=True,
+                        help='''
+specify the end date time when the data will be extracted.
 The date format should be of the following format: YYYY-MM-DD:HH.
     ''')
 
@@ -49,6 +60,13 @@ The date format should be of the following format: YYYY-MM-DD:HH.
 ###########
 # Helpers #
 ###########
+
+
+def extract_data(log_file, begin, end):
+    result = ddict(lambda: list([['time', 'value']]))
+
+    with open(log_file) as f:
+        pass
 
 
 if __name__ == '__main__':
