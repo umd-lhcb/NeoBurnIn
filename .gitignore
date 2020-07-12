@@ -9,3 +9,4 @@ measurements/test_server/
 demo/NaiveLogger.yml
 *.log
 *.csv
+*.png
