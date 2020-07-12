@@ -89,7 +89,7 @@ def extract_data(log_file, begin, end):
 
 
 def write_data(output_dir, data, begin, end):
-    output_dir = Path(output_dir) / Path('{}_{}'.format(
+    output_dir = Path(output_dir) / Path('{}__{}'.format(
         begin.strftime(TIME_FMT), end.strftime(TIME_FMT)
     ))
     makedirs(output_dir, exist_ok=True)
