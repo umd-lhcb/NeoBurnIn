@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Sun Jul 12, 2020 at 09:43 PM +0800
+# Last Change: Sun Jul 12, 2020 at 09:45 PM +0800
 
 import logging
 import datetime as dt
@@ -78,7 +78,7 @@ class DataServer(GroundServer):
         while True:
             now = datetime.now()
             time_delta = (now-self.last_received).total_seconds()
-            logger.info('Checking if client is alive at {}'.format(
+            logger.debug('Checking if client is alive at {}'.format(
                 now.strftime(standard_time_format)
             ))
 
