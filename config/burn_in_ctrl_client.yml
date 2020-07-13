@@ -20,7 +20,27 @@ sensors:
             - /sys/bus/w1/devices/28-0000098d0cbe/w1_slave
             - /sys/bus/w1/devices/28-0000098fd7e3/w1_slave
         displayName: COMBINED_WIRE
-        interval: 1
+        interval: 5
+    - Therm.ThermDataSource:
+        sensorPath:
+            - /sys/bus/w1/devices/28-0000098d8197/w1_slave
+        displayName: THERM_SENSOR1
+        interval: 5
+    - Therm.ThermDataSource:
+        sensorPath:
+            - /sys/bus/w1/devices/28-0000098d94eb/w1_slave
+        displayName: THERM_SENSOR2
+        interval: 5
+    - Therm.ThermDataSource:
+        sensorPath:
+            - /sys/bus/w1/devices/28-0000098d0cbe/w1_slave
+        displayName: THERM_SENSOR3
+        interval: 5
+    - Therm.ThermDataSource:
+        sensorPath:
+            - /sys/bus/w1/devices/28-0000098fd7e3/w1_slave
+        displayName: THERM_SENSOR4
+        interval: 5
     - Current.CurrentMaratonDataSource:
         ipAddr: 192.168.1.31
         interval: 60
