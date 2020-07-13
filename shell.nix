@@ -20,5 +20,6 @@ pkgs.mkShell {
   ]
   ++ stdenv.lib.optionals (stdenv.isx86_64) [
     pytest
+    matplotlib
   ];
 }

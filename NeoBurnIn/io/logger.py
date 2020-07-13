@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jun 29, 2020 at 03:31 AM +0800
+# Last Change: Sun Jul 12, 2020 at 09:43 PM +0800
 # Too bad. Impurities everywhere.
 
 import logging
@@ -10,7 +10,7 @@ import logging.handlers
 from datetime import datetime
 from rainbow_logging_handler import RainbowLoggingHandler
 
-from NeoBurnIn.base import time_delta_in_seconds
+from NeoBurnIn.base import time_delta_in_seconds, parse_time_limit
 
 
 def configure_client_logger(filename, maxSize, backupCount,
@@ -82,12 +82,6 @@ def parse_size_limit(size):
     size_dict = {'B': 1, 'KB': 1024, 'MB': 1024*1024}
     size_parsed = size.split(' ')
     return int(size_parsed[0]) * size_dict[size_parsed[1]]
-
-
-def parse_time_limit(time):
-    time_dict = {'SEC': 1, 'MIN': 60*1, 'HRS': 60*60}
-    time_parsed = time.split(' ')
-    return int(time_parsed[0]) * time_dict[time_parsed[1]]
 
 
 ##############

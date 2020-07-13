@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jun 29, 2020 at 02:56 AM +0800
+# Last Change: Sun Jul 12, 2020 at 09:45 PM +0800
 
 import logging
 import datetime as dt
@@ -18,7 +18,7 @@ from labSNMP.wrapper.Wiener import WienerControl
 
 from NeoBurnIn.base import BaseServer
 from NeoBurnIn.base import DataStream, DataStats
-from NeoBurnIn.base import standard_time_format
+from NeoBurnIn.base import standard_time_format, parse_time_limit
 
 logger = logging.getLogger(__name__)
 
@@ -44,13 +44,13 @@ class GroundServer(BaseServer):
 class DataServer(GroundServer):
     def __init__(self, *args,
                  stdevRange=3, thermChName=['THERM'], thermAlarmThresh=60,
-                 heartBeatInterval=360, checkHeartBeatInterval=60,  # in seconds
+                 heartBeatInterval='1 HRS', checkHeartBeatInterval='20 MIN',  # in seconds
                  **kwargs):
         self.stdevRange = stdevRange
         self.thermChName = thermChName
         self.thermAlarmThresh = thermAlarmThresh
-        self.heartBeatInterval = heartBeatInterval
-        self.checkHeartBeatInterval = checkHeartBeatInterval
+        self.heartBeatInterval = parse_time_limit(heartBeatInterval)
+        self.checkHeartBeatInterval = parse_time_limit(checkHeartBeatInterval)
 
         self.stash = self.stash_create()
         self.last_received = datetime.now()
@@ -78,7 +78,7 @@ class DataServer(GroundServer):
         while True:
             now = datetime.now()
             time_delta = (now-self.last_received).total_seconds()
-            logger.info('Checking if client is alive at {}'.format(
+            logger.debug('Checking if client is alive at {}'.format(
                 now.strftime(standard_time_format)
             ))
 

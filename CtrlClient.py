@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 06, 2020 at 05:31 PM +0800
+# Last Change: Sat Jul 11, 2020 at 11:34 PM +0800
 
 import janus
 import importlib
@@ -8,9 +8,6 @@ import importlib
 from threading import Event
 from queue import Queue
 from argparse import ArgumentParser
-
-import sys
-sys.path.insert(0, '..')
 
 from NeoBurnIn.io.client import CtrlClient
 from NeoBurnIn.io.logger import LoggingThread

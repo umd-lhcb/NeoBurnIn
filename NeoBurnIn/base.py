@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jun 29, 2020 at 02:25 AM +0800
+# Last Change: Sun Jul 12, 2020 at 09:42 PM +0800
 
 import abc
 import sys
@@ -49,6 +49,12 @@ def parse_config(config_file):
     else:
         print('{}: configuration file does not exist.'.format(config_file))
         sys.exit(1)
+
+
+def parse_time_limit(time):
+    time_dict = {'SEC': 1, 'MIN': 60*1, 'HRS': 60*60}
+    time_parsed = time.split(' ')
+    return int(time_parsed[0]) * time_dict[time_parsed[1]]
 
 
 class ThreadTerminator(object):
