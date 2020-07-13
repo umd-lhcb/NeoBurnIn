@@ -3,7 +3,7 @@ log:
     maxSize: 100 MB
     backupCount: 10
     fromaddr: burninatumd@gmail.com
-    toaddrs: yangzs@umd.edu, syp@umd.edu
+    toaddrs: lhcb-hw@umd.edu
     credentials: <ask_yipeng_for_passwd>  # Ask Yipeng on slack
     interval: 1 HRS
 
@@ -20,7 +20,7 @@ sensors:
             - /sys/bus/w1/devices/28-0000098d0cbe/w1_slave
             - /sys/bus/w1/devices/28-0000098fd7e3/w1_slave
         displayName: COMBINED_WIRE
-        interval: 5
+        interval: 1
     - Current.CurrentMaratonDataSource:
         ipAddr: 192.168.1.31
         interval: 60
@@ -61,21 +61,21 @@ controllers:
 ctrlRules:
     - match:
         name: "COMBINED_WIRE"
-        valueGt: 48  # Set the temp when the VALVE should be turned ON
+        valueGt: 40  # Set the temp when the VALVE should be turned ON
       action:
           sink: relay1
           state: "on"
           ch: 1
     - match:
         name: "COMBINED_WIRE"
-        valueLt: 30  # Set the temp when the VALVE should be turned OFF
+        valueLt: 31  # Set the temp when the VALVE should be turned OFF
       action:
           sink: relay1
           state: "off"
           ch: 1
     - match:
         name: "COMBINED_WIRE"
-        valueGt: 70  # Set the temp when the MARATON should be turned OFF
+        valueGt: 60  # Set the temp when the MARATON should be turned OFF
       action:
           sink: relay2
           state: "off"
