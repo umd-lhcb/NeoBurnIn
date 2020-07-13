@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Sun Jul 12, 2020 at 09:45 PM +0800
+# Last Change: Tue Jul 14, 2020 at 03:26 AM +0800
 
 import logging
 import datetime as dt
@@ -44,13 +44,15 @@ class GroundServer(BaseServer):
 class DataServer(GroundServer):
     def __init__(self, *args,
                  stdevRange=3, thermChName=['THERM'], thermAlarmThresh=60,
-                 heartBeatInterval='1 HRS', checkHeartBeatInterval='20 MIN',  # in seconds
+                 heartBeatInterval='1 HRS', checkHeartBeatInterval='20 MIN',
+                 itemLength=1000,
                  **kwargs):
         self.stdevRange = stdevRange
         self.thermChName = thermChName
         self.thermAlarmThresh = thermAlarmThresh
         self.heartBeatInterval = parse_time_limit(heartBeatInterval)
         self.checkHeartBeatInterval = parse_time_limit(checkHeartBeatInterval)
+        self.itemLength = itemLength
 
         self.stash = self.stash_create()
         self.last_received = datetime.now()
@@ -223,7 +225,7 @@ class DataServer(GroundServer):
         Store data. If a root-level key does not exist, create it, along with
         specified empty leaves.
         '''
-        return defaultdict(self.default_item)
+        return defaultdict(lambda: self.default_item(self.itemLength))
 
     @staticmethod
     def default_item(item_length=1000):
