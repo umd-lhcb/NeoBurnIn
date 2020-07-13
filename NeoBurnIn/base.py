@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Sun Jul 12, 2020 at 09:42 PM +0800
+# Last Change: Tue Jul 14, 2020 at 03:15 AM +0800
 
 import abc
 import sys
@@ -157,7 +157,7 @@ DataPassthru = namedtuple('DataPassthru', ('date name value'),
 
 class BaseDataSource(metaclass=abc.ABCMeta):
     @abc.abstractclassmethod
-    def run(self, interval):
+    def run(self):
         '''
         Continuously providing data at given INTERVAL. Running in the current
         thread.
