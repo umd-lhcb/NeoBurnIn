@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Tue Jun 30, 2020 at 02:18 AM +0800
+# Last Change: Thu Jul 16, 2020 at 05:46 AM +0800
 
 import logging
 import asyncio
@@ -166,7 +166,7 @@ class CtrlClient(DataClient):
                 if data.value:
                     await super().send(self.assemble_msg(data))
 
-                else:
+                elif 'THERM' not in data.name:  # FIXME: Silence unknown thermal sensor caused alarm for now.
                     logger.critical('{} alarm triggered!'.format(data.name))
 
                 self.queue.task_done  # Mark task as done
