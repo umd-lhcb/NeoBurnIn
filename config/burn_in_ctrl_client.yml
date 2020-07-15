@@ -81,7 +81,7 @@ controllers:
 ctrlRules:
     - match:
         name: "COMBINED_WIRE"
-        valueGt: 40  # Set the temp when the VALVE should be turned ON
+        valueGt: 38  # Set the temp when the VALVE should be turned ON
       action:
           sink: relay1
           state: "on"
