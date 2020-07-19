@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 20, 2020 at 03:34 AM +0800
+# Last Change: Mon Jul 20, 2020 at 03:43 AM +0800
 
 import logging
 
@@ -38,7 +38,7 @@ class ThermDataFancySource(ThermDataSource):
         super().__init__(*args, **kwargs)
 
     def initial_sampling(self):
-        raw_samples = [super().get() for i in
+        raw_samples = [self.get() for i in
                        range(self.numOfRecentDP+self.numOfInitOutlier)]
 
         sample_mean = mean(raw_samples)
