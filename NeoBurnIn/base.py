@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Tue Jul 14, 2020 at 03:15 AM +0800
+# Last Change: Mon Jul 20, 2020 at 12:46 AM +0800
 
 import abc
 import sys
@@ -79,13 +79,19 @@ class DataStream(list):
     on append. The string will be used for JSON output, which will be used for
     visualization.
     '''
-    def __init__(self, *args,
-                 max_length=5, **kwargs):
+    def __init__(self, iterable=None, max_length=5):
         self.max_length = max_length
         self.json_str = ''
         self.list_is_full = False
 
-        super().__init__(*args, **kwargs)
+        if iterable and len(iterable) > max_length:
+            # Make sure the length of the list is correct
+            iterable = iterable[len(iterable)-max_length:]
+
+        if iterable:
+            super().__init__(iterable)
+        else:
+            super().__init__()
 
     def append(self, item):
         # Append unconditionally.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jun 29, 2020 at 02:37 AM +0800
+# Last Change: Mon Jul 20, 2020 at 12:46 AM +0800
 
 import pytest
 import statistics
@@ -52,7 +52,6 @@ def test_data_stream_return_val_of_append(data_stream):
         assert data_stream.append(i) is True
 
 
-@pytest.mark.xfail(reason="Not implemented yet.")
 def test_data_stream_pass_generator_as_an_argument():
     data_stream = DataStream(range(0, 6), max_length=5)
     assert data_stream == [i for i in range(1, 6)]
