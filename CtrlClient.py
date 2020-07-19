@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 20, 2020 at 02:11 AM +0800
+# Last Change: Mon Jul 20, 2020 at 02:16 AM +0800
 
 import importlib
 
@@ -39,19 +39,17 @@ def parse_input():
 # Helpers #
 ###########
 
-class ControllerEmitter(object):
-    def __init__(self, controllers_dict):
-        self.emitted_sinks = {}
+def emit_controller(controllers_dict):
+    emitted_sinks = {}
 
-        self.controllers_dict = controllers_dict
+    for label, controller_spec in controllers_dict.items():
+        for name, spec in controller_spec.items():
+            mod, cls = name.rsplit('.')
+            controller = getattr(importlib.import_module(
+                'NeoBurnIn.DataSink.' + mod), cls)
+            emitted_sinks[label] = controller(**spec)
 
-    def init_controllers(self):
-        for label, controller_spec in self.controllers_dict.items():
-            for name, spec in controller_spec.items():
-                mod, cls = name.rsplit('.')
-                controller = getattr(importlib.import_module(
-                    'NeoBurnIn.DataSink.' + mod), cls)
-                self.emitted_sinks[label] = controller(**spec)
+    return emitted_sinks
 
 
 #########
@@ -67,13 +65,12 @@ logging_thread = LoggingThread(logging_queue, **options['log'])
 sensors = SensorEmitter(options['sensors'])
 sensors.init_sensors()
 
-controllers = ControllerEmitter(options['controllers'])
-controllers.init_controllers()
+controllers = emit_controller(options['controllers'])
 ctrl_rules = parse_directive(options['ctrlRules'])
 
 client = CtrlClient(
     sensors.queue.async_q, sensors.stop_event, sensors.emitted_sensors,
-    controllers=controllers.emitted_sinks, ctrlRules=ctrl_rules,
+    controllers=controllers, ctrlRules=ctrl_rules,
     **options['client']
 )
 
