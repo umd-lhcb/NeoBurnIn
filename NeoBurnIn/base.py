@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 20, 2020 at 12:46 AM +0800
+# Last Change: Mon Jul 20, 2020 at 02:09 AM +0800
 
 import abc
 import sys
 import yaml
+import janus
+import importlib
 
 from datetime import datetime
 from collections import defaultdict, namedtuple
 from statistics import mean, stdev
 from pathlib import Path
+from threading import Event
 
 standard_time_format = "%Y-%m-%d %H:%M:%S.%f"
 
@@ -67,6 +70,45 @@ class ThreadTerminator(object):
         for th in self.thread_list:
             # Blocking until all slave threads are terminated.
             th.cleanup()
+
+
+class SensorEmitter(object):
+    def __init__(self, sensors_list):
+        self.stop_event = Event()
+        self.queue = janus.Queue()
+        self.emitted_sensors = []
+
+        self.sensors_list = sensors_list
+
+    def init_sensors(self):
+        gpio_is_inited = False
+
+        for sensor_spec in self.sensors_list:
+            for name, spec in sensor_spec.items():
+                mod, cls = name.rsplit('.')
+                sensor = getattr(importlib.import_module(
+                    'NeoBurnIn.DataSource.' + mod), cls)
+                if 'WaterAlarm' in cls or 'FireAlarm' in cls:
+                    if gpio_is_inited:
+                        self.emitted_sensors.append(sensor(
+                            self.stop_event, self.queue.sync_q,
+                            gpio_init_cleanup=False, **spec))
+                    else:
+                        gpio_is_inited = True
+                        self.emitted_sensors.append(sensor(
+                            self.stop_event, self.queue.sync_q, **spec))
+
+                else:
+                    self.emitted_sensors.append(sensor(
+                        self.stop_event, self.queue.sync_q, **spec))
+
+    def start(self):
+        for sensor in self.emitted_sensors:
+            sensor.start()
+
+    def join(self):
+        for sensor in self.emitted_sensors:
+            sensor.join()
 
 
 ##########################

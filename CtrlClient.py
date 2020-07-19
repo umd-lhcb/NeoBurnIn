@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 #
-# Last Change: Sat Jul 11, 2020 at 11:34 PM +0800
+# Last Change: Mon Jul 20, 2020 at 02:11 AM +0800
 
-import janus
 import importlib
 
-from threading import Event
 from queue import Queue
 from argparse import ArgumentParser
 
 from NeoBurnIn.io.client import CtrlClient
 from NeoBurnIn.io.logger import LoggingThread
-from NeoBurnIn.base import parse_config
+from NeoBurnIn.base import parse_config, SensorEmitter
 from NeoBurnIn.functional import parse_directive
 
 
@@ -40,41 +38,6 @@ def parse_input():
 ###########
 # Helpers #
 ###########
-
-class SensorEmitter(object):
-    def __init__(self, sensors_list):
-        self.stop_event = Event()
-        self.queue = janus.Queue()
-        self.emitted_sensors = []
-
-        self.sensors_list = sensors_list
-
-    def init_sensors(self):
-        gpio_is_inited = False
-
-        for sensor_spec in self.sensors_list:
-            for name, spec in sensor_spec.items():
-                mod, cls = name.rsplit('.')
-                sensor = getattr(importlib.import_module(
-                    'NeoBurnIn.DataSource.' + mod), cls)
-                if 'WaterAlarm' in cls or 'FireAlarm' in cls:
-                    if gpio_is_inited:
-                        self.emitted_sensors.append(sensor(
-                            self.stop_event, self.queue.sync_q,
-                            gpio_init_cleanup=False, **spec))
-                    else:
-                        gpio_is_inited = True
-                        self.emitted_sensors.append(sensor(
-                            self.stop_event, self.queue.sync_q, **spec))
-
-                else:
-                    self.emitted_sensors.append(sensor(
-                        self.stop_event, self.queue.sync_q, **spec))
-
-    def start(self):
-        for sensor in self.emitted_sensors:
-            sensor.start()
-
 
 class ControllerEmitter(object):
     def __init__(self, controllers_dict):
