@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Sun Jan 19, 2020 at 03:24 AM -0500
+# Last Change: Sun Jul 19, 2020 at 11:49 PM +0800
 
 from argparse import ArgumentParser
 from queue import Queue
@@ -8,6 +8,8 @@ from queue import Queue
 from NeoBurnIn.io.server import CtrlServer
 from NeoBurnIn.io.logger import LoggingThread
 from NeoBurnIn.base import parse_config
+
+from rpi.burnin.USBRelay import set_relay_state, get_all_device_paths
 
 
 ###################
@@ -29,6 +31,16 @@ def parse_input():
         default='CtrlServer.yml'
     )
 
+    parser.add_argument(
+        '--relay-channel',
+        dest='relayChannel',
+        help='''
+        specify number of relay channels.
+        ''',
+        type=int,
+        default=2
+    )
+
     return parser.parse_args()
 
 
@@ -48,3 +60,11 @@ if __name__ == "__main__":
     logging_thread.start()
     server.run()
     logging_thread.stop()
+
+    # Turn on all USB relays when the server quits
+    print('Turning on all USB relays...')
+    for relay in get_all_device_paths():
+        print('Turning on channels of relay {}'.format(relay.decode('utf-8')))
+        for ch in range(args.relayChannel):
+            set_relay_state(relay, ch)
+            print('Channel {} is set to ON.'.format(ch))
