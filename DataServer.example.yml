@@ -11,9 +11,6 @@ log:
     when: D
     rotateInterval: 1
     useTimeRotated: False
-    logLevel: DEBUG
-    logLevelStdout: DEBUG
-    logLevelFile: DEBUG
 
 server:
     host: localhost
