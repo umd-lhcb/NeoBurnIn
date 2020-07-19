@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 20, 2020 at 03:24 AM +0800
+# Last Change: Mon Jul 20, 2020 at 03:28 AM +0800
 # Too bad. Impurities everywhere.
 
 import logging
@@ -32,11 +32,13 @@ class LoggingThread(object):
                  maxSize='100 MB',
                  when='D', rotateInterval=1,
                  useTimeRotated=False,
-                 logLevelStdout='INFO',
+                 logLevel='INFO',
+                 logLevelStdout='WARNING',
                  logLevelFile='INFO'
                  ):
         # Handlers for listener
-        console_handler = log_handler_colored_console()
+        console_handler = log_handler_colored_console(
+            level=parse_logging_level(logLevelStdout))
         # console_handler = log_handler_console()
         if useTimeRotated:
             file_handler = log_hander_file_time_rotated(
@@ -68,7 +70,7 @@ class LoggingThread(object):
         # Configure the root logger by attaching queue handler only
         queue_handler = logging.handlers.QueueHandler(queue)
         logger = logging.getLogger()
-        logger.setLevel(parse_logging_level(logLevelStdout))
+        logger.setLevel(parse_logging_level(logLevel))
         logger.addHandler(queue_handler)
 
     def start(self):

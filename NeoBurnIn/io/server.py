@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Tue Jul 14, 2020 at 03:26 AM +0800
+# Last Change: Mon Jul 20, 2020 at 03:25 AM +0800
 
 import logging
 import datetime as dt
@@ -66,6 +66,7 @@ class DataServer(GroundServer):
     async def app_factory(self):
         self.scheduler = await aiojobs.create_scheduler()
         await self.scheduler.spawn(self.check_heartbeat())
+        logger.debug('Heat beat checker scheduled.')
         return self.app
 
     def run(self):
