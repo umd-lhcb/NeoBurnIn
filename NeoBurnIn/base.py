@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 20, 2020 at 02:40 AM +0800
+# Last Change: Mon Jul 20, 2020 at 02:59 AM +0800
 
 import abc
 import sys
@@ -133,8 +133,10 @@ class DataStream(list):
     on append. The string will be used for JSON output, which will be used for
     visualization.
     '''
-    def __init__(self, iterable=None, max_length=5):
+    def __init__(self, iterable=None, max_length=5, update_json=True):
         self.max_length = max_length
+        self.update_json = update_json
+
         self.json_str = ''
         self.list_is_full = False
 
@@ -160,7 +162,8 @@ class DataStream(list):
             self.list_is_full = True
 
         # Update the JSON string representation at append-time.
-        self.json_str = ','.join(str(x) for x in self)
+        if self.update_json:
+            self.json_str = ','.join(str(x) for x in self)
 
         return self.list_is_full
 
