@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Sun Jul 12, 2020 at 09:43 PM +0800
+# Last Change: Mon Jul 20, 2020 at 03:24 AM +0800
 # Too bad. Impurities everywhere.
 
 import logging
@@ -32,16 +32,20 @@ class LoggingThread(object):
                  maxSize='100 MB',
                  when='D', rotateInterval=1,
                  useTimeRotated=False,
-                 level=logging.INFO
+                 logLevelStdout='INFO',
+                 logLevelFile='INFO'
                  ):
         # Handlers for listener
         console_handler = log_handler_colored_console()
         # console_handler = log_handler_console()
         if useTimeRotated:
             file_handler = log_hander_file_time_rotated(
-                filename, when, rotateInterval, backupCount)
+                filename, when, rotateInterval, backupCount,
+                level=parse_logging_level(logLevelFile))
         else:
-            file_handler = log_handler_file(filename, maxSize, backupCount)
+            file_handler = log_handler_file(
+                filename, maxSize, backupCount,
+                level=parse_logging_level(logLevelFile))
 
         if fromaddr:
             email_handler = log_handler_email(fromaddr, toaddrs, credentials,
@@ -64,7 +68,7 @@ class LoggingThread(object):
         # Configure the root logger by attaching queue handler only
         queue_handler = logging.handlers.QueueHandler(queue)
         logger = logging.getLogger()
-        logger.setLevel(level)
+        logger.setLevel(parse_logging_level(logLevelStdout))
         logger.addHandler(queue_handler)
 
     def start(self):
@@ -82,6 +86,18 @@ def parse_size_limit(size):
     size_dict = {'B': 1, 'KB': 1024, 'MB': 1024*1024}
     size_parsed = size.split(' ')
     return int(size_parsed[0]) * size_dict[size_parsed[1]]
+
+
+def parse_logging_level(lvl):
+    known_levels = {
+        'CRITICAL': 50,
+        'ERROR': 40,
+        'WARNING': 30,
+        'INFO': 20,
+        'DEBUG': 10,
+        'NOTSET': 0,
+    }
+    return known_levels[lvl]
 
 
 ##############
