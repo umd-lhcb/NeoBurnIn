@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 20, 2020 at 02:09 AM +0800
+# Last Change: Mon Jul 20, 2020 at 02:40 AM +0800
 
 import abc
 import sys
@@ -44,6 +44,9 @@ def time_delta_in_seconds(later_time, previous_time):
 
 
 def parse_config(config_file):
+    '''
+    Parse configuration file used for all clients/servers.
+    '''
     if Path(config_file).exists():
         with open(config_file) as cfg:
             parsed = yaml.safe_load(cfg)
@@ -55,12 +58,18 @@ def parse_config(config_file):
 
 
 def parse_time_limit(time):
+    '''
+    Convert the string-based time, such as '1 HRS', to seconds.
+    '''
     time_dict = {'SEC': 1, 'MIN': 60*1, 'HRS': 60*60}
     time_parsed = time.split(' ')
     return int(time_parsed[0]) * time_dict[time_parsed[1]]
 
 
 class ThreadTerminator(object):
+    '''
+    Terminate all listed threads gracefully when this thread is shutdown.
+    '''
     def __init__(self, stop_event, thread_list):
         self.stop_event = stop_event
         self.thread_list = thread_list
@@ -73,6 +82,9 @@ class ThreadTerminator(object):
 
 
 class SensorEmitter(object):
+    '''
+    Import and configure sensors.
+    '''
     def __init__(self, sensors_list):
         self.stop_event = Event()
         self.queue = janus.Queue()
