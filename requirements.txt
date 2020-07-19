@@ -6,6 +6,6 @@ janus==0.4.0
 rainbow_logging_handler
 pyyaml
 curses-menu
-git+https://github.com/umd-lhcb/rpi.burnin@0.3.4
+git+https://github.com/umd-lhcb/rpi.burnin@0.3.5
 git+https://github.com/umd-lhcb/labSNMP@0.2.1
 matplotlib
