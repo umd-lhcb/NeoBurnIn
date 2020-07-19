@@ -1,0 +1,116 @@
+log:
+    filename: logs/burn_in_ctrl_client_debug.log
+    maxSize: 100 MB
+    backupCount: 10
+    fromaddr: burninatumd@gmail.com
+    toaddrs: lhcb-hw@umd.edu
+    credentials: <ask_yipeng_for_passwd>  # Ask Yipeng on slack
+    interval: 1 HRS
+    logLevel: DEBUG
+    logLevelFile: DEBUG
+
+client:
+    host: 129.2.92.92
+    port: 45678
+    maxConcurrency: 20
+
+sensors:
+    - Therm.ThermDataFancySource:
+        sensorPath:
+            - /sys/bus/w1/devices/28-0000098d8197/w1_slave
+            - /sys/bus/w1/devices/28-0000098d94eb/w1_slave
+            - /sys/bus/w1/devices/28-0000098d0cbe/w1_slave
+            - /sys/bus/w1/devices/28-0000098fd7e3/w1_slave
+        displayName: COMBINED_WIRE
+        interval: 10
+    - Therm.ThermDataFancySource:
+        sensorPath:
+            - /sys/bus/w1/devices/28-0000098d8197/w1_slave
+        displayName: THERM_SENSOR1
+        interval: 20
+    - Therm.ThermDataFancySource:
+        sensorPath:
+            - /sys/bus/w1/devices/28-0000098d94eb/w1_slave
+        displayName: THERM_SENSOR2
+        interval: 20
+    - Therm.ThermDataFancySource:
+        sensorPath:
+            - /sys/bus/w1/devices/28-0000098d0cbe/w1_slave
+        displayName: THERM_SENSOR3
+        interval: 20
+    - Therm.ThermDataFancySource:
+        sensorPath:
+            - /sys/bus/w1/devices/28-0000098fd7e3/w1_slave
+        displayName: THERM_SENSOR4
+        interval: 20
+    - Current.CurrentMaratonDataSource:
+        ipAddr: 192.168.1.31
+        interval: 60
+        displayName: MARATON_CURR
+        psuChannels:
+            - 1
+            - 2
+            #- 3  # This channel will not be used for now.
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+    - Alarm.FireAlarmDataSource:
+        ch: 8
+        displayName: FIRE
+    - Alarm.WaterAlarmDataSource:
+        ch: 11
+        displayName: WATER
+
+controllers:
+    relay1:
+        Relay.RelaySink:
+            host: localhost  # 0.0.0.0 is a symbolic IP and should NOT be used here.
+            port: 45679
+            automaticDiscovery: true
+            relayIdx: 0
+    relay2:
+        PowerSupply.PowerSupplySink:
+            host: localhost
+            port: 45679
+            psuIp: 192.168.1.31
+
+ctrlRules:
+    - match:
+        name: "COMBINED_WIRE"
+        valueGt: 40  # Set the temp when the VALVE should be turned ON
+      action:
+          sink: relay1
+          state: "on"
+          ch: 1
+    - match:
+        name: "COMBINED_WIRE"
+        valueLt: 33  # Set the temp when the VALVE should be turned OFF
+      action:
+          sink: relay1
+          state: "off"
+          ch: 1
+    - match:
+        name: "COMBINED_WIRE"
+        valueGt: 60  # Set the temp when the MARATON should be turned OFF
+      action:
+          sink: relay2
+          state: "off"
+          ch: all
+    - match:
+        name: "FIRE"
+      action:
+          sink: relay2
+          state: "off"
+          ch: all
+    - match:
+        name: "WATER"
+      action:
+          sink: relay2
+          state: "off"
+          ch: all
