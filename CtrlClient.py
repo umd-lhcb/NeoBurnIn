@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 20, 2020 at 02:16 AM +0800
+# Last Change: Mon Jul 20, 2020 at 04:04 PM +0800
 
 import importlib
 
@@ -11,6 +11,8 @@ from NeoBurnIn.io.client import CtrlClient
 from NeoBurnIn.io.logger import LoggingThread
 from NeoBurnIn.base import parse_config, SensorEmitter
 from NeoBurnIn.functional import parse_directive
+
+from rpi.burnin.USBRelay import set_relay_state, get_all_device_paths
 
 
 ###################
@@ -79,3 +81,11 @@ if __name__ == "__main__":
     sensors.start()
     client.run()
     logging_thread.stop()
+
+    # Turn on all USB relays when the client quits
+    print('Turning on all USB relays...')
+    for relay in get_all_device_paths():
+        print('Turning on channels of relay {}'.format(relay.decode('utf-8')))
+        for ch in range(args.relayChannel):
+            set_relay_state(relay, ch)
+            print('Channel {} is set to ON.'.format(ch))
