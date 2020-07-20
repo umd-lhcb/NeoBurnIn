@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 20, 2020 at 03:25 AM +0800
+# Last Change: Mon Jul 20, 2020 at 03:51 PM +0800
 
 import logging
 import datetime as dt
@@ -45,7 +45,7 @@ class DataServer(GroundServer):
     def __init__(self, *args,
                  stdevRange=3, thermChName=['THERM'], thermAlarmThresh=60,
                  heartBeatInterval='1 HRS', checkHeartBeatInterval='20 MIN',
-                 itemLength=1000,
+                 itemLength=1000, splitThresh=5,
                  **kwargs):
         self.stdevRange = stdevRange
         self.thermChName = thermChName
@@ -53,6 +53,7 @@ class DataServer(GroundServer):
         self.heartBeatInterval = parse_time_limit(heartBeatInterval)
         self.checkHeartBeatInterval = parse_time_limit(checkHeartBeatInterval)
         self.itemLength = itemLength
+        self.splitThresh = splitThresh
 
         self.stash = self.stash_create()
         self.last_received = datetime.now()
@@ -160,7 +161,7 @@ class DataServer(GroundServer):
 
             # Proceed only if the data entry is valid
             if date is not None:
-                # Log the whole entry
+                # Log the whole entry first
                 logger.info('Received: {}'.format(entry))
 
                 # First check if this data point is OK.
@@ -168,14 +169,21 @@ class DataServer(GroundServer):
                     if value >= self.thermAlarmThresh:
                         logger.critical('Over temperature! Channel {} with a reading of {} deg C is greater than threshold {} deg C'.format(ch_name, value, self.thermAlarmThresh))
 
-                elif self.stash[ch_name]['data'].reference_exists:
-                    mean = self.stash[ch_name]['data'].reference_mean
-                    envelop = self.stash[ch_name]['data'].reference_stdev * \
-                        self.stdevRange
-                    if value <= mean-envelop or value >= mean+envelop:
-                        logger.critical('Channel {} measured a value of {}, which is outside of {} stds.'.format(
-                            ch_name, value, self.stdevRange
-                        ))
+                else:
+                    # Since most of the Maraton current measurements is simple
+                    # bi-modal step functions, we try to pre-determine whether
+                    # this measurements belongs to 'hi' or 'lo'.
+                    mode = 'data_hi' if value > self.splitThresh else 'data_lo'
+
+                    if self.stash[ch_name][mode].reference_exists:
+                        mean = self.stash[ch_name][mode].reference_mean
+                        envelop = self.stash[ch_name][mode].reference_stdev * \
+                            self.stdevRange
+
+                        if value <= mean-envelop or value >= mean+envelop:
+                            logger.critical('Channel {} measured a value of {}, which is outside of {} stds.'.format(
+                                ch_name, value, self.stdevRange
+                            ))
 
                 # Store the data and time
                 self.stash[ch_name]['data'].append(value)
@@ -232,7 +240,9 @@ class DataServer(GroundServer):
     def default_item(item_length=1000):
         return {
             'time': DataStream(max_length=item_length),
-            'data': DataStats(max_length=item_length),
+            'data': DataStream(max_length=item_length),
+            'data_hi': DataStats(max_length=item_length),
+            'data_lo': DataStats(max_length=item_length),
         }
 
 
