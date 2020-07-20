@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 20, 2020 at 03:43 AM +0800
+# Last Change: Tue Jul 21, 2020 at 01:32 AM +0800
 
 import logging
 
@@ -30,7 +30,7 @@ class ThermDataSource(ThermSensor, BaseDataSource):
 
 class ThermDataFancySource(ThermDataSource):
     def __init__(self, *args,
-                 numOfRecentDP=8, numOfInitOutlier=2, rejectThresh=8, **kwargs):
+                 numOfRecentDP=5, numOfInitOutlier=2, rejectThresh=8, **kwargs):
         self.numOfRecentDP = numOfRecentDP
         self.numOfInitOutlier = numOfInitOutlier
         self.rejectThresh = rejectThresh
