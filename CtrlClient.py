@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Tue Jul 21, 2020 at 12:08 AM +0800
+# Last Change: Wed Jul 22, 2020 at 02:57 AM +0800
 
 import importlib
 
@@ -11,7 +11,7 @@ from NeoBurnIn.io.client import CtrlClient
 from NeoBurnIn.io.logger import LoggingThread
 from NeoBurnIn.base import parse_config, SensorEmitter
 from NeoBurnIn.functional import parse_directive
-from NeoBurnIn.utils import turn_on_usb_relay
+from NeoBurnIn.utils import turn_off_usb_relay
 
 
 ###################
@@ -81,4 +81,4 @@ if __name__ == "__main__":
     client.run()
     logging_thread.stop()
 
-    turn_on_usb_relay()
+    turn_off_usb_relay()
