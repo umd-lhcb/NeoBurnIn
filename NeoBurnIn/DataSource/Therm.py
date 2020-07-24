@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Tue Jul 21, 2020 at 01:32 AM +0800
+# Last Change: Fri Jul 24, 2020 at 10:18 PM +0800
 
 import logging
 
@@ -62,6 +62,8 @@ class ThermDataFancySource(ThermDataSource):
             logger.debug('{} readout: {}'.format(self.displayName, therm))
 
             recent_mean = mean(self.sample)
+            logger.debug('{} recent mean: {}'.format(
+                self.displayName, recent_mean))
             if abs(therm - recent_mean) > self.rejectThresh:
                 logger.debug('{} readout {} rejected, with recent mean {}'.format(
                     self.displayName, therm, recent_mean
