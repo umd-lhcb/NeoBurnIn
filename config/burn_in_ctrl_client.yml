@@ -1,7 +1,7 @@
 log:
     filename: logs/burn_in_ctrl_client.log
-    maxSize: 100 MB
-    backupCount: 10
+    maxSize: 20 MB
+    backupCount: 50
     fromaddr: burninatumd@gmail.com
     toaddrs: lhcb-hw@umd.edu
     credentials: <ask_yipeng_for_passwd>  # Ask Yipeng on slack
