@@ -1,5 +1,5 @@
 let
-  pkgs = import <nixpkgs> { overlays = [(import ./nix/burnin)]; };
+  pkgs = import <nixpkgs> { overlays = [(import ./nix/overlay)]; };
   python = pkgs.python3;
   pythonPackages = python.pkgs;
   stdenv = pkgs.stdenv;
