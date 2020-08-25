@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Wed Aug 26, 2020 at 02:23 AM +0800
+# Last Change: Wed Aug 26, 2020 at 02:30 AM +0800
 
 import logging
 
@@ -46,9 +46,9 @@ class ThermDataFancySource(ThermDataSource):
         sorted_distance_idx = self.sorted_idx(distance_to_mean)
 
         # Remove the 2 data points that are furthest away from mean
-        outlier_idx = sorted_distance_idx[-2:]
+        good_idx = sorted_distance_idx[:-2]
         self.sample = DataStream(
-            [i for i in raw_samples if i not in outlier_idx],
+            [raw_samples[i] for i in good_idx],
             max_length=self.numOfRecentDP, update_json=False)
         logger.info('{} acquired {} initial good data points: {}'.format(
             self.displayName, self.numOfRecentDP, self.sample
