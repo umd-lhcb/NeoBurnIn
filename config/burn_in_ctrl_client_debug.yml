@@ -97,7 +97,7 @@ ctrlRules:
           ch: 1
     - match:
         name: "COMBINED_WIRE"
-        valueGt: 60  # Set the temp when the MARATON should be turned OFF
+        valueGt: 50  # Set the temp when the MARATON should be turned OFF
       action:
           sink: relay2
           state: "off"
