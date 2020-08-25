@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Fri Jul 24, 2020 at 10:18 PM +0800
+# Last Change: Wed Aug 26, 2020 at 02:23 AM +0800
 
 import logging
 
@@ -38,7 +38,7 @@ class ThermDataFancySource(ThermDataSource):
         super().__init__(*args, **kwargs)
 
     def initial_sampling(self):
-        raw_samples = [self.get() for i in
+        raw_samples = [self.get() for _ in
                        range(self.numOfRecentDP+self.numOfInitOutlier)]
 
         sample_mean = mean(raw_samples)
@@ -75,5 +75,5 @@ class ThermDataFancySource(ThermDataSource):
                 self.queue.put(msg)
 
     @staticmethod
-    def sorted_idx(l):
-        return [i[0] for i in sorted(enumerate(l), key=lambda x:x[1])]
+    def sorted_idx(lst):
+        return [i[0] for i in sorted(enumerate(lst), key=lambda x:x[1])]
