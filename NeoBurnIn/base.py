@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Mon Jul 20, 2020 at 02:59 AM +0800
+# Last Change: Wed Aug 26, 2020 at 02:45 AM +0800
 
 import abc
 import sys
@@ -140,9 +140,10 @@ class DataStream(list):
         self.json_str = ''
         self.list_is_full = False
 
-        if iterable and len(iterable) > max_length:
+        if iterable and len(iterable) >= max_length:
             # Make sure the length of the list is correct
             iterable = iterable[len(iterable)-max_length:]
+            self.list_is_full = True
 
         if iterable:
             super().__init__(iterable)
