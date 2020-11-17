@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Last Change: Tue Jun 23, 2020 at 05:07 PM +0800
+# Last Change: Tue Nov 17, 2020 at 11:29 PM +0100
 
 import logging
 import queue
@@ -43,6 +43,7 @@ options = parse_config('NaiveLogger.yml')
 
 logging_file = NamedTemporaryFile()
 logging_queue = queue.Queue()
+options['log']['filename'] = logging_file.name
 
 logging_thread = LoggingThread(logging_queue, **options['log'])
 
@@ -57,7 +58,7 @@ if __name__ == "__main__":
     print('This message should be printed out immediately by the master thread.')
     logger.critical("Test message with level CRITICAL, should be suppressed by email handler.")
 
-    sleep(125)
+    sleep(65)
     logger.critical("Test message with level CRITICAL, reprise.")
 
     logging_thread.stop()
