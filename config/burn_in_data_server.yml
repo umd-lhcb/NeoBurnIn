@@ -18,6 +18,6 @@ server:
         - THERM_SENSOR3
         - THERM_SENSOR4
     thermAlarmThresh: 50
-    heartBeatInterval: 2 HRS  # Send an alarm if the client has been not sending anything for the past 10 min
-    checkHeartBeatInterval: 30 MIN  # Check heart beat every min
+    heartBeatInterval: 24 HRS  # Send an alarm if the client has been not sending anything for the past day
+    checkHeartBeatInterval: 30 MIN  # Check heart beat every 30 min
     itemLength: 10000
