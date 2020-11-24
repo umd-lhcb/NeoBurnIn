@@ -5,7 +5,7 @@ log:
     fromaddr: burninatumd@gmail.com
     toaddrs: syp@umd.edu,yangzs@umd.edu,sabraun@umd.edu
     credentials: <ask_yipeng_for_passwd>  # Ask Yipeng on slack for the password of this account
-    interval: 6 HRS
+    interval: 2 HRS
 
 server:
     host: 0.0.0.0
