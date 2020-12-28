@@ -4,6 +4,8 @@ buildPythonPackage rec {
   pname = "curses-menu";
   version = "0.5.0";
 
+  patches = [ ./no_dep.patch ];
+
   src = fetchPypi {
     inherit pname version;
     extension = "zip";
