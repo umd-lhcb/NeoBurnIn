@@ -1,8 +1,6 @@
 __pycache__
-.python-version
 .pytest_cache
-.virtualenv/
-.envrc
+.python-version
 
 measurements/test_server/
 *server.yml
