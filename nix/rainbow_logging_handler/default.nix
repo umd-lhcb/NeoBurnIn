@@ -1,5 +1,9 @@
-{ stdenv, buildPythonPackage, fetchPypi
-, colorama, logutils }:
+{ stdenv
+, buildPythonPackage
+, fetchPypi
+, colorama
+, logutils
+}:
 
 buildPythonPackage rec {
   pname = "rainbow_logging_handler";
