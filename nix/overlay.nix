@@ -5,11 +5,10 @@ let
       rainbow_logging_handler = super.callPackage ./rainbow_logging_handler { };
       aiojobs = super.callPackage ./aiojobs { };
       janus = super.callPackage ./janus { };
-      NeoBurnIn = super.callPackage ./default.nix { };
+      curses-menu = super.callPackage ./curses-menu { };
     };
   };
 in
-{
+rec {
   python3 = prev.python3.override pythonOverrides;
-  pythonPackages = python3.pkgs;
 }
