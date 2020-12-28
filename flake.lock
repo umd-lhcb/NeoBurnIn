@@ -45,25 +45,6 @@
         "type": "github"
       }
     },
-    "labSNMP": {
-      "inputs": {
-        "flake-utils": "flake-utils_2",
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1609115268,
-        "narHash": "sha256-QHO3fhJfmTJrEC+k4O6GOlBtCMQrJb2TrFvZmoTHw0Y=",
-        "owner": "umd-lhcb",
-        "repo": "labSNMP",
-        "rev": "8ed478899580d99a62dea1e93a33100261e324b9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "umd-lhcb",
-        "repo": "labSNMP",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1609026361,
@@ -112,31 +93,50 @@
         "type": "github"
       }
     },
-    "root": {
+    "py-labSNMP": {
       "inputs": {
-        "flake-utils": "flake-utils",
-        "labSNMP": "labSNMP",
-        "nixpkgs": "nixpkgs_2",
-        "rpi_burnin": "rpi_burnin"
+        "flake-utils": "flake-utils_2",
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1609124099,
+        "narHash": "sha256-ihAO6o1m0J3207/IBQRJRisw7D6cu8G+llvtwlNambQ=",
+        "owner": "umd-lhcb",
+        "repo": "labSNMP",
+        "rev": "3278b320d0074601e4e8a219e590cd9d1333b78a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "umd-lhcb",
+        "repo": "labSNMP",
+        "type": "github"
       }
     },
-    "rpi_burnin": {
+    "py-rpi_burnin": {
       "inputs": {
         "flake-utils": "flake-utils_3",
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1609115248,
-        "narHash": "sha256-3Rl9vekqQ+/paC7776nnYWO/bErkZS3Mxd5uQa2C45k=",
+        "lastModified": 1609124138,
+        "narHash": "sha256-kD6/MidAl78VpCII8CoKAMcePEOm39xhXpy6CkpaHHI=",
         "owner": "umd-lhcb",
         "repo": "rpi.burnin",
-        "rev": "f9b3020ba3830eaa7fd3a2714930a96450102d5c",
+        "rev": "e6921bfd5673295de7a09e96dc2747d1d4536644",
         "type": "github"
       },
       "original": {
         "owner": "umd-lhcb",
         "repo": "rpi.burnin",
         "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs",
+        "py-labSNMP": "py-labSNMP",
+        "py-rpi_burnin": "py-rpi_burnin"
       }
     }
   },

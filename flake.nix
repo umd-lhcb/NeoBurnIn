@@ -4,13 +4,13 @@
   inputs = rec {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-20.09";
     flake-utils.url = "github:numtide/flake-utils";
-    labSNMP = {
+    py-labSNMP = {
       url = "github:umd-lhcb/labSNMP";
       inputs = {
         inherit nixpkgs flake-utils;
       };
     };
-    rpi_burnin = {
+    py-rpi_burnin = {
       url = "github:umd-lhcb/rpi.burnin";
       inputs = {
         inherit nixpkgs flake-utils;
@@ -18,7 +18,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, labSNMP, rpi_burnin }:
+  outputs = { self, nixpkgs, flake-utils, py-labSNMP, py-rpi_burnin }:
     {
       overlay = import ./nix/overlay.nix;
     }
@@ -27,7 +27,7 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [ self.overlay ];
+          overlays = [ self.overlay py-labSNMP.overlay py-rpi_burnin.overlay ];
         };
         python = pkgs.python3;
         pythonPackages = python.pkgs;
@@ -42,6 +42,9 @@
             janus
             pyyaml
             rainbow_logging_handler
+
+            labSNMP
+            rpi_burnin
           ]);
           NeoBurnIn_Dev = pkgs.mkShell {
             buildInputs = [ NeoBurnIn ]
