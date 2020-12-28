@@ -61,8 +61,6 @@
             ]);
           };
         };
-
-        defaultPackage = packages.NeoBurnIn;
         devShell = packages.NeoBurnIn_Dev;
       });
 }
