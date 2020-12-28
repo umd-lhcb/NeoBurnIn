@@ -46,19 +46,19 @@
           NeoBurnIn_Dev = pkgs.mkShell {
             buildInputs = [ NeoBurnIn ]
             ++ stdenv.lib.optionals (stdenv.isx86_64) (with pythonPackages; [
-            # Testing
-            pytest
+              # Testing
+              pytest
 
-            # Python auto-complete
-            jedi
+              # Python auto-complete
+              jedi
 
-            # Linters
-            flake8
-            pylint
+              # Linters
+              flake8
+              pylint
 
-            # Plotting
-            matplotlib
-          ]);
+              # Plotting
+              matplotlib
+            ]);
           };
         };
 
