@@ -43,6 +43,9 @@
             pyyaml
             rainbow_logging_handler
 
+            # for LVR mon
+            curses-menu
+
             labSNMP
             rpi_burnin
           ]);
