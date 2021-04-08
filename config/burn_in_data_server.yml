@@ -18,6 +18,6 @@ server:
         - THERM_SENSOR3
         - THERM_SENSOR4
     thermAlarmThresh: 48
-    heartBeatInterval: 72 HRS
-    checkHeartBeatInterval: 12 HRS
+    heartBeatInterval: 12 HRS
+    checkHeartBeatInterval: 6 HRS
     itemLength: 10000
